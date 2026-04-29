@@ -1,0 +1,163 @@
+{
+  "tenant": {
+    "name": "Two Pharmacy",
+    "category": "Pharmacy & Wellness"
+  },
+
+  "branding": {
+    "logo": "/two_pharmacy/logo.svg",
+    "colors": {
+      "primary": "#1F1F23",
+      "secondary": "#9CA0A8",
+      "background": "#F4F4F5",
+      "text": "#0A0A0B",
+      "accent": "#0F0F11",
+      "ink": "#000000"
+    }
+  },
+
+  "seo": {
+    "title": "Two Pharmacy — Pharmacy, Reimagined.",
+    "description": "A modern neighbourhood pharmacy. Authentic medicines, careful counsel, and a calmer way to take care of yourself.",
+    "keywords": [
+      "neighbourhood pharmacy",
+      "modern pharmacy",
+      "medicine delivery",
+      "wellness store",
+      "pharmacist consultation"
+    ],
+    "ogImage": "/two_pharmacy/og-image.jpg"
+  },
+
+  "content": {
+    "hero": {
+      "eyebrow": "Modern Pharmacy",
+      "headline": "Pharmacy, reimagined.",
+      "tagline": "Authentic medicines, careful counsel, and a quieter, more considered way to take care of yourself — and the people you love.",
+      "image": "/two_pharmacy/hero.jpg",
+      "cta": {
+        "label": "Visit Two",
+        "type": "safe-action"
+      },
+      "secondaryCta": {
+        "label": "Our Approach",
+        "href": "/about"
+      },
+      "proof": [
+        "Open 7 days a week",
+        "Licensed pharmacists on-site",
+        "Free home delivery within 5 km"
+      ]
+    },
+
+    "about": {
+      "description": "Two Pharmacy is the neighbourhood pharmacy we always wanted to walk into — calm, honest, and built around the person standing at the counter. We carry a tightly curated catalogue of authentic medicines and wellness essentials, and our pharmacists make time for real conversations, not just transactions.",
+      "image": "/two_pharmacy/about.jpg"
+    },
+
+    "services": [
+      {
+        "title": "Prescription Dispensing",
+        "description": "Bring in or upload a prescription and our pharmacists will fulfil it accurately, with batch verification on every order.",
+        "image": "/two_pharmacy/services/dispensing.jpg"
+      },
+      {
+        "title": "Pharmacist Consultations",
+        "description": "Five focused minutes with a licensed pharmacist — questions about dosage, interactions, alternatives, or simply a clear next step.",
+        "image": "/two_pharmacy/services/prescription.jpg"
+      },
+      {
+        "title": "Wellness Essentials",
+        "description": "A small, considered selection of vitamins, immunity, sleep and recovery products — only brands we'd take ourselves.",
+        "image": "/two_pharmacy/services/wellness.jpg"
+      },
+      {
+        "title": "Diagnostic Pickup",
+        "description": "Drop off a prescription for blood work or a basic test — we coordinate with our partner labs and notify you when reports arrive.",
+        "image": "/two_pharmacy/services/diagnostics.jpg"
+      }
+    ],
+
+    "sections": [
+      {
+        "type": "gallery",
+        "data": {
+          "eyebrow": "Inside Two",
+          "heading": "Made for the way pharmacies should feel",
+          "images": [
+            { "src": "/two_pharmacy/gallery/pills-macro.jpg", "alt": "Macro shot of pharmaceutical capsules", "caption": "Authentic medicines" },
+            { "src": "/two_pharmacy/gallery/pharmacist.jpg", "alt": "Pharmacist reviewing a screen", "caption": "Licensed pharmacists" },
+            { "src": "/two_pharmacy/gallery/lab-glassware.jpg", "alt": "Laboratory glassware in soft light", "caption": "Quality, verified" },
+            { "src": "/two_pharmacy/gallery/medicine-bottles.jpg", "alt": "Apothecary bottles arranged on a shelf", "caption": "Curated catalogue" },
+            { "src": "/two_pharmacy/gallery/store-aisle.jpg", "alt": "Quiet store aisle in monochrome", "caption": "A calmer space" }
+          ]
+        }
+      },
+      {
+        "type": "features",
+        "data": {
+          "heading": "Why people choose Two",
+          "items": [
+            {
+              "title": "Only authentic medicines",
+              "description": "Every batch is sourced from licensed distributors and validated on arrival — no grey-market product on our shelves."
+            },
+            {
+              "title": "Pharmacists who have time",
+              "description": "We staff for conversation, not throughput. You'll get a real answer to your question before you leave."
+            },
+            {
+              "title": "Quiet, considered space",
+              "description": "Calm lighting, low noise, no upsells. A pharmacy should feel like a deep breath, not an aisle of bright packaging."
+            },
+            {
+              "title": "Free delivery, fairly priced",
+              "description": "Free same-day delivery within five kilometres. MRP-only pricing — what's printed on the box is what you pay."
+            }
+          ]
+        }
+      },
+      {
+        "type": "howItWorks",
+        "data": {
+          "heading": "How a visit works",
+          "steps": [
+            {
+              "step": 1,
+              "title": "Walk in or message us",
+              "description": "Stop by during opening hours or send us your prescription on WhatsApp — both work."
+            },
+            {
+              "step": 2,
+              "title": "Talk to a pharmacist",
+              "description": "Quick questions, dosage advice, alternatives — they'll walk you through it before you commit."
+            },
+            {
+              "step": 3,
+              "title": "Take home, or we deliver",
+              "description": "Pay at the counter and leave, or have it delivered to your door — usually within the hour."
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "contact": {
+    "email": "hello@twopharmacy.example",
+    "phone": "+91 80 5544 7700",
+    "address": "Ground Floor, 27/B, Church Street, Bengaluru 560001"
+  },
+
+  "features": {
+    "enableChat": true,
+    "enableForms": false,
+    "enablePayments": false,
+    "enableCart": false
+  },
+
+  "compliance": {
+    "mode": "business-profile-safe",
+    "disclaimer": "Two Pharmacy is a licensed retail pharmacy. The content on this website is intended for general awareness and is not a substitute for professional medical diagnosis, advice, or treatment. Prescription medicines are dispensed only against a valid prescription, in accordance with applicable regulations."
+  }
+}
