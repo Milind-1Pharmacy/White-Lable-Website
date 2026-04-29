@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { StructuredData } from "@/components/common/SEO";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { getConfig } from "@/lib/getConfig";
 import { themeStyle } from "@/lib/themeLoader";
@@ -47,15 +44,10 @@ export default async function RootLayout({
     >
       <body
         suppressHydrationWarning
-        className="flex min-h-full flex-col bg-[var(--brand-background)] text-[var(--brand-text)]"
+        className="flex min-h-full flex-col text-[var(--brand-text)]"
         style={themeStyle(config)}
       >
-        <StructuredData config={config} />
-        <MotionProvider>
-          <Navbar app={config.app} />
-          <main className="flex-1">{children}</main>
-          <Footer app={config.app} />
-        </MotionProvider>
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );
