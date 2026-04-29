@@ -60,6 +60,7 @@ modules/*.tsx             ← receives sanitized props, renders
 | `services`     | `modules/Services.tsx`   |
 | `features`     | `modules/Features.tsx`   |
 | `howItWorks`   | `modules/HowItWorks.tsx` |
+| `gallery`      | `modules/Gallery.tsx`    |
 
 When adding a new section type: define its shape in `types/config.types.ts`, add the mapping in the section dispatcher, and ensure the module renders nothing (not an error) if its data is missing.
 
@@ -83,11 +84,34 @@ Compliance always wins. If config and compliance disagree, compliance is what re
 - **404 fallback** lives in `app/not-found.tsx`.
 - Lazy-load non-critical modules (`next/dynamic`) when they aren't above the fold.
 
+## Animation patterns (GSAP + ScrollTrigger)
+
+Animation primitives live in `lib/motion.ts` (`fadeUp`, `staggerCards`, `parallaxImage`, `imageReveal`). All client modules use `gsap.context()` for scoped cleanup. Hard rules:
+
+- **Use `gsap.from()`, never `gsap.fromTo()`** for entry animations. If the trigger never fires (HMR, Strict Mode, fast scroll), content stays at its natural visible state. `fromTo` locks invisible state.
+- **Always set `clearProps: "transform,opacity"`** so GSAP wipes inline styles after completion — prevents stale state across HMR.
+- **Use `start: "top 95%"`** for entry triggers, not 80%. Above-the-fold content fires immediately.
+- **Inner image refs that get parallaxed need `-inset-[6%]` overscan** (not `inset-0`). GSAP `yPercent` translation otherwise reveals blank wrapper edges. See `modules/Hero.tsx`, `modules/About.tsx`, `modules/Gallery.tsx`.
+- **Don't stack CSS `scale-[1.x]` on the same element GSAP transforms.** Use `-inset-[N%]` (layout) for overscan instead.
+- **`ScrollTrigger` must be registered at `lib/motion.ts` module load** (not in a `useEffect`). Otherwise modules race the provider mount and log "Missing plugin?".
+- All presets honor `prefers-reduced-motion: reduce` via `REDUCED_MOTION` constant — they bail to `null` and elements render at their natural state.
+- Lenis was tried and removed — it conflicts with sticky headers and breaks scroll. `scroll-behavior: smooth` on `html` is enough.
+
+## Tenant assets
+
+Per-tenant images live under `public/<project>/` (e.g. `public/demo_proj/`). Sub-folder for service thumbnails: `public/<project>/services/`. The JSON references these paths absolutely (`/demo_proj/hero.png`). When swapping tenants, drop new assets into a new folder and update `configs/app_master.json` paths — no component changes.
+
+Standard slots: `logo.png`, `hero.png`, `about.png`, `og-image.png`, `services/<slug>.png`, plus any gallery images.
+
 ## Project gotchas (Next 16.2 + shadcn base-ui)
 
 - The edge handler file is `proxy.ts` at the repo root and exports `function proxy()` — Next 16.2 renamed `middleware` → `proxy`. Do not bring back a `middleware.ts`.
 - This shadcn revision uses `@base-ui/react/button`. The `Button` does **not** support `asChild`. To make a `<Link>` look like a button, compose `buttonVariants(...)` with `cn()` on the link itself (see `modules/Hero.tsx`, `app/not-found.tsx`).
 - Tailwind v4 is in use (`@import "tailwindcss"` in `app/globals.css`). Brand colors are CSS variables on `<body>` set via `lib/themeLoader.ts`; reference them as `bg-[var(--brand-primary)]`, etc.
+- `<body>` has `suppressHydrationWarning` to silence ColorZilla / similar browser extensions injecting `cz-shortcut-listen` attributes. Don't remove it — the hydration mismatch is from the extension, not the app.
+- `Container` is `max-w-7xl` (1280px) with `lg:px-12 xl:px-16` padding. Don't downsize to `max-w-6xl` — gutters become too wide on 1440px+ screens.
+- The Hero `<section>` has `overflow-hidden` for the floating decorative blobs. Anything with negative absolute insets (e.g. floating badge tags) outside a child gets clipped — put overlays *inside* the inner rounded card.
+- Brand palette has six CSS vars: `--brand-primary`, `--brand-secondary`, `--brand-background`, `--brand-text`, `--brand-accent` (deeper accent for CTAs/hover), `--brand-ink` (highest contrast). All defined in `lib/themeLoader.ts` and `configs/system.json` fallbacks.
 
 ## Adding a new module
 
