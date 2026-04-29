@@ -1,0 +1,164 @@
+{
+  "tenant": {
+    "name": "Medicine Pharmacy",
+    "category": "Telemedicine & Pharmacy"
+  },
+
+  "branding": {
+    "logo": "/medicine_pharmacy/logo.svg",
+    "colors": {
+      "primary": "#8B1A1A",
+      "secondary": "#E8C4B8",
+      "background": "#FBEDE8",
+      "text": "#1A1414",
+      "accent": "#4A0E0E",
+      "ink": "#2D0808"
+    }
+  },
+
+  "seo": {
+    "title": "Medicine Pharmacy — Consult Doctors. Get Medicine. From Home.",
+    "description": "A modern telemedicine platform. Connect with verified doctors, get e-prescriptions, and have authentic medicine delivered to your door.",
+    "keywords": [
+      "telemedicine",
+      "online doctor consultation",
+      "medicine delivery",
+      "online pharmacy",
+      "e-prescription",
+      "lab tests at home"
+    ],
+    "ogImage": "/medicine_pharmacy/og-image.jpg"
+  },
+
+  "content": {
+    "hero": {
+      "eyebrow": "Telemedicine · India",
+      "headline": "Care, delivered to your doorstep.",
+      "tagline": "Talk to a verified doctor in minutes. Get your prescription, your medicines, and your lab tests — all without leaving home.",
+      "image": "/medicine_pharmacy/hero.jpg",
+      "cta": {
+        "label": "Talk to a Doctor",
+        "type": "safe-action"
+      },
+      "secondaryCta": {
+        "label": "How It Works",
+        "href": "/services"
+      },
+      "proof": [
+        "1,200+ verified doctors",
+        "1M+ consultations delivered",
+        "Available across 80+ cities"
+      ]
+    },
+
+    "about": {
+      "description": "Medicine Pharmacy is built around one simple idea — quality care should be just a tap away. We bring together licensed doctors, certified pharmacists, and accredited diagnostic labs onto a single, trusted platform. From a fever at midnight to managing a long-term condition, we make every step calmer, faster, and more affordable.",
+      "image": "/medicine_pharmacy/about.jpg"
+    },
+
+    "services": [
+      {
+        "title": "Online Consultations",
+        "description": "Connect with verified doctors across 25+ specialties via video or chat — usually within ten minutes, any day of the week.",
+        "image": "/medicine_pharmacy/services/consultation.jpg"
+      },
+      {
+        "title": "E-Prescriptions",
+        "description": "Receive a digitally signed, valid prescription right after your consultation — saved to your account, ready when you need it.",
+        "image": "/medicine_pharmacy/services/prescription.jpg"
+      },
+      {
+        "title": "Medicine Delivery",
+        "description": "Authentic, temperature-controlled medicines sourced from licensed partner pharmacies, delivered to your doorstep — often the same day.",
+        "image": "/medicine_pharmacy/services/delivery.jpg"
+      },
+      {
+        "title": "Lab Tests at Home",
+        "description": "NABL-accredited diagnostic services with home sample collection and digital reports — over 1,500 tests available across major cities.",
+        "image": "/medicine_pharmacy/services/lab-tests.jpg"
+      }
+    ],
+
+    "sections": [
+      {
+        "type": "gallery",
+        "data": {
+          "eyebrow": "A look behind the platform",
+          "heading": "Where care meets craft",
+          "images": [
+            { "src": "/medicine_pharmacy/gallery/pharmacy-shelf.jpg", "alt": "Organised pharmacy shelves with prescription medicines", "caption": "Curated pharmacy network" },
+            { "src": "/medicine_pharmacy/gallery/doctor-consult.jpg", "alt": "Doctor consulting a patient via tablet", "caption": "Verified clinicians" },
+            { "src": "/medicine_pharmacy/gallery/medicines.jpg", "alt": "Authentic medicine packaging", "caption": "Authentic medicines" },
+            { "src": "/medicine_pharmacy/gallery/lab-microscope.jpg", "alt": "Lab technician examining a sample under microscope", "caption": "Accredited diagnostics" },
+            { "src": "/medicine_pharmacy/gallery/pharmacy-counter.jpg", "alt": "Pharmacist preparing a customer order", "caption": "Trained pharmacists" }
+          ]
+        }
+      },
+      {
+        "type": "features",
+        "data": {
+          "heading": "Why patients trust us",
+          "items": [
+            {
+              "title": "Verified, licensed doctors",
+              "description": "Every clinician on our platform is verified against the National Medical Commission registry — no shortcuts."
+            },
+            {
+              "title": "Authentic medicines, always",
+              "description": "We work only with licensed partner pharmacies and validate batch authenticity on every order."
+            },
+            {
+              "title": "End-to-end encrypted records",
+              "description": "Consultations, prescriptions, and reports stay private — encrypted at rest and in transit, owned by you."
+            },
+            {
+              "title": "Transparent, upfront pricing",
+              "description": "See the cost of every consultation, medicine and test before you confirm — no surprise charges, ever."
+            }
+          ]
+        }
+      },
+      {
+        "type": "howItWorks",
+        "data": {
+          "heading": "How it works",
+          "steps": [
+            {
+              "step": 1,
+              "title": "Describe your concern",
+              "description": "Tell us what's going on in a few words. Pick a specialty, or let us suggest one."
+            },
+            {
+              "step": 2,
+              "title": "Talk to a verified doctor",
+              "description": "Connect by video or chat — usually in under ten minutes. Get diagnosed, advised, and prescribed."
+            },
+            {
+              "step": 3,
+              "title": "Medicines & reports at home",
+              "description": "Order medicines, schedule a lab test, or simply save your e-prescription — all from a single dashboard."
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "contact": {
+    "email": "care@medicinepharmacy.example",
+    "phone": "+91 80 4567 8900",
+    "address": "Floor 8, Prestige Cube, Outer Ring Road, Marathahalli, Bengaluru 560037"
+  },
+
+  "features": {
+    "enableChat": true,
+    "enableForms": false,
+    "enablePayments": false,
+    "enableCart": false
+  },
+
+  "compliance": {
+    "mode": "business-profile-safe",
+    "disclaimer": "Medicine Pharmacy is an informational platform that connects patients with licensed clinicians and partner pharmacies. The content on this website is intended for general awareness and is not a substitute for professional medical diagnosis, advice, or treatment. Always consult a qualified medical practitioner for any health concern. Medicines are dispensed by licensed pharmacies in accordance with applicable regulations and only against a valid prescription where required."
+  }
+}
