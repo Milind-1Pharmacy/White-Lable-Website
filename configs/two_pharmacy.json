@@ -7,12 +7,12 @@
   "branding": {
     "logo": "/two_pharmacy/logo.svg",
     "colors": {
-      "primary": "#1F1F23",
-      "secondary": "#9CA0A8",
-      "background": "#F4F4F5",
-      "text": "#0A0A0B",
-      "accent": "#0F0F11",
-      "ink": "#000000"
+      "primary": "#FF8A3D",
+      "secondary": "#2A2A30",
+      "background": "#0A0A0B",
+      "text": "#F4F4F5",
+      "accent": "#FF6F1A",
+      "ink": "#FFFFFF"
     }
   },
 
