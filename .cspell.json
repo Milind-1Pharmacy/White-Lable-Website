@@ -1,0 +1,42 @@
+{
+  "version": "0.2",
+  "language": "en,en-GB",
+  "words": [
+    "Bengaluru",
+    "Indiranagar",
+    "Hatha",
+    "hatha",
+    "pranayama",
+    "Vedic",
+    "neighbourhood",
+    "Apoth",
+    "apoth",
+    "Apothékary",
+    "Lumen",
+    "shadcn",
+    "lucide",
+    "geist",
+    "Geist",
+    "Fraunces",
+    "Lenis",
+    "lenis",
+    "yoga",
+    "breathwork",
+    "wellness",
+    "asana",
+    "zafu",
+    "OG",
+    "og",
+    "tabular-nums",
+    "tabular",
+    "yoyo",
+    "yPercent",
+    "xPercent"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".next/**",
+    "package-lock.json",
+    "*.log"
+  ]
+}

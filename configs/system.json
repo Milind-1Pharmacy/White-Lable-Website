@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "mode": "single-tenant",
+
+  "architecture": {
+    "rules": [
+      "Never hardcode business content in components",
+      "All content, branding, and features must come from app_master.json",
+      "Components must be stateless and reusable",
+      "Compliance rules override UI rendering",
+      "App must render safely even with partial/missing config"
+    ]
+  },
+
+  "routing": {
+    "requiredPages": [
+      "/",
+      "/about",
+      "/services",
+      "/contact",
+      "/privacy-policy",
+      "/terms-and-conditions",
+      "/disclaimer"
+    ],
+    "fallback": "/not-found"
+  },
+
+  "rendering": {
+    "default": "server-component",
+    "strategy": "ssr+isr",
+    "revalidateSeconds": 3600
+  },
+
+  "sectionAllowlist": [
+    "hero",
+    "about",
+    "services",
+    "features",
+    "howItWorks",
+    "gallery"
+  ],
+
+  "sectionMapping": {
+    "hero": "modules/Hero.tsx",
+    "about": "modules/About.tsx",
+    "services": "modules/Services.tsx",
+    "features": "modules/Features.tsx",
+    "howItWorks": "modules/HowItWorks.tsx",
+    "gallery": "modules/Gallery.tsx"
+  },
+
+  "compliance": {
+    "defaultMode": "business-profile-safe",
+    "rules": [
+      "Replace unsafe CTA labels automatically",
+      "Disable payment/cart features if enabled",
+      "Ensure disclaimer is always present",
+      "Prevent rendering of restricted sections",
+      "Force support-only communication flows"
+    ],
+    "unsafeCtaLabels": [
+      "Buy Now",
+      "Order",
+      "Order Now",
+      "Checkout",
+      "Add to Cart",
+      "Pay",
+      "Pay Now",
+      "Subscribe & Pay"
+    ],
+    "safeCtaFallback": "Learn More",
+    "forceDisabledFeatures": [
+      "enablePayments",
+      "enableCart"
+    ],
+    "defaultDisclaimer": "The information presented on this website is for general informational purposes only and should not be relied upon as professional advice."
+  },
+
+  "performance": {
+    "rules": [
+      "Use ISR for static pages",
+      "Minimize client-side JS",
+      "Tree-shake unused components",
+      "Enable image optimization",
+      "Use CDN-ready assets"
+    ]
+  },
+
+  "branding": {
+    "fallbackColors": {
+      "primary": "#111827",
+      "secondary": "#6B7280",
+      "background": "#FFFFFF",
+      "text": "#111827",
+      "accent": "#1F1E1B",
+      "ink": "#0F0E0C"
+    }
+  }
+}
