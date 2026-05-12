@@ -40,7 +40,16 @@
     "gallery",
     "stats",
     "testimonials",
-    "faq"
+    "faq",
+    "heroRotating",
+    "appDownload",
+    "aboutWithStats",
+    "servicesIconRow",
+    "brandOptionsCompare",
+    "videoFeature",
+    "mediaSplit",
+    "productPromo",
+    "teamGrid"
   ],
 
   "sectionMapping": {
@@ -52,7 +61,16 @@
     "gallery": "modules/Gallery.tsx",
     "stats": "modules/Stats.tsx",
     "testimonials": "modules/Testimonials.tsx",
-    "faq": "modules/Faq.tsx"
+    "faq": "modules/Faq.tsx",
+    "heroRotating": "modules/HeroRotating.tsx",
+    "appDownload": "modules/AppDownload.tsx",
+    "aboutWithStats": "modules/AboutWithStats.tsx",
+    "servicesIconRow": "modules/ServicesIconRow.tsx",
+    "brandOptionsCompare": "modules/BrandOptionsCompare.tsx",
+    "videoFeature": "modules/VideoFeature.tsx",
+    "mediaSplit": "modules/MediaSplit.tsx",
+    "productPromo": "modules/ProductPromo.tsx",
+    "teamGrid": "modules/TeamGrid.tsx"
   },
 
   "compliance": {
@@ -99,7 +117,9 @@
       "background": "#FFFFFF",
       "text": "#111827",
       "accent": "#1F1E1B",
-      "ink": "#0F0E0C"
+      "ink": "#0F0E0C",
+      "warm": "#E63950",
+      "cool": "#1FB6B6"
     }
   }
 }

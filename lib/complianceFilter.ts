@@ -32,11 +32,17 @@ export function applyCompliance(
   app: AppConfig,
   system: SystemConfig,
 ): AppConfig {
-  const sanitizedHeroCta = {
-    ...app.content.hero.cta,
-    label: sanitizeCta(app.content.hero.cta?.label, system),
-    type: "safe-action" as const,
-  };
+  const hero = app.content.hero;
+  const sanitizedHero = hero
+    ? {
+        ...hero,
+        cta: {
+          ...hero.cta,
+          label: sanitizeCta(hero.cta?.label, system),
+          type: "safe-action" as const,
+        },
+      }
+    : undefined;
 
   const allowlist = system.sectionAllowlist;
   const filteredSections = (app.content.sections ?? []).filter((s) =>
@@ -56,7 +62,7 @@ export function applyCompliance(
     ...app,
     content: {
       ...app.content,
-      hero: { ...app.content.hero, cta: sanitizedHeroCta },
+      hero: sanitizedHero,
       sections: filteredSections,
     },
     features,

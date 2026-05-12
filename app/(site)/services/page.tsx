@@ -16,10 +16,12 @@ export default async function ServicesPage() {
   const { app } = await getConfig();
   return (
     <>
-      <Services
-        items={app.content.services}
-        heading={`Services from ${app.tenant.name}`}
-      />
+      {app.content.services && app.content.services.length > 0 && (
+        <Services
+          items={app.content.services}
+          heading={`Services from ${app.tenant.name}`}
+        />
+      )}
       <SectionRenderer
         sections={app.content.sections.filter((s) => s.type === "howItWorks")}
       />

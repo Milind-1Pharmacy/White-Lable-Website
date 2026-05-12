@@ -8,12 +8,13 @@ export const revalidate = 3600;
 
 export default async function HomePage() {
   const { app } = await getConfig();
+  const { hero, about, services, sections } = app.content;
   return (
     <>
-      <Hero content={app.content.hero} tenant={app.tenant} />
-      <About content={app.content.about} tenant={app.tenant} />
-      <Services items={app.content.services} />
-      <SectionRenderer sections={app.content.sections} />
+      {hero?.headline && <Hero content={hero} tenant={app.tenant} />}
+      {about?.description && <About content={about} tenant={app.tenant} />}
+      {services && services.length > 0 && <Services items={services} />}
+      <SectionRenderer sections={sections} />
     </>
   );
 }
