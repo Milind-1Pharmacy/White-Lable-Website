@@ -18,6 +18,15 @@ export const getSystemConfig = cache(async (): Promise<SystemConfig> => {
 });
 
 export const getAppConfig = cache(async (): Promise<AppConfig> => {
+  const tenant = process.env.TENANT?.trim();
+  if (tenant) {
+    const filename = tenant.endsWith(".json") ? tenant : `${tenant}.json`;
+    try {
+      return await readJson<AppConfig>(filename);
+    } catch {
+      // fall back to app_master.json if the tenant file is missing/unreadable
+    }
+  }
   return readJson<AppConfig>("app_master.json");
 });
 
