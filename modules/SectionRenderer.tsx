@@ -1,6 +1,9 @@
 import { Features } from "@/modules/Features";
 import { HowItWorks } from "@/modules/HowItWorks";
 import { Gallery } from "@/modules/Gallery";
+import { Stats } from "@/modules/Stats";
+import { Testimonials } from "@/modules/Testimonials";
+import { Faq } from "@/modules/Faq";
 import type { Section } from "@/types/config.types";
 
 type SectionRendererProps = {
@@ -19,6 +22,12 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
             return <HowItWorks key={`how-${idx}`} data={section.data} />;
           case "gallery":
             return <Gallery key={`gallery-${idx}`} data={section.data} />;
+          case "stats":
+            return <Stats key={`stats-${idx}`} data={section.data} />;
+          case "testimonials":
+            return <Testimonials key={`testimonials-${idx}`} data={section.data} />;
+          case "faq":
+            return <Faq key={`faq-${idx}`} data={section.data} />;
           default:
             return null;
         }

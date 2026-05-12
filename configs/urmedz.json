@@ -1,0 +1,245 @@
+{
+  "tenant": {
+    "name": "UrMedz",
+    "category": "Pharmacy & Health-Tech"
+  },
+
+  "branding": {
+    "logo": "/urmedz/logo.svg",
+    "colors": {
+      "primary": "#0A174C",
+      "secondary": "#11225E",
+      "background": "#FFFFFF",
+      "text": "#0A174C",
+      "accent": "#0A174C",
+      "ink": "#050B26"
+    }
+  },
+
+  "seo": {
+    "title": "UrMedz — Authentic Medicines at Your Fingertips",
+    "description": "UrMedz is a pharmacy and health-tech network — retail stores, quick commerce and hi-tech fulfilment centres bringing authentic medicines to your doorstep.",
+    "keywords": [
+      "urmedz",
+      "pharmacy bengaluru",
+      "authentic medicines",
+      "medicine delivery",
+      "pharmacy fulfilment",
+      "health tech india"
+    ],
+    "ogImage": "/urmedz/og-image.jpg"
+  },
+
+  "content": {
+    "hero": {
+      "eyebrow": "Pharma, made accessible",
+      "headline": "Authentic medicines at your fingertips.",
+      "tagline": "Quality healthcare for all — built on a network of retail stores, quick commerce and hi-tech fulfilment centres across India.",
+      "image": "/urmedz/hero.jpg",
+      "cta": {
+        "label": "Visit UrMedz",
+        "type": "safe-action"
+      },
+      "secondaryCta": {
+        "label": "How we work",
+        "href": "/about"
+      },
+      "proof": [
+        "Licensed pharmacists",
+        "25+ retail stores",
+        "Pan-India fulfilment"
+      ]
+    },
+
+    "about": {
+      "description": "UrMedz exists to make genuine, safe healthcare products accessible to every household. We combine a neighbourhood retail network with hi-tech fulfilment centres and a quick-commerce engine — so the medicines you depend on are always sourced from licensed channels, stored under the right conditions, and delivered in time. Behind it all, our AI-assisted operating platform helps independent pharmacies run faster, leaner, and more reliably.",
+      "image": "/urmedz/about.jpg"
+    },
+
+    "services": [
+      {
+        "title": "Retail Stores",
+        "description": "A growing network of neighbourhood pharmacies stocked with authentic medicines, staffed by trained pharmacists, and connected to our central inventory in real time.",
+        "image": "/urmedz/services/retail.jpg"
+      },
+      {
+        "title": "Quick Commerce",
+        "description": "Same-day and on-demand delivery for everyday medicines and wellness essentials, routed from the nearest UrMedz store or hub.",
+        "image": "/urmedz/services/quick-commerce.jpg"
+      },
+      {
+        "title": "Hi-Tech Fulfilment",
+        "description": "Climate-controlled, audited fulfilment centres with batch traceability and serialised dispatch — built for scale and compliance.",
+        "image": "/urmedz/services/fulfillment.jpg"
+      },
+      {
+        "title": "E-commerce Fulfilment",
+        "description": "Backend pharmacy fulfilment for partner platforms and clinics — prescription validation, inventory and last-mile, handled end to end.",
+        "image": "/urmedz/services/ecommerce.jpg"
+      }
+    ],
+
+    "sections": [
+      {
+        "type": "gallery",
+        "data": {
+          "eyebrow": "Inside UrMedz",
+          "heading": "From the store to the fulfilment floor",
+          "images": [
+            { "src": "/urmedz/gallery/store.jpg", "alt": "Inside a UrMedz retail store with organised shelves", "caption": "Retail stores" },
+            { "src": "/urmedz/gallery/dispensing.jpg", "alt": "Pharmacist preparing a customer order at the counter", "caption": "Dispensing counter" },
+            { "src": "/urmedz/gallery/shelves.jpg", "alt": "Authentic medicines arranged on pharmacy shelves", "caption": "Authentic stock" },
+            { "src": "/urmedz/gallery/fulfillment-center.jpg", "alt": "Inside a hi-tech pharmacy fulfilment centre", "caption": "Fulfilment centre" },
+            { "src": "/urmedz/gallery/pharmacist.jpg", "alt": "Licensed pharmacist advising a customer", "caption": "Licensed pharmacists" }
+          ]
+        }
+      },
+      {
+        "type": "stats",
+        "data": {
+          "eyebrow": "By the numbers",
+          "items": [
+            {
+              "value": "25",
+              "suffix": "+",
+              "label": "Retail stores",
+              "footnote": "across South India, as of Q2 2026"
+            },
+            {
+              "value": "10000",
+              "suffix": "+",
+              "label": "Orders fulfilled daily",
+              "footnote": "across retail and quick commerce"
+            },
+            {
+              "value": "80000",
+              "label": "SKUs catalogued",
+              "footnote": "medicines, OTC and wellness"
+            },
+            {
+              "value": "2",
+              "label": "Fulfilment centres",
+              "footnote": "Bengaluru and Hyderabad"
+            }
+          ]
+        }
+      },
+      {
+        "type": "features",
+        "data": {
+          "heading": "Why UrMedz",
+          "items": [
+            {
+              "title": "Authenticity at the source",
+              "description": "Every medicine on our shelves is sourced from licensed distributors and traceable to its manufacturer — no grey-market shortcuts."
+            },
+            {
+              "title": "Scale where it matters",
+              "description": "A retail-plus-fulfilment footprint means the medicine you need is rarely more than a few kilometres away."
+            },
+            {
+              "title": "Infrastructure built for compliance",
+              "description": "Cold-chain handling, batch traceability and audit-ready dispatch — built into every store and centre."
+            },
+            {
+              "title": "An AI-assisted platform",
+              "description": "Our SaaS platform helps partner pharmacies forecast demand, manage inventory and stay compliant — quietly, in the background."
+            }
+          ]
+        }
+      },
+      {
+        "type": "howItWorks",
+        "data": {
+          "heading": "How it works",
+          "steps": [
+            {
+              "step": 1,
+              "title": "Browse or upload your prescription",
+              "description": "Search our catalogue or upload a doctor's prescription — we'll match it to authentic, in-stock medicines."
+            },
+            {
+              "step": 2,
+              "title": "A licensed pharmacist reviews it",
+              "description": "Every order is checked by a registered pharmacist before it's dispensed — interactions, dosage and validity."
+            },
+            {
+              "step": 3,
+              "title": "Delivered or ready for pickup",
+              "description": "Choose home delivery from your nearest UrMedz store, or pick it up on your way — usually within hours."
+            }
+          ]
+        }
+      },
+      {
+        "type": "testimonials",
+        "data": {
+          "eyebrow": "Testimony · 2026",
+          "items": [
+            {
+              "quote": "Knowing that every strip I pick up is genuine — and that a real pharmacist has looked at the prescription — is the part I'd been missing for years.",
+              "name": "Anika Rao",
+              "role": "Customer, Bengaluru"
+            },
+            {
+              "quote": "We moved our store onto the UrMedz platform and inventory finally stopped being a guessing game. The forecasting alone paid for itself in a quarter.",
+              "name": "Rohit Menon",
+              "role": "Partner pharmacy, Hyderabad"
+            },
+            {
+              "quote": "What stands out is the discipline — temperature logs, batch numbers, dispatch trails. It feels less like a pharmacy chain and more like infrastructure.",
+              "name": "Dr. Priya Iyer",
+              "role": "Consulting physician"
+            }
+          ]
+        }
+      },
+      {
+        "type": "faq",
+        "data": {
+          "heading": "Frequently asked",
+          "items": [
+            {
+              "question": "Where do you source your medicines from?",
+              "answer": "All medicines on the UrMedz network are sourced from licensed distributors and authorised manufacturer channels. Every batch is traceable end to end, and our stores and fulfilment centres are audited against regulatory standards."
+            },
+            {
+              "question": "How do you handle prescriptions?",
+              "answer": "Prescription-only medicines require a valid doctor's prescription. You can upload it through our app or hand it in at any UrMedz store. A registered pharmacist reviews every prescription before the order is dispensed."
+            },
+            {
+              "question": "Which areas do you deliver to?",
+              "answer": "Quick commerce delivery is available across Bengaluru and Hyderabad today, with same-day or next-day delivery in several other cities. You can check live coverage for your pin code on the UrMedz app."
+            },
+            {
+              "question": "What is your return policy?",
+              "answer": "Medicines can be returned only in line with regulatory guidelines — typically unopened items in original packaging, returned within seven days, with a valid invoice. Cold-chain and prescription-controlled items are non-returnable for safety reasons."
+            },
+            {
+              "question": "How can I get in touch?",
+              "answer": "You can reach our support team via the contact page, walk in to any UrMedz retail store, or call our customer care line for help with an order, a prescription, or a partnership query."
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "contact": {
+    "email": "care@urmedz.example",
+    "phone": "+91 80 4567 0049",
+    "address": "Cheemasandra, Whitefield, Bengaluru 560049"
+  },
+
+  "features": {
+    "enableChat": true,
+    "enableForms": false,
+    "enablePayments": false,
+    "enableCart": false
+  },
+
+  "compliance": {
+    "mode": "business-profile-safe",
+    "disclaimer": "UrMedz is an informational platform connecting customers with licensed pharmacies and partner clinicians. The content on this website is intended for general awareness only and is not a substitute for professional medical diagnosis, advice or treatment. Always consult a qualified medical practitioner for any health concern. Prescription medicines are dispensed by licensed pharmacies in accordance with applicable regulations and only against a valid prescription."
+  }
+}

@@ -90,12 +90,56 @@ export type GallerySectionData = {
   images: GalleryImage[];
 };
 
-export type SectionType = "features" | "howItWorks" | "gallery";
+export type StatItem = {
+  value: string;
+  suffix?: string;
+  label: string;
+  footnote?: string;
+};
+
+export type StatsSectionData = {
+  eyebrow?: string;
+  items: StatItem[];
+};
+
+export type TestimonialItem = {
+  quote: string;
+  name: string;
+  role: string;
+  avatar?: string;
+};
+
+export type TestimonialsSectionData = {
+  eyebrow?: string;
+  heading?: string;
+  items: TestimonialItem[];
+};
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type FaqSectionData = {
+  heading?: string;
+  items: FaqItem[];
+};
+
+export type SectionType =
+  | "features"
+  | "howItWorks"
+  | "gallery"
+  | "stats"
+  | "testimonials"
+  | "faq";
 
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
   | { type: "howItWorks"; data: HowItWorksSectionData }
-  | { type: "gallery"; data: GallerySectionData };
+  | { type: "gallery"; data: GallerySectionData }
+  | { type: "stats"; data: StatsSectionData }
+  | { type: "testimonials"; data: TestimonialsSectionData }
+  | { type: "faq"; data: FaqSectionData };
 
 export type Content = {
   hero: HeroContent;

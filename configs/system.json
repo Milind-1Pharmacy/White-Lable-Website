@@ -37,7 +37,10 @@
     "services",
     "features",
     "howItWorks",
-    "gallery"
+    "gallery",
+    "stats",
+    "testimonials",
+    "faq"
   ],
 
   "sectionMapping": {
@@ -46,7 +49,10 @@
     "services": "modules/Services.tsx",
     "features": "modules/Features.tsx",
     "howItWorks": "modules/HowItWorks.tsx",
-    "gallery": "modules/Gallery.tsx"
+    "gallery": "modules/Gallery.tsx",
+    "stats": "modules/Stats.tsx",
+    "testimonials": "modules/Testimonials.tsx",
+    "faq": "modules/Faq.tsx"
   },
 
   "compliance": {
