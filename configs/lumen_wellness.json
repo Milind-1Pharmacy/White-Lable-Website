@@ -1,0 +1,163 @@
+{
+  "tenant": {
+    "name": "Lumen Wellness Studio",
+    "category": "Wellness & Fitness"
+  },
+
+  "branding": {
+    "logo": "/demo_proj/logo.png",
+    "colors": {
+      "primary": "#6B7F5C",
+      "secondary": "#D9C9A3",
+      "background": "#FAF7F2",
+      "text": "#2C2A26",
+      "accent": "#3F4A36",
+      "ink": "#1F1E1B"
+    }
+  },
+
+  "seo": {
+    "title": "Lumen Wellness Studio — Yoga, Meditation & Breathwork in Bengaluru",
+    "description": "A neighbourhood wellness studio offering guided yoga, meditation, and breathwork sessions for everyday balance.",
+    "keywords": [
+      "yoga studio bengaluru",
+      "meditation classes",
+      "breathwork sessions",
+      "wellness studio",
+      "hatha yoga"
+    ],
+    "ogImage": "/demo_proj/og-image.png"
+  },
+
+  "content": {
+    "hero": {
+      "eyebrow": "Indiranagar · Bengaluru",
+      "headline": "Slow down. Breathe. Begin again.",
+      "tagline": "Guided yoga, meditation and breathwork in the heart of Indiranagar.",
+      "image": "/demo_proj/hero.png",
+      "cta": {
+        "label": "Visit the Studio",
+        "type": "safe-action"
+      },
+      "secondaryCta": {
+        "label": "Learn More",
+        "href": "/about"
+      },
+      "proof": [
+        "200+ practitioners",
+        "12 certified instructors",
+        "6 years in Indiranagar"
+      ]
+    },
+
+    "about": {
+      "description": "Lumen Wellness Studio is a quiet, light-filled space dedicated to mindful movement and restorative practice. Our certified instructors guide small groups through traditional and modern wellness disciplines — built around the rhythms of everyday life.",
+      "image": "/demo_proj/about.png"
+    },
+
+    "services": [
+      {
+        "title": "Hatha Yoga",
+        "description": "Foundational asana and alignment classes for all levels, held in small groups of up to ten.",
+        "image": "/demo_proj/services/hatha-yoga.png"
+      },
+      {
+        "title": "Meditation Sessions",
+        "description": "Guided seated and walking meditation drawing from mindfulness and Vedic traditions.",
+        "image": "/demo_proj/services/meditation.png"
+      },
+      {
+        "title": "Breathwork Workshops",
+        "description": "Weekend pranayama workshops focused on practical techniques for stress and energy.",
+        "image": "/demo_proj/services/breathwork.png"
+      },
+      {
+        "title": "Wellness Consultations",
+        "description": "One-on-one informational sessions to help you choose a practice that fits your routine.",
+        "image": "/demo_proj/services/wellness-consultation.png"
+      }
+    ],
+
+    "sections": [
+      {
+        "type": "gallery",
+        "data": {
+          "eyebrow": "Inside the studio",
+          "heading": "A space built for stillness",
+          "images": [
+            { "src": "/demo_proj/services/hatha-yoga.png", "alt": "Mats laid out in the practice room", "caption": "The practice room" },
+            { "src": "/demo_proj/services/meditation.png", "alt": "Meditation cushion in soft afternoon light", "caption": "Meditation corner" },
+            { "src": "/demo_proj/about.png", "alt": "Inner courtyard with skylight", "caption": "Inner courtyard" },
+            { "src": "/demo_proj/services/breathwork.png", "alt": "Breathwork ceremony with incense", "caption": "Workshop space" },
+            { "src": "/demo_proj/services/wellness-consultation.png", "alt": "Consultation chairs by the window", "caption": "Consultation lounge" }
+          ]
+        }
+      },
+      {
+        "type": "features",
+        "data": {
+          "heading": "Why Lumen",
+          "items": [
+            {
+              "title": "Small group sizes",
+              "description": "Never more than ten people per class — every session feels personal."
+            },
+            {
+              "title": "Certified instructors",
+              "description": "Our teachers carry international 200- and 500-hour certifications."
+            },
+            {
+              "title": "Natural light & airflow",
+              "description": "Our studio is built around two skylights and a quiet inner courtyard."
+            },
+            {
+              "title": "All experience levels",
+              "description": "From first-timers to long-time practitioners — every class is layered."
+            }
+          ]
+        }
+      },
+      {
+        "type": "howItWorks",
+        "data": {
+          "heading": "Getting started",
+          "steps": [
+            {
+              "step": 1,
+              "title": "Reach out",
+              "description": "Send us a message or call to learn about current schedules and openings."
+            },
+            {
+              "step": 2,
+              "title": "Visit the studio",
+              "description": "Come in for a free orientation — meet the instructors and see the space."
+            },
+            {
+              "step": 3,
+              "title": "Begin your practice",
+              "description": "Choose a class that fits your week and start at your own pace."
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "contact": {
+    "email": "hello@lumenwellness.example",
+    "phone": "+91 80 4000 1234",
+    "address": "12, 3rd Cross, 100 Feet Road, Indiranagar, Bengaluru 560038"
+  },
+
+  "features": {
+    "enableChat": true,
+    "enableForms": false,
+    "enablePayments": false,
+    "enableCart": false
+  },
+
+  "compliance": {
+    "mode": "business-profile-safe",
+    "disclaimer": "The information on this website is intended for general awareness only and does not constitute medical, therapeutic, or professional health advice. Please consult a qualified practitioner before beginning any new wellness practice."
+  }
+}
