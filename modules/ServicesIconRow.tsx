@@ -65,16 +65,14 @@ function IconFor({ name }: { name?: string }) {
 
 export function ServicesIconRow({ data }: ServicesIconRowProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const rowRef = useRef<HTMLDivElement | null>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !rowRef.current) return;
+    if (!sectionRef.current || !gridRef.current) return;
     const ctx = gsap.context(() => {
-      const cards = rowRef.current!.querySelectorAll<HTMLElement>(
-        "[data-service-card]",
-      );
+      const cards = gridRef.current!.querySelectorAll<HTMLElement>("[data-service-card]");
       if (cards.length)
-        staggerCards(cards, { trigger: rowRef.current, stagger: 0.09, y: 24 });
+        staggerCards(cards, { trigger: gridRef.current, stagger: 0.09, y: 28 });
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -89,43 +87,62 @@ export function ServicesIconRow({ data }: ServicesIconRowProps) {
     >
       <Container>
         <div
-          ref={rowRef}
-          className="grid border-y border-[var(--brand-primary)]/12 sm:grid-cols-2 lg:grid-cols-4"
+          ref={gridRef}
+          className="grid sm:grid-cols-2 lg:grid-cols-4"
         >
           {data.items.map((item, i) => (
             <article
               key={item.slug}
               id={item.slug}
               data-service-card
-              className="group relative flex min-h-[280px] flex-col p-7 sm:min-h-[320px] sm:p-9 lg:[&:not(:last-child)]:border-r lg:[&:not(:last-child)]:border-[var(--brand-primary)]/12"
+              className="group relative flex flex-col overflow-hidden rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-12px_rgba(10,23,76,0.18)] sm:p-8"
+              style={{
+                background: i % 2 === 0
+                  ? "color-mix(in srgb, var(--brand-primary) 4%, var(--brand-background))"
+                  : "var(--brand-background)",
+                border: "1px solid color-mix(in srgb, var(--brand-primary) 10%, transparent)",
+              }}
             >
-              <span className="font-mono text-[10px] tracking-[0.2em] text-[var(--brand-primary)]/40">
+              {/* Number */}
+              <span
+                className="font-mono text-[10px] font-bold uppercase tracking-[0.25em]"
+                style={{ color: "color-mix(in srgb, var(--brand-primary) 30%, transparent)" }}
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h3 className="mt-3 text-[14px] font-bold uppercase tracking-[0.16em] text-[var(--brand-warm)]">
-                {item.title}
-              </h3>
-              <p className="mt-3 max-w-[28ch] flex-1 text-[14px] leading-[1.55] text-[var(--brand-primary)]/70">
-                {item.description}
-              </p>
-              <div className="mt-6 flex items-end justify-between">
-                <span
-                  aria-hidden
-                  className="block h-12 w-12 text-[var(--brand-warm)]"
-                >
+
+              {/* Icon */}
+              <div
+                className="mt-5 flex h-14 w-14 items-center justify-center rounded-xl transition-colors duration-300"
+                style={{
+                  background: "color-mix(in srgb, var(--brand-primary) 8%, transparent)",
+                  color: "var(--brand-primary)",
+                }}
+              >
+                <span className="block h-8 w-8">
                   <IconFor name={item.icon ?? item.slug} />
                 </span>
-                {item.footnote && (
-                  <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--brand-primary)]/50">
-                    {item.footnote}
-                  </span>
-                )}
               </div>
 
-              {/* Hover/active bar */}
-              <span
+              {/* Content */}
+              <h3 className="mt-5 text-[15px] font-bold leading-snug tracking-tight text-[var(--brand-primary)]">
+                {item.title}
+              </h3>
+              <p className="mt-2.5 flex-1 text-[13px] leading-relaxed text-[var(--brand-primary)]/60">
+                {item.description}
+              </p>
+
+              {item.footnote && (
+                <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--brand-primary)]/40">
+                  {item.footnote}
+                </p>
+              )}
+
+              {/* Hover accent line */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-[3px] origin-left scale-x-0 rounded-b-2xl transition-transform duration-300 group-hover:scale-x-100"
+                style={{ background: "var(--brand-warm, #E63950)" }}
                 aria-hidden
-                className="absolute -bottom-px left-0 right-0 h-[2px] origin-center scale-x-0 bg-[var(--brand-warm)] transition-transform duration-300 group-hover:scale-x-100"
               />
             </article>
           ))}

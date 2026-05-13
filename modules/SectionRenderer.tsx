@@ -4,6 +4,10 @@ import { Gallery } from "@/modules/Gallery";
 import { Stats } from "@/modules/Stats";
 import { Testimonials } from "@/modules/Testimonials";
 import { Faq } from "@/modules/Faq";
+import { AboutFeatures } from "@/modules/AboutFeatures";
+import { SavingsVideo } from "@/modules/SavingsVideo";
+import { TeamShowcase } from "@/modules/TeamShowcase";
+import { HeroBanner } from "@/modules/HeroBanner";
 import { HeroRotating } from "@/modules/HeroRotating";
 import { AppDownload } from "@/modules/AppDownload";
 import { AboutWithStats } from "@/modules/AboutWithStats";
@@ -39,6 +43,8 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
             );
           case "faq":
             return <Faq key={`faq-${idx}`} data={section.data} />;
+          case "heroBanner":
+            return <HeroBanner key={`hero-banner-${idx}`} data={section.data} />;
           case "heroRotating":
             return (
               <HeroRotating key={`hero-rot-${idx}`} data={section.data} />
@@ -65,6 +71,12 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
             return <ProductPromo key={`pp-${idx}`} data={section.data} />;
           case "teamGrid":
             return <TeamGrid key={`tg-${idx}`} data={section.data} />;
+          case "aboutFeatures":
+            return <AboutFeatures key={`af-${idx}`} data={section.data} />;
+          case "savingsVideo":
+            return <SavingsVideo key={`sv-${idx}`} data={section.data} />;
+          case "teamShowcase":
+            return <TeamShowcase key={`ts-${idx}`} data={section.data} />;
           default:
             return null;
         }

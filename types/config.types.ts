@@ -21,6 +21,7 @@ export type BrandingColors = {
 
 export type Branding = {
   logo?: string;
+  logoFull?: string;
   colors: BrandingColors;
 };
 
@@ -125,6 +126,18 @@ export type FaqItem = {
 export type FaqSectionData = {
   heading?: string;
   items: FaqItem[];
+};
+
+export type HeroBannerSlide = {
+  image: string;
+  alt?: string;
+  headline?: string;
+  tagline?: string;
+};
+
+export type HeroBannerSectionData = {
+  slides: HeroBannerSlide[];
+  autoRotateSeconds?: number;
 };
 
 export type HeroRotatingSlide = {
@@ -240,6 +253,43 @@ export type TeamGridSectionData = {
   highlightWords?: string[];
 };
 
+export type AboutFeatureItem = {
+  icon?: string;
+  title: string;
+  description?: string;
+};
+
+export type AboutFeaturesSectionData = {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  features: AboutFeatureItem[];
+};
+
+export type SavingsStat = {
+  name: string;
+  percentage: number;
+};
+
+export type SavingsVideoSectionData = {
+  title: string;
+  description?: string;
+  videoPoster: string;
+  videoSrc?: string;
+  statsTitle?: string;
+  statsSubtitle?: string;
+  stats: SavingsStat[];
+};
+
+export type TeamShowcaseSectionData = {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  centralText?: string;
+  centralIcon?: string;
+  images: string[];
+};
+
 export type SectionType =
   | "features"
   | "howItWorks"
@@ -247,6 +297,7 @@ export type SectionType =
   | "stats"
   | "testimonials"
   | "faq"
+  | "heroBanner"
   | "heroRotating"
   | "appDownload"
   | "aboutWithStats"
@@ -255,7 +306,10 @@ export type SectionType =
   | "videoFeature"
   | "mediaSplit"
   | "productPromo"
-  | "teamGrid";
+  | "teamGrid"
+  | "aboutFeatures"
+  | "savingsVideo"
+  | "teamShowcase";
 
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
@@ -264,6 +318,7 @@ export type Section =
   | { type: "stats"; data: StatsSectionData }
   | { type: "testimonials"; data: TestimonialsSectionData }
   | { type: "faq"; data: FaqSectionData }
+  | { type: "heroBanner"; data: HeroBannerSectionData }
   | { type: "heroRotating"; data: HeroRotatingSectionData }
   | { type: "appDownload"; data: AppDownloadSectionData }
   | { type: "aboutWithStats"; data: AboutWithStatsSectionData }
@@ -272,7 +327,10 @@ export type Section =
   | { type: "videoFeature"; data: VideoFeatureSectionData }
   | { type: "mediaSplit"; data: MediaSplitSectionData }
   | { type: "productPromo"; data: ProductPromoSectionData }
-  | { type: "teamGrid"; data: TeamGridSectionData };
+  | { type: "teamGrid"; data: TeamGridSectionData }
+  | { type: "aboutFeatures"; data: AboutFeaturesSectionData }
+  | { type: "savingsVideo"; data: SavingsVideoSectionData }
+  | { type: "teamShowcase"; data: TeamShowcaseSectionData };
 
 export type Content = {
   hero?: HeroContent;

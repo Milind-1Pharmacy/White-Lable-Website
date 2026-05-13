@@ -46,40 +46,53 @@ export function Navbar({ app }: NavbarProps) {
           scrolled ? "h-16" : "h-20 sm:h-24",
         )}
       >
-        <Link href="/" className="group flex items-center gap-3 sm:gap-4">
-          {app.branding?.logo ? (
+        <Link href="/" className="group flex items-center gap-3">
+          {app.branding?.logoFull ? (
+            /* Full wordmark only — no icon, no text */
             <span
               className={cn(
-                "relative inline-flex items-center justify-center overflow-hidden rounded-full ring-1 ring-black/5 transition-all duration-500 group-hover:rotate-[8deg]",
-                scrolled ? "h-9 w-9" : "h-11 w-11",
+                "relative block transition-all duration-500",
+                scrolled ? "h-12" : "h-22",
               )}
+              style={{ width: scrolled ? 160 : 224 }}
             >
               <Image
-                src={app.branding.logo}
-                alt={`${app.tenant.name} logo`}
-                width={48}
-                height={48}
-                className="h-full w-full object-cover"
+                src={app.branding.logoFull}
+                alt={app.tenant.name}
+                fill
+                sizes="320px"
+                className="object-contain object-left"
               />
             </span>
           ) : (
-            <span
-              aria-hidden
-              className={cn(
-                "inline-block rounded-full transition-all duration-500 group-hover:rotate-[8deg]",
-                scrolled ? "h-9 w-9" : "h-11 w-11",
+            /* Fallback: icon mark + tenant name text */
+            <>
+              {app.branding?.logo && (
+                <span
+                  className={cn(
+                    "relative shrink-0 overflow-hidden rounded-full ring-1 ring-black/5 transition-all duration-500 group-hover:rotate-[8deg]",
+                    scrolled ? "h-8 w-8" : "h-10 w-10",
+                  )}
+                >
+                  <Image
+                    src={app.branding.logo}
+                    alt=""
+                    fill
+                    sizes="40px"
+                    className="object-contain"
+                  />
+                </span>
               )}
-              style={{ background: "var(--brand-primary)" }}
-            />
+              <span
+                className={cn(
+                  "font-display font-light tracking-tight text-[var(--brand-text)] transition-all duration-500",
+                  scrolled ? "text-base sm:text-lg" : "text-lg sm:text-2xl",
+                )}
+              >
+                {app.tenant.name}
+              </span>
+            </>
           )}
-          <span
-            className={cn(
-              "font-display font-light tracking-tight text-[var(--brand-text)] transition-all duration-500",
-              scrolled ? "text-base sm:text-lg" : "text-lg sm:text-2xl",
-            )}
-          >
-            {app.tenant.name}
-          </span>
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm md:flex">

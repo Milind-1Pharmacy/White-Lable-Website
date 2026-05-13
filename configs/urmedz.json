@@ -5,7 +5,8 @@
   },
 
   "branding": {
-    "logo": "/urmedz/logo.svg",
+    "logo": "/urmedz/icon.png",
+    "logoFull": "/urmedz/logo-full.png",
     "colors": {
       "primary": "#0A174C",
       "secondary": "#11225E",
@@ -31,55 +32,172 @@
   },
 
   "content": {
-    "hero": {
-      "eyebrow": "Pharma, made accessible",
-      "headline": "Authentic medicines at your fingertips.",
-      "tagline": "Quality healthcare for all — built on a network of retail stores, quick commerce and hi-tech fulfilment centres across India.",
-      "image": "/urmedz/hero.jpg",
-      "cta": {
-        "label": "Visit UrMedz",
-        "type": "safe-action"
-      },
-      "secondaryCta": {
-        "label": "How we work",
-        "href": "/about"
-      },
-      "proof": [
-        "Licensed pharmacists",
-        "25+ retail stores",
-        "Pan-India fulfilment"
-      ]
-    },
-
-    "about": {
-      "description": "UrMedz exists to make genuine, safe healthcare products accessible to every household. We combine a neighbourhood retail network with hi-tech fulfilment centres and a quick-commerce engine — so the medicines you depend on are always sourced from licensed channels, stored under the right conditions, and delivered in time. Behind it all, our AI-assisted operating platform helps independent pharmacies run faster, leaner, and more reliably.",
-      "image": "/urmedz/about.jpg"
-    },
-
-    "services": [
-      {
-        "title": "Retail Stores",
-        "description": "A growing network of neighbourhood pharmacies stocked with authentic medicines, staffed by trained pharmacists, and connected to our central inventory in real time.",
-        "image": "/urmedz/services/retail.jpg"
-      },
-      {
-        "title": "Quick Commerce",
-        "description": "Same-day and on-demand delivery for everyday medicines and wellness essentials, routed from the nearest UrMedz store or hub.",
-        "image": "/urmedz/services/quick-commerce.jpg"
-      },
-      {
-        "title": "Hi-Tech Fulfilment",
-        "description": "Climate-controlled, audited fulfilment centres with batch traceability and serialised dispatch — built for scale and compliance.",
-        "image": "/urmedz/services/fulfillment.jpg"
-      },
-      {
-        "title": "E-commerce Fulfilment",
-        "description": "Backend pharmacy fulfilment for partner platforms and clinics — prescription validation, inventory and last-mile, handled end to end.",
-        "image": "/urmedz/services/ecommerce.jpg"
-      }
-    ],
 
     "sections": [
+      {
+        "type": "heroBanner",
+        "data": {
+          "autoRotateSeconds": 5.5,
+          "slides": [
+            {
+              "image": "https://www.urmedz.in/wp-content/uploads/2024/12/banners_final-03-1jpg.jpg",
+              "alt": "UrMedz — Authentic medicines at your fingertips"
+            },
+            {
+              "image": "https://www.urmedz.in/wp-content/uploads/2024/10/banners-new.jpg",
+              "alt": "Quick commerce pharmacy delivery"
+            },
+            {
+              "image": "https://www.urmedz.in/wp-content/uploads/2024/10/bnr2-2.jpg",
+              "alt": "Hi-tech fulfilment centres"
+            }
+          ]
+        }
+      },
+      {
+        "type": "appDownload",
+        "data": {
+          "heading": "Download our app now!",
+          "badges": [
+            {
+              "kind": "play",
+              "href": "https://play.google.com/store/apps/details?id=com.urmedzB2C"
+            },
+            {
+              "kind": "appstore",
+              "href": "https://apps.apple.com/in/app/urmedz/id6753715891"
+            }
+          ]
+        }
+      },
+      {
+        "type": "aboutFeatures",
+        "data": {
+          "eyebrow": "About us",
+          "title": "Medicines are indispensable to our lives. Accessibility and affordability can be game changing.",
+          "description": "The pharma sector is experiencing a much needed transformation. Access to a large range of options brings choice and affordability to your doorstep.",
+          "features": [
+            {
+              "icon": "https://www.urmedz.in/wp-content/uploads/2024/10/icons-13-1.png",
+              "title": "50,000 sft Fulfilment Centres. Widest array of medicines."
+            },
+            {
+              "icon": "https://www.urmedz.in/wp-content/uploads/2024/10/icons-14-1.png",
+              "title": "Best prices ever. Affordable alternatives."
+            }
+          ]
+        }
+      },
+      {
+        "type": "servicesIconRow",
+        "data": {
+          "items": [
+            {
+              "slug": "retail",
+              "title": "Retail Stores",
+              "description": "A network of 25 stores and counting — neighbourhood pharmacies stocked with authentic medicines."
+            },
+            {
+              "slug": "quick-commerce",
+              "title": "Quick Commerce",
+              "description": "India's largest network of dark stores in pharma — same-day and on-demand delivery."
+            },
+            {
+              "slug": "fulfillment",
+              "title": "Hi-Tech Fulfilment",
+              "description": "India's most advanced fulfilment centres in pharmaceutical distribution."
+            },
+            {
+              "slug": "ecommerce",
+              "title": "E-commerce Fulfilment",
+              "description": "India's largest pharmaceutical fulfilment partner in e-commerce."
+            }
+          ]
+        }
+      },
+      {
+        "type": "savingsVideo",
+        "data": {
+          "title": "Unraveling the magic of brand options in medicines",
+          "description": "Prices of medicines vary dramatically from brand to brand. However the medicine's composition remains identical across brands. The UrMedz intelligent engine presents optimised options for you.",
+          "videoPoster": "https://www.urmedz.in/wp-content/uploads/2024/12/img.jpg",
+          "videoSrc": "https://www.urmedz.in/wp-content/uploads/2024/11/ur_medz_video-3.mp4",
+          "statsTitle": "Customer Savings",
+          "statsSubtitle": "From prescribed brand to UrMedz recommendation",
+          "stats": [
+            { "name": "Diabetes Tablets", "percentage": 46 },
+            { "name": "Blood Sugar Tablets", "percentage": 56 },
+            { "name": "Blood Pressure Tablets", "percentage": 80 },
+            { "name": "Gastric Relief Tablets", "percentage": 55 }
+          ]
+        }
+      },
+      {
+        "type": "stats",
+        "data": {
+          "eyebrow": "By the numbers",
+          "items": [
+            {
+              "value": "25",
+              "suffix": "+",
+              "label": "Retail stores",
+              "footnote": "across South India, as of Q2 2026"
+            },
+            {
+              "value": "10000",
+              "suffix": "+",
+              "label": "Orders fulfilled daily",
+              "footnote": "across retail and quick commerce"
+            },
+            {
+              "value": "80000",
+              "label": "SKUs catalogued",
+              "footnote": "medicines, OTC and wellness"
+            },
+            {
+              "value": "2",
+              "label": "Fulfilment centres",
+              "footnote": "Bengaluru and Hyderabad"
+            }
+          ]
+        }
+      },
+      {
+        "type": "videoFeature",
+        "data": {
+          "poster": "https://www.urmedz.in/wp-content/uploads/2024/11/video.jpg",
+          "tag": "Behind the scenes",
+          "headline": "A look at our hi-tech fulfilment centres",
+          "ctaLabel": "Watch Now",
+          "videoSrc": "https://www.urmedz.in/wp-content/uploads/2024/11/new-ur_medz_video-4.mp4",
+          "marquee": "Authentic · Traceable · Compliant · Fast · Scalable · Trusted"
+        }
+      },
+      {
+        "type": "mediaSplit",
+        "data": {
+          "headline": "Our AI-driven retail stores",
+          "meta": "Technology · 2026",
+          "image": "https://www.urmedz.in/wp-content/uploads/2025/08/shopn.png",
+          "videoSrc": "https://www.urmedz.in/wp-content/uploads/2025/08/Urmedz-Store-Assistant.mp4"
+        }
+      },
+      {
+        "type": "teamShowcase",
+        "data": {
+          "eyebrow": "Our Team of Specialists",
+          "title": "Proud to be powered by a dedicated team",
+          "description": "Our doctors, pharmacists, supply chain specialists and health guardians are dedicated to delivering authentic healthcare products — managing everything from customer support to quality assurance with care and commitment.",
+          "centralText": "United by a single purpose — to make healthcare accessible, affordable, and trustworthy for everyone.",
+          "centralIcon": "https://www.urmedz.in/wp-content/uploads/2024/11/ccentr-icon.png",
+          "images": [
+            "https://www.urmedz.in/wp-content/uploads/2024/11/1-1.png",
+            "https://www.urmedz.in/wp-content/uploads/2024/11/2.png",
+            "https://www.urmedz.in/wp-content/uploads/2024/11/3.png",
+            "https://www.urmedz.in/wp-content/uploads/2024/11/4-1.png"
+          ]
+        }
+      },
       {
         "type": "gallery",
         "data": {

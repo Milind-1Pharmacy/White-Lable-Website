@@ -41,6 +41,7 @@
     "stats",
     "testimonials",
     "faq",
+    "heroBanner",
     "heroRotating",
     "appDownload",
     "aboutWithStats",
@@ -49,7 +50,10 @@
     "videoFeature",
     "mediaSplit",
     "productPromo",
-    "teamGrid"
+    "teamGrid",
+    "aboutFeatures",
+    "savingsVideo",
+    "teamShowcase"
   ],
 
   "sectionMapping": {
@@ -62,6 +66,7 @@
     "stats": "modules/Stats.tsx",
     "testimonials": "modules/Testimonials.tsx",
     "faq": "modules/Faq.tsx",
+    "heroBanner": "modules/HeroBanner.tsx",
     "heroRotating": "modules/HeroRotating.tsx",
     "appDownload": "modules/AppDownload.tsx",
     "aboutWithStats": "modules/AboutWithStats.tsx",
@@ -70,7 +75,10 @@
     "videoFeature": "modules/VideoFeature.tsx",
     "mediaSplit": "modules/MediaSplit.tsx",
     "productPromo": "modules/ProductPromo.tsx",
-    "teamGrid": "modules/TeamGrid.tsx"
+    "teamGrid": "modules/TeamGrid.tsx",
+    "aboutFeatures": "modules/AboutFeatures.tsx",
+    "savingsVideo": "modules/SavingsVideo.tsx",
+    "teamShowcase": "modules/TeamShowcase.tsx"
   },
 
   "compliance": {
