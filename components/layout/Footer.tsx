@@ -1,22 +1,6 @@
-"use client";
-
+import Image from "next/image";
 import Link from "next/link";
-
-import { Container } from "@/components/layout/Container";
 import type { AppConfig } from "@/types/config.types";
-
-const LEGAL_LINKS = [
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms & Conditions", href: "/terms-and-conditions" },
-  { label: "Disclaimer", href: "/disclaimer" },
-];
-
-const QUICK_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Contact", href: "/contact" },
-];
 
 type FooterProps = {
   app: AppConfig;
@@ -24,122 +8,92 @@ type FooterProps = {
 
 export function Footer({ app }: FooterProps) {
   const year = new Date().getFullYear();
-
-  const scrollToTop = () => {
-    if (typeof window === "undefined") return;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const fullLogo = app.branding?.logoFull ?? app.branding?.logo;
 
   return (
-    <footer className="relative mt-24 overflow-hidden border-t border-[var(--brand-primary)]/15">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent, color-mix(in srgb, var(--brand-secondary) 12%, transparent))",
-        }}
-      />
-      <Container className="py-20 sm:py-24">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-          {/* Brand column */}
-          <div className="lg:col-span-5">
-            <p className="font-display text-3xl font-light tracking-tight text-[var(--brand-text)] sm:text-4xl">
-              {app.tenant.name}
-            </p>
-            {app.contact?.address ? (
-              <p className="mt-4 max-w-xs text-sm leading-relaxed text-[var(--brand-text)]/65">
-                {app.contact.address}
-              </p>
-            ) : null}
-            <button
-              type="button"
-              onClick={scrollToTop}
-              className="group mt-8 inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--brand-text)]/65 transition-colors duration-300 hover:text-[var(--brand-text)]"
-            >
-              <span
-                aria-hidden
-                className="inline-block translate-y-0 transition-transform duration-300 group-hover:-translate-y-1"
-              >
-                ↑
-              </span>
-              Back to top
-            </button>
-          </div>
+    <footer className="footer" id="contact">
+      <div className="wrap">
+        <div className="between" style={{ alignItems: "end", flexWrap: "wrap", gap: 32 }}>
+          <h2 className="h-display h-big" style={{ maxWidth: 980, lineHeight: 0.92 }}>
+            Authentic medicines,<br />
+            <span className="serif-it" style={{ color: "var(--accent)" }}>delivered with</span> care.
+          </h2>
+          <Link href="/contact" className="btn btn-accent" style={{ padding: "18px 28px" }}>
+            Start an order →
+          </Link>
+        </div>
 
-          {/* Quick links */}
-          <div className="lg:col-span-3">
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--brand-primary)]">
-              Explore
+        <div className="footer__grid">
+          <div className="footer__col">
+            {fullLogo && (
+              <div style={{ background: "var(--cream)", borderRadius: 14, padding: "18px 22px", display: "inline-block", marginBottom: 22 }}>
+                <Image
+                  src={fullLogo}
+                  alt={app.tenant.name}
+                  width={140}
+                  height={56}
+                  style={{ height: 56, width: "auto", display: "block" }}
+                />
+              </div>
+            )}
+            <p className="body-s" style={{ color: "rgba(244,239,230,.55)", maxWidth: 320 }}>
+              A pharmacy &amp; health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.
             </p>
-            <ul className="mt-5 space-y-3">
-              {QUICK_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[var(--brand-text)]/70 transition-colors duration-300 hover:text-[var(--brand-text)]"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className="lg:col-span-4">
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--brand-primary)]">
-              Contact
-            </p>
-            <ul className="mt-5 space-y-3 text-sm text-[var(--brand-text)]/70">
-              {app.contact?.email ? (
-                <li>
-                  <a
-                    href={`mailto:${app.contact.email}`}
-                    className="transition-colors duration-300 hover:text-[var(--brand-text)]"
-                  >
+            {(app.contact?.address || app.contact?.email || app.contact?.phone) && (
+              <div style={{ marginTop: 24, fontSize: 13, color: "rgba(244,239,230,.7)", display: "flex", flexDirection: "column", gap: 6 }}>
+                <span className="mono" style={{ fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(244,239,230,.45)" }}>Head office</span>
+                {app.contact.address && <span>{app.contact.address}</span>}
+                {(app.contact.email || app.contact.phone) && (
+                  <span style={{ marginTop: 8 }}>
                     {app.contact.email}
-                  </a>
-                </li>
-              ) : null}
-              {app.contact?.phone ? (
-                <li>
-                  <a
-                    href={`tel:${app.contact.phone.replace(/\s+/g, "")}`}
-                    className="transition-colors duration-300 hover:text-[var(--brand-text)]"
-                  >
+                    {app.contact.email && app.contact.phone ? " · " : ""}
                     {app.contact.phone}
-                  </a>
-                </li>
-              ) : null}
-              <li className="pt-2 text-[11px] uppercase tracking-[0.22em] text-[var(--brand-text)]/50">
-                Mon–Sat · 6 AM – 9 PM
-              </li>
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="footer__col">
+            <h5>Company</h5>
+            <ul>
+              <li><Link href="/about">About</Link></li>
+              <li><Link href="/about">Team</Link></li>
+              <li><Link href="/contact">Careers</Link></li>
+              <li><Link href="/contact">Press</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer__col">
+            <h5>Services</h5>
+            <ul>
+              <li><Link href="/services">Retail stores</Link></li>
+              <li><Link href="/services">Quick commerce</Link></li>
+              <li><Link href="/services">Fulfilment</Link></li>
+              <li><Link href="/services">E-commerce partner</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer__col">
+            <h5>Resources</h5>
+            <ul>
+              <li><Link href="/contact">FAQ</Link></li>
+              <li><Link href="/contact">Support</Link></li>
+              <li><Link href="/privacy-policy">Privacy</Link></li>
+              <li><Link href="/terms-and-conditions">Terms</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-6 border-t border-black/5 pt-8 sm:flex-row sm:items-center">
-          <p className="text-xs text-[var(--brand-text)]/55">
-            © {year} {app.tenant.name}. All rights reserved.
-          </p>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-xs">
-            {LEGAL_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-[var(--brand-text)]/55 transition-colors duration-300 hover:text-[var(--brand-text)]"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        {app.compliance?.disclaimer && (
+          <p className="footer__disc">{app.compliance.disclaimer}</p>
+        )}
 
-        <p className="mt-8 max-w-3xl text-[11px] leading-relaxed text-[var(--brand-text)]/45">
-          {app.compliance.disclaimer}
-        </p>
-      </Container>
+        <div className="footer__bottom">
+          <span>© {year} {app.tenant.name}.</span>
+          <span>RX-001 · DRG-LIC-KA · ISO 9001:2015</span>
+        </div>
+      </div>
     </footer>
   );
 }

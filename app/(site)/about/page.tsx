@@ -16,7 +16,7 @@ export default async function AboutPage() {
   const { app } = await getConfig();
   return (
     <>
-      <About content={app.content.about} tenant={app.tenant} />
+      <About data={app.content.about} />
       <SectionRenderer
         sections={app.content.sections.filter((s) => s.type === "features")}
       />

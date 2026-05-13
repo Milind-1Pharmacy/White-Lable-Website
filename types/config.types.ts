@@ -19,6 +19,7 @@ export type BrandingColors = {
 
 export type Branding = {
   logo?: string;
+  logoFull?: string;
   colors: BrandingColors;
 };
 
@@ -46,9 +47,18 @@ export type HeroContent = {
   proof?: HeroProofItem[];
 };
 
+export type PillarItem = {
+  n: string;
+  title: string;
+  body: string;
+  accent: string;
+  meta: string;
+};
+
 export type AboutContent = {
   description: string;
   image?: string;
+  pillars?: PillarItem[];
 };
 
 export type ServiceItem = {
@@ -90,12 +100,93 @@ export type GallerySectionData = {
   images: GalleryImage[];
 };
 
-export type SectionType = "features" | "howItWorks" | "gallery";
+export type StatItem = {
+  value: string;
+  suffix?: string;
+  label: string;
+  footnote?: string;
+};
+
+export type StatsSectionData = {
+  eyebrow?: string;
+  headline?: string;
+  items: StatItem[];
+};
+
+export type AIStoreSectionData = {
+  _placeholder?: true;
+};
+
+export type TeamSectionData = {
+  _placeholder?: true;
+};
+
+export type SavingsItem = {
+  name: string;
+  cat: string;
+  brandPrice: number;
+  ourPrice: number;
+  pct: number;
+  color?: string;
+};
+
+export type SavingsSectionData = {
+  eyebrow?: string;
+  heading?: string;
+  items: SavingsItem[];
+  videoPoster?: string;
+  videoUrl?: string;
+};
+
+export type VideoFeatureSectionData = {
+  tag?: string;
+  heading: string;
+  ctaLabel?: string;
+  poster?: string;
+  videoUrl?: string;
+  marquee?: string[];
+};
+
+export type AppStripSectionData = {
+  heading?: string;
+  descriptor?: string;
+  appStoreUrl?: string;
+  googlePlayUrl?: string;
+};
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type FaqSectionData = {
+  heading?: string;
+  items: FaqItem[];
+};
+
+export type SectionType =
+  | "features"
+  | "howItWorks"
+  | "gallery"
+  | "stats"
+  | "savings"
+  | "videoFeature"
+  | "appStrip"
+  | "faq"
+  | "aiStore"
+  | "team";
 
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
   | { type: "howItWorks"; data: HowItWorksSectionData }
-  | { type: "gallery"; data: GallerySectionData };
+  | { type: "gallery"; data: GallerySectionData }
+  | { type: "stats"; data: StatsSectionData }
+  | { type: "savings"; data: SavingsSectionData }
+  | { type: "videoFeature"; data: VideoFeatureSectionData }
+  | { type: "appStrip"; data: AppStripSectionData }
+  | { type: "faq"; data: FaqSectionData }
+  | { type: "aiStore"; data: AIStoreSectionData }
+  | { type: "team"; data: TeamSectionData };
 
 export type Content = {
   hero: HeroContent;

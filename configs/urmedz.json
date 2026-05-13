@@ -221,29 +221,34 @@
           "heading": "From the store to the fulfilment floor",
           "images": [
             {
-              "src": "/urmedz/gallery/retail-store.jpg",
+              "src": "https://www.urmedz.in/wp-content/uploads/2024/12/banners_final-03-1jpg.jpg",
               "alt": "Inside a UrMedz retail store with organised shelves",
               "caption": "Retail stores"
             },
             {
-              "src": "/urmedz/gallery/dispensing.jpg",
-              "alt": "Pharmacist at the dispensing counter",
-              "caption": "Dispensing counter"
-            },
-            {
-              "src": "/urmedz/gallery/stock.jpg",
-              "alt": "Authenticated medicine packaging on shelves",
-              "caption": "Authentic stock"
-            },
-            {
-              "src": "/urmedz/gallery/fulfilment.jpg",
+              "src": "https://www.urmedz.in/wp-content/uploads/2024/11/video.jpg",
               "alt": "Interior of the UrMedz hi-tech fulfilment centre",
               "caption": "Fulfilment centre"
             },
             {
-              "src": "/urmedz/gallery/pharmacists.jpg",
-              "alt": "Licensed pharmacists reviewing prescriptions",
-              "caption": "Licensed pharmacists"
+              "src": "https://www.urmedz.in/wp-content/uploads/2025/08/shopn.png",
+              "alt": "UrMedz AI-driven store floor",
+              "caption": "Store floor"
+            },
+            {
+              "src": "https://www.urmedz.in/wp-content/uploads/2024/10/banners-new.jpg",
+              "alt": "Quick commerce delivery network",
+              "caption": "Quick commerce"
+            },
+            {
+              "src": "https://www.urmedz.in/wp-content/uploads/2024/12/img.jpg",
+              "alt": "Brand options savings demonstration",
+              "caption": "Brand options"
+            },
+            {
+              "src": "https://www.urmedz.in/wp-content/uploads/2024/10/bnr2-2.jpg",
+              "alt": "Licensed pharmacist at the dispensing counter",
+              "caption": "Dispensing"
             }
           ]
         }

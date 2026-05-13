@@ -10,9 +10,9 @@ export default async function HomePage() {
   const { app } = await getConfig();
   return (
     <>
-      <Hero content={app.content.hero} tenant={app.tenant} />
-      <About content={app.content.about} tenant={app.tenant} />
-      <Services items={app.content.services} />
+      <Hero data={app.content.hero} />
+      <About data={app.content.about} />
+      <Services data={app.content.services} />
       <SectionRenderer sections={app.content.sections} />
     </>
   );

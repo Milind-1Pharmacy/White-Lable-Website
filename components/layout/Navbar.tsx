@@ -3,119 +3,112 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/layout/Container";
-import { cn } from "@/lib/utils";
-import type { NavItem } from "@/types/ui.types";
 import type { AppConfig } from "@/types/config.types";
-
-const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Contact", href: "/contact" },
-];
 
 type NavbarProps = {
   app: AppConfig;
 };
 
+const NAV_LINKS = [
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Fulfilment", href: "/services" },
+  { label: "Team", href: "/about" },
+  { label: "FAQ", href: "/contact" },
+  { label: "Contact", href: "/contact" },
+];
+
 export function Navbar({ app }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const on = () => setScrolled(window.scrollY > 60);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
   }, []);
 
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
+  const iconLogo = app.branding?.logo;
+  const fullLogo = app.branding?.logoFull ?? iconLogo;
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-40 transition-all duration-500",
-        scrolled
-          ? "border-b border-[var(--brand-primary)]/15 bg-[var(--brand-background)]/85 backdrop-blur-xl"
-          : "border-b border-transparent bg-[var(--brand-background)]/70 backdrop-blur-md",
-      )}
-    >
-      <Container
-        className={cn(
-          "flex items-center justify-between transition-[height,padding] duration-500",
-          scrolled ? "h-16" : "h-20 sm:h-24",
-        )}
-      >
-        <Link href="/" className="group flex items-center gap-3 sm:gap-4">
-          {app.branding?.logo ? (
-            <span
-              className={cn(
-                "relative inline-flex items-center justify-center overflow-hidden rounded-full ring-1 ring-black/5 transition-all duration-500 group-hover:rotate-[8deg]",
-                scrolled ? "h-9 w-9" : "h-11 w-11",
-              )}
-            >
-              <Image
-                src={app.branding.logo}
-                alt={`${app.tenant.name} logo`}
-                width={48}
-                height={48}
-                className="h-full w-full object-cover"
-              />
-            </span>
-          ) : (
-            <span
-              aria-hidden
-              className={cn(
-                "inline-block rounded-full transition-all duration-500 group-hover:rotate-[8deg]",
-                scrolled ? "h-9 w-9" : "h-11 w-11",
-              )}
-              style={{ background: "var(--brand-primary)" }}
+    <>
+      <header className={"nav" + (scrolled ? " is-scrolled" : "")}>
+        <Link href="/" className="nav__brand" onClick={closeMenu}>
+          {fullLogo && (
+            <Image
+              src={fullLogo}
+              alt={app.tenant.name}
+              width={160}
+              height={48}
+              className="nav__logo-full"
+              priority
             />
           )}
-          <span
-            className={cn(
-              "font-display font-light tracking-tight text-[var(--brand-text)] transition-all duration-500",
-              scrolled ? "text-base sm:text-lg" : "text-lg sm:text-2xl",
-            )}
-          >
-            {app.tenant.name}
-          </span>
+          {iconLogo && (
+            <Image
+              src={iconLogo}
+              alt={app.tenant.name}
+              width={40}
+              height={40}
+              className="nav__mark"
+            />
+          )}
+          {!fullLogo && !iconLogo && (
+            <span style={{ fontWeight: 700, fontSize: 18 }}>{app.tenant.name}</span>
+          )}
         </Link>
 
-        <nav className="hidden items-center gap-8 text-sm md:flex">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="group relative font-medium text-[var(--brand-text)]/70 transition-colors duration-300 hover:text-[var(--brand-text)]"
-            >
-              <span>{item.label}</span>
-              <span
-                aria-hidden
-                className="absolute -bottom-1.5 left-1/2 h-px w-0 -translate-x-1/2 bg-[var(--brand-primary)] transition-all duration-300 group-hover:w-full"
-              />
-            </Link>
+        <nav className="nav__links">
+          {NAV_LINKS.map((l) => (
+            <Link key={l.label} href={l.href}>{l.label}</Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/contact"
-            className={cn(
-              buttonVariants({ size: "sm" }),
-              "group hidden h-10 items-center gap-2 rounded-full bg-[var(--brand-primary)] px-5 text-xs font-medium tracking-wide text-white shadow-sm transition-all duration-300 hover:bg-[var(--brand-accent)] hover:shadow-md sm:inline-flex",
-            )}
-          >
-            <span>Visit Studio</span>
-            <span
-              aria-hidden
-              className="inline-block translate-x-0 transition-transform duration-300 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
+        <div className="nav__cta">
+          <Link href="/contact" className="btn btn-ghost" style={{ padding: "10px 16px" }}>
+            Get the app
+          </Link>
+          <Link href="/contact" className="btn btn-primary" style={{ padding: "10px 18px" }}>
+            Order now →
           </Link>
         </div>
-      </Container>
-    </header>
+
+        <button
+          className={"nav__hamburger" + (menuOpen ? " is-open" : "")}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </header>
+
+      {/* Mobile slide-in menu */}
+      <div className={"nav__mobile-menu" + (menuOpen ? " is-open" : "")} aria-hidden={!menuOpen}>
+        {NAV_LINKS.map((l) => (
+          <Link key={l.label} href={l.href} onClick={closeMenu}>{l.label}</Link>
+        ))}
+        <div className="nav__mobile-cta">
+          <Link href="/contact" className="btn btn-ghost" onClick={closeMenu}>
+            Get the app
+          </Link>
+          <Link href="/contact" className="btn btn-primary" onClick={closeMenu}>
+            Order now →
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }

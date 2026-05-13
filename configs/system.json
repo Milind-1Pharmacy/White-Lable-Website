@@ -37,7 +37,15 @@
     "services",
     "features",
     "howItWorks",
-    "gallery"
+    "gallery",
+    "stats",
+    "savings",
+    "videoFeature",
+    "appStrip",
+    "testimonials",
+    "faq",
+    "aiStore",
+    "team"
   ],
 
   "sectionMapping": {
@@ -46,7 +54,15 @@
     "services": "modules/Services.tsx",
     "features": "modules/Features.tsx",
     "howItWorks": "modules/HowItWorks.tsx",
-    "gallery": "modules/Gallery.tsx"
+    "gallery": "modules/Gallery.tsx",
+    "stats": "modules/Stats.tsx",
+    "savings": "modules/Savings.tsx",
+    "videoFeature": "modules/VideoFeature.tsx",
+    "appStrip": "modules/AppStrip.tsx",
+    "testimonials": "modules/Testimonials.tsx",
+    "faq": "modules/Faq.tsx",
+    "aiStore": "modules/AIStore.tsx",
+    "team": "modules/Team.tsx"
   },
 
   "compliance": {
