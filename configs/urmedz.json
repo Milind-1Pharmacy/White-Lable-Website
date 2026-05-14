@@ -398,8 +398,6 @@
               { "text": " — in three steps." }
             ]
           },
-          "ctaLabel": "Start an order →",
-          "ctaHref": "/contact",
           "steps": [
             {
               "step": 1,
@@ -518,8 +516,6 @@
           { "text": " care." }
         ]
       },
-      "ctaLabel": "Start an order →",
-      "ctaHref": "/contact",
       "description": "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
       "addressLabel": "Head office",
       "columns": [

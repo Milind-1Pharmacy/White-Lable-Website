@@ -3386,23 +3386,28 @@ body {
     gap: 6px;
   }
 
-  /* Sticky CTA — content-sized pill, not a full-width banner */
+  /* Sticky CTA — on mobile, drop the dark pill surround and let the
+     button stand alone. No wasted negative space around the CTA. */
   .cta-bar {
     width: auto;
     max-width: calc(100% - 32px);
     bottom: 14px;
-    padding: 6px 8px 6px 14px;
-    gap: 10px;
+    padding: 0;
+    gap: 0;
+    background: transparent;
+    box-shadow: none;
     font-size: 12.5px;
   }
 
-  .cta-bar > span:not(.pulse):not(.btn) {
+  .cta-bar > span:not(.pulse):not(.btn),
+  .cta-bar .pulse {
     display: none;
   }
 
   .cta-bar .btn {
-    padding: 8px 14px !important;
-    font-size: 12.5px !important;
+    padding: 12px 22px !important;
+    font-size: 13.5px !important;
+    box-shadow: 0 18px 50px rgba(5, 11, 38, 0.28);
   }
 
   /* Pad the bottom of the page so the sticky bar doesn't permanently
