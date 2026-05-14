@@ -3391,7 +3391,7 @@ body {
   .cta-bar {
     width: auto;
     max-width: calc(100% - 32px);
-    bottom: 14px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     padding: 0;
     gap: 0;
     background: transparent;

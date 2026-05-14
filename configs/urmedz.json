@@ -53,7 +53,7 @@
       },
       "secondaryCta": {
         "label": "How It Works",
-        "href": "/services"
+        "href": "/#services"
       },
       "proof": [
         "25+ retail stores",
@@ -170,7 +170,7 @@
           { "text": "One network.", "emphasis": "italic" }
         ]
       },
-      "ctaLabel": "All services →",
+      "ctaLabel": "All services  ",
       "ctaHref": "/services"
     },
 
@@ -429,7 +429,7 @@
             ]
           },
           "lede": "Anything we missed? Reach out — our team replies within a working day.",
-          "ctaLabel": "Contact support →",
+          "ctaLabel": "Contact support  ",
           "ctaHref": "/contact",
           "items": [
             {
@@ -505,7 +505,7 @@
     "stickyCta": {
       "enabled": true,
       "text": "The UrMedz app is here.",
-      "ctaLabel": "Download →",
+      "ctaLabel": "Download App Now",
       "ctaHref": "#app"
     },
     "footer": {

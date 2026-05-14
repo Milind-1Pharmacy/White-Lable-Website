@@ -170,7 +170,7 @@
           { "text": "One network.", "emphasis": "italic" }
         ]
       },
-      "ctaLabel": "All services →",
+      "ctaLabel": "All services  ",
       "ctaHref": "/services"
     },
 
@@ -383,7 +383,7 @@
               { "text": " — in three steps." }
             ]
           },
-          "ctaLabel": "Start an order →",
+          "ctaLabel": "Start an order  ",
           "ctaHref": "/contact",
           "steps": [
             {
@@ -416,7 +416,7 @@
             ]
           },
           "lede": "Anything we missed? Reach out — our team replies within a working day.",
-          "ctaLabel": "Contact support →",
+          "ctaLabel": "Contact support  ",
           "ctaHref": "/contact",
           "items": [
             {
@@ -480,7 +480,7 @@
     "stickyCta": {
       "enabled": true,
       "text": "The UrMedz app is here.",
-      "ctaLabel": "Download →",
+      "ctaLabel": "Download  ",
       "ctaHref": "#app"
     },
     "footer": {
@@ -491,7 +491,7 @@
           { "text": " care." }
         ]
       },
-      "ctaLabel": "Start an order →",
+      "ctaLabel": "Start an order  ",
       "ctaHref": "/contact",
       "description": "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
       "addressLabel": "Head office",
@@ -966,7 +966,10 @@
           {
             "heading": "4. User Obligations",
             "body": [
-              { "type": "p", "text": "Usage Rights: Users receive a limited, non-exclusive right to access and use the website and services for lawful purposes only." },
+              {
+                "type": "p",
+                "text": "Usage Rights: Users receive a limited, non-exclusive right to access and use the website and services for lawful purposes only."
+              },
               "Prohibited Conduct: Users must not engage in various prohibited activities, such as:",
               {
                 "type": "list",

@@ -79,10 +79,7 @@ export function Faq({ data }: FaqProps) {
                       {f.learnMoreLabel && f.learnMoreHref && (
                         <>
                           {" "}
-                          <Link
-                            className="faq__a-link"
-                            href={f.learnMoreHref}
-                          >
+                          <Link className="faq__a-link" href={f.learnMoreHref}>
                             {f.learnMoreLabel} →
                           </Link>
                         </>
