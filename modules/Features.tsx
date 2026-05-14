@@ -1,11 +1,23 @@
 "use client";
 import { useIsMobile } from "@/lib/useIsMobile";
-import type { FeaturesSectionData } from "@/types/config.types";
+import type {
+  FeatureItem,
+  FeaturesSectionData,
+} from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 type FeaturesProps = {
   data: FeaturesSectionData;
 };
+
+const renderCell = (w: FeatureItem, i: number) => (
+  <div key={i} className="why-cell">
+    <div className="num">{String(i + 1).padStart(2, "0")}</div>
+    <h4>{w.title}</h4>
+    <p className="body-s">{w.description}</p>
+  </div>
+);
 
 export function Features({ data }: FeaturesProps) {
   const isMobile = useIsMobile();
@@ -38,15 +50,19 @@ export function Features({ data }: FeaturesProps) {
             )}
           </div>
         )}
-        <div className="why__grid">
-          {data.items.map((w, i) => (
-            <div key={i} className="why-cell">
-              <div className="num">{String(i + 1).padStart(2, "0")}</div>
-              <h4>{w.title}</h4>
-              <p className="body-s">{w.description}</p>
-            </div>
-          ))}
+        <div className="why__grid m-desktop-only">
+          {data.items.map(renderCell)}
         </div>
+        <MobileCarousel
+          className="why__carousel"
+          ariaLabel="Why UrMedz"
+          cardWidth="84%"
+          maxCardWidth={340}
+          gap={14}
+          edgePadding={24}
+        >
+          {data.items.map(renderCell)}
+        </MobileCarousel>
       </div>
     </section>
   );

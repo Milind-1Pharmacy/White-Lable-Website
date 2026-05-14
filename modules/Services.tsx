@@ -1,5 +1,6 @@
 import type { ServiceItem, ServicesMeta } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 type ServicesProps = {
   data: ServiceItem[];
@@ -10,6 +11,22 @@ export function Services({ data, meta }: ServicesProps) {
   if (!data?.length) return null;
 
   const heading = renderRichHeading(meta?.heading);
+  const total = String(data.length).padStart(2, "0");
+
+  const renderCard = (s: ServiceItem, i: number) => (
+    <div key={i} className="service">
+      <div>
+        <div className="service__num">
+          {String(i + 1).padStart(2, "0")} / {total}
+        </div>
+      </div>
+      <div>
+        <h3 className="service__title">{s.title}</h3>
+        <p className="service__desc">{s.description}</p>
+      </div>
+      <div className="service__arrow">↗</div>
+    </div>
+  );
 
   return (
     <section className="section section--cream" id="services">
@@ -41,23 +58,18 @@ export function Services({ data, meta }: ServicesProps) {
             </a>
           )}
         </div>
-        <div className="services__grid">
-          {data.map((s, i) => (
-            <div key={i} className="service">
-              <div>
-                <div className="service__num">
-                  {String(i + 1).padStart(2, "0")} /{" "}
-                  {String(data.length).padStart(2, "0")}
-                </div>
-              </div>
-              <div>
-                <h3 className="service__title">{s.title}</h3>
-                <p className="service__desc">{s.description}</p>
-              </div>
-              <div className="service__arrow">↗</div>
-            </div>
-          ))}
+        <div className="services__grid m-desktop-only">
+          {data.map(renderCard)}
         </div>
+        <MobileCarousel
+          ariaLabel="UrMedz services"
+          cardWidth="84%"
+          maxCardWidth={340}
+          gap={14}
+          edgePadding={24}
+        >
+          {data.map(renderCard)}
+        </MobileCarousel>
       </div>
     </section>
   );

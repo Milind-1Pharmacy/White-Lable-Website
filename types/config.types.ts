@@ -207,7 +207,7 @@ export type TeamSectionData = {
 export type SavingsItem = {
   name: string;
   cat: string;
-  ourPrice: number;
+  ourPrice?: number;
   pct: number;
   color?: string;
 };
@@ -257,6 +257,8 @@ export type AppStripSectionData = {
 export type FaqItem = {
   question: string;
   answer: string;
+  learnMoreLabel?: string;
+  learnMoreHref?: string;
 };
 
 export type FaqSectionData = {
@@ -327,6 +329,7 @@ export type NavCta = {
   label: string;
   href: string;
   variant?: "primary" | "ghost" | "accent";
+  external?: boolean;
 };
 
 export type NavConfig = {
@@ -376,6 +379,11 @@ export type LegalPage = {
   intro?: string;
   body?: Array<string | LegalBlock>;
   sections?: LegalSection[];
+  video?: {
+    src: string;
+    poster?: string;
+    caption?: string;
+  };
 };
 
 export type ContactPageConfig = {
@@ -397,6 +405,7 @@ export type PagesConfig = {
   disclaimer?: LegalPage;
   privacyPolicy?: LegalPage;
   termsAndConditions?: LegalPage;
+  deactivateAccount?: LegalPage;
   notFound?: NotFoundConfig;
 };
 

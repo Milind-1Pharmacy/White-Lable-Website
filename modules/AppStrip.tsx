@@ -1,8 +1,5 @@
 import Image from "next/image";
-import type {
-  AppStripSectionData,
-  Branding,
-} from "@/types/config.types";
+import type { AppStripSectionData, Branding } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 
 type AppStripProps = {
@@ -26,7 +23,11 @@ export function AppStrip({ data, branding }: AppStripProps) {
     <section
       className="wrap"
       id="app"
-      style={{ paddingTop: 24, paddingBottom: 24 }}
+      style={{
+        paddingTop: 24,
+        paddingBottom: 24,
+        marginBottom: 12,
+      }}
     >
       <div className="appstrip">
         <div className="appstrip__left">

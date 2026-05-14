@@ -350,10 +350,7 @@
             }
           ],
           "credentials": [
-            { "label": "Regulatory", "value": "Drug Licence · KA-RX-001" },
-            { "label": "Quality", "value": "ISO 9001:2015 audited" },
-            { "label": "Affiliations", "value": "IPA · ASCRS · NABP-equiv." },
-            { "label": "Care SLA", "value": "Avg. reply < 9 min · 4 languages" }
+            { "label": "Care SLA", "value": "Avg. reply < 1 hrs · 3 languages" }
           ]
         }
       },
@@ -456,6 +453,12 @@
             {
               "question": "How can I get in touch?",
               "answer": "You can reach our support team at care@urmedz.in or call +91 80 4567 0049 during business hours (9 am – 9 pm, Mon–Sat). For urgent queries, the in-app chat connects you to a pharmacist directly."
+            },
+            {
+              "question": "How do I deactivate my UrMedz account?",
+              "answer": "You can permanently deactivate your account directly from the UrMedz app in a few taps — your profile, order history, and saved preferences will be removed and cannot be recovered.",
+              "learnMoreLabel": "See the full guide",
+              "learnMoreHref": "/deactivate-account"
             }
           ]
         }
@@ -484,14 +487,20 @@
   "layout": {
     "nav": {
       "links": [
-        { "label": "About", "href": "/about" },
-        { "label": "Services", "href": "/services" },
-        { "label": "Fulfilment", "href": "/services" },
-        { "label": "Team", "href": "/about" },
-        { "label": "FAQ", "href": "/contact" },
+        { "label": "About", "href": "/#about" },
+        { "label": "Services", "href": "/#services" },
+        { "label": "Fulfilment", "href": "/#fulfilment" },
+        { "label": "Team", "href": "/#team" },
+        { "label": "FAQ", "href": "/#faq" },
         { "label": "Contact", "href": "/contact" }
       ],
       "ctas": [
+        {
+          "label": "Login",
+          "href": "https://ros.urmedz.in/login",
+          "variant": "primary",
+          "external": true
+        },
         { "label": "Get the app", "href": "/contact", "variant": "ghost" }
       ]
     },
@@ -513,33 +522,30 @@
       "ctaHref": "/contact",
       "description": "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
       "addressLabel": "Head office",
-      "bottomTag": "RX-001 · DRG-LIC-KA · ISO 9001:2015",
       "columns": [
         {
           "heading": "Company",
           "links": [
-            { "label": "About", "href": "/about" },
-            { "label": "Team", "href": "/about" },
-            { "label": "Careers", "href": "/contact" },
-            { "label": "Press", "href": "/contact" }
+            { "label": "About", "href": "/#about" },
+            { "label": "Team", "href": "/#team" },
+            { "label": "Careers", "href": "/contact" }
           ]
         },
         {
           "heading": "Services",
           "links": [
-            { "label": "Retail stores", "href": "/services" },
-            { "label": "Quick commerce", "href": "/services" },
-            { "label": "Fulfilment", "href": "/services" },
-            { "label": "E-commerce partner", "href": "/services" }
+            { "label": "Retail stores", "href": "/#services" },
+            { "label": "Fulfilment", "href": "/#fulfilment" },
+            { "label": "Get the app", "href": "/#app" }
           ]
         },
         {
           "heading": "Resources",
           "links": [
-            { "label": "FAQ", "href": "/contact" },
-            { "label": "Support", "href": "/contact" },
+            { "label": "FAQ", "href": "/#faq" },
             { "label": "Privacy", "href": "/privacy-policy" },
-            { "label": "Terms", "href": "/terms-conditions" }
+            { "label": "Terms", "href": "/terms-conditions" },
+            { "label": "Deactivate account", "href": "/deactivate-account" }
           ]
         }
       ]
@@ -549,6 +555,47 @@
         "eyebrow": "Contact",
         "heading": "Get in touch with UrMedz",
         "lede": "We're happy to answer questions about our offerings. Reach out via any of the channels below and our team will get back to you."
+      },
+      "deactivateAccount": {
+        "eyebrow": "Account",
+        "heading": "Delete your UrMedz account",
+        "intro": "We're sorry to see you go. You can deactivate your UrMedz consumer account directly from the mobile app in a few taps. Account deactivation is permanent — your profile, order history, and saved preferences will be removed and cannot be recovered.",
+        "video": {
+          "src": "https://www.urmedz.in/wp-content/uploads/2025/08/deactivate-account.mp4",
+          "caption": "A short walkthrough of the in-app deactivation flow."
+        },
+        "sections": [
+          {
+            "heading": "Steps to deactivate your account",
+            "body": [
+              {
+                "type": "list",
+                "ordered": true,
+                "items": [
+                  "Open the UrMedz app on your phone.",
+                  "Tap your profile icon at the bottom-right corner to open the menu.",
+                  "Select the three dots next to the \"Log Out\" button.",
+                  "Tap \"Deactivate\" to proceed with deleting your account.",
+                  "Confirm the action when prompted. Your account will be queued for deletion immediately."
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "What happens after deactivation",
+            "body": [
+              "Your profile, address book, saved prescriptions, and order history will be permanently removed from our active systems within seven business days.",
+              "Anonymised transaction records are retained for the period required by Indian pharmaceutical and tax regulations. These records cannot be linked back to your identity once deactivation is complete.",
+              "You will stop receiving any communications from UrMedz once deactivation is processed."
+            ]
+          },
+          {
+            "heading": "Need help instead?",
+            "body": [
+              "If you ran into a problem with an order, a refund, or a prescription, our support team can usually resolve it without you needing to close your account. Reach out via the Contact page or write to support@urmedz.in before deactivating."
+            ]
+          }
+        ]
       },
       "disclaimer": {
         "eyebrow": "Legal",

@@ -1,5 +1,6 @@
 import type { AboutContent } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 type AboutProps = {
   data?: AboutContent;
@@ -13,6 +14,35 @@ export function About({ data }: AboutProps) {
   if (!hasHead && pillars.length === 0) return null;
 
   const title = renderRichHeading(data.title);
+
+  const renderPillar = (
+    p: NonNullable<AboutContent["pillars"]>[number],
+    idx: number,
+  ) => (
+    <div
+      key={idx}
+      className="about2__pillar"
+      style={{ ["--pillar-accent" as string]: p.accent }}
+    >
+      <div className="about2__pillar-top">
+        <span className="about2__pillar-badge">{p.n}</span>
+        <span
+          className="mono"
+          style={{
+            fontSize: 11,
+            letterSpacing: ".14em",
+            color: "var(--mute)",
+          }}
+        >
+          {p.meta}
+        </span>
+      </div>
+      <h3 className="about2__pillar-title">{p.title}</h3>
+      <p className="body-s" style={{ margin: 0 }}>
+        {p.body}
+      </p>
+    </div>
+  );
 
   return (
     <section className="section" id="about">
@@ -33,33 +63,20 @@ export function About({ data }: AboutProps) {
         )}
 
         {pillars.length > 0 && (
-          <div className="about2__pillars">
-            {pillars.map((p, idx) => (
-              <div
-                key={idx}
-                className="about2__pillar"
-                style={{ ["--pillar-accent" as string]: p.accent }}
-              >
-                <div className="about2__pillar-top">
-                  <span className="about2__pillar-badge">{p.n}</span>
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 11,
-                      letterSpacing: ".14em",
-                      color: "var(--mute)",
-                    }}
-                  >
-                    {p.meta}
-                  </span>
-                </div>
-                <h3 className="about2__pillar-title">{p.title}</h3>
-                <p className="body-s" style={{ margin: 0 }}>
-                  {p.body}
-                </p>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="about2__pillars m-desktop-only">
+              {pillars.map(renderPillar)}
+            </div>
+            <MobileCarousel
+              ariaLabel="UrMedz pillars"
+              cardWidth="84%"
+              maxCardWidth={340}
+              gap={14}
+              edgePadding={24}
+            >
+              {pillars.map(renderPillar)}
+            </MobileCarousel>
+          </>
         )}
       </div>
     </section>

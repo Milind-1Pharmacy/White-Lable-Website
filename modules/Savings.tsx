@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { SavingsSectionData } from "@/types/config.types";
-import { useIsMobile } from "@/lib/useIsMobile";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
@@ -58,7 +58,7 @@ function SavingsCard({
   row: {
     name: string;
     cat: string;
-    ourPrice: number;
+    ourPrice?: number;
     pct: number;
     color?: string;
   };
@@ -75,20 +75,14 @@ function SavingsCard({
         ["--card-delay" as string]: `${index * 80}ms`,
       }}
     >
-      <header className="sv-card__head">
-        <span className="sv-card__cat mono">{row.cat}</span>
-        <span className="sv-card__pct">
-          <AnimNum value={row.pct} />% saved
+      <h3 className="sv-card__title">{row.name}</h3>
+      <div className="sv-card__meta">
+        <span className="sv-card__badge" aria-label={`${row.pct}% lower`}>
+          <span className="sv-card__badge-num">{row.pct}</span>
+          <span className="sv-card__badge-sym" aria-hidden="true">%</span>
         </span>
-      </header>
-      <h3 className="sv-card__name">{row.name}</h3>
-      <footer className="sv-card__foot">
-        <span className="sv-card__tag mono">Our pick</span>
-        <span className="sv-card__price">
-          <span className="sv-card__cur">₹</span>
-          <AnimNum value={row.ourPrice} />
-        </span>
-      </footer>
+        <span className="sv-card__label mono">vs. brand average</span>
+      </div>
     </article>
   );
 }
@@ -99,7 +93,6 @@ type SavingsProps = {
 
 export function Savings({ data }: SavingsProps) {
   const [playing, setPlaying] = useState(false);
-  const isMobile = useIsMobile();
   if (!data?.items?.length) return null;
 
   const heading = renderRichHeading(data.heading);
@@ -127,7 +120,7 @@ export function Savings({ data }: SavingsProps) {
                   style={{
                     marginTop: 14,
                     maxWidth: 760,
-                    minHeight: isMobile ? 64 : 108,
+                    minHeight: 108,
                     lineHeight: 1.1,
                   }}
                 >
@@ -181,11 +174,22 @@ export function Savings({ data }: SavingsProps) {
             </div>
           )}
 
-        <div className="sv-grid">
+        <div className="sv-grid m-desktop-only">
           {data.items.map((row, idx) => (
             <SavingsCard key={idx} row={row} index={idx} />
           ))}
         </div>
+        <MobileCarousel
+          ariaLabel="Sample savings"
+          cardWidth="86%"
+          maxCardWidth={360}
+          gap={14}
+          edgePadding={24}
+        >
+          {data.items.map((row, idx) => (
+            <SavingsCard key={idx} row={row} index={idx} />
+          ))}
+        </MobileCarousel>
 
         {ledger?.footnote && <p className="sv-foot mono">{ledger.footnote}</p>}
 

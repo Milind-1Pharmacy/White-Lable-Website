@@ -2,8 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import type { Branding, TeamSectionData } from "@/types/config.types";
+import type {
+  Branding,
+  TeamDepartment,
+  TeamSectionData,
+} from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,6 +48,41 @@ function AnimNum({ value }: { value: number }) {
     return () => cancelAnimationFrame(raf);
   }, [seen, value]);
   return <span ref={ref}>{n}</span>;
+}
+
+function renderCell(d: TeamDepartment, i: number, total: number) {
+  return (
+    <div
+      key={i}
+      className="team2__cell"
+      style={{ background: d.bg, color: d.fg }}
+    >
+      <div className="team2__cell-top">
+        <span
+          className="mono"
+          style={{ fontSize: 11, letterSpacing: ".14em", opacity: 0.75 }}
+        >
+          {d.code} / {String(total).padStart(2, "0")}
+        </span>
+        <span
+          className="mono"
+          style={{ fontSize: 11, letterSpacing: ".14em", opacity: 0.75 }}
+        >
+          {d.role}
+        </span>
+      </div>
+      <div>
+        <div className="team2__count">
+          <AnimNum value={d.count} />
+          <span className="serif-it" style={{ opacity: 0.7 }}>
+            +
+          </span>
+        </div>
+        <div className="team2__label">{d.label}</div>
+      </div>
+      <p className="team2__detail">{d.detail}</p>
+    </div>
+  );
 }
 
 type TeamProps = {
@@ -108,48 +148,20 @@ export function Team({ data, branding }: TeamProps) {
         )}
 
         {departments.length > 0 && (
-          <div className="team2__grid">
-            {departments.map((d, i) => (
-              <div
-                key={i}
-                className="team2__cell"
-                style={{ background: d.bg, color: d.fg }}
-              >
-                <div className="team2__cell-top">
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 11,
-                      letterSpacing: ".14em",
-                      opacity: 0.75,
-                    }}
-                  >
-                    {d.code} / {String(total).padStart(2, "0")}
-                  </span>
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 11,
-                      letterSpacing: ".14em",
-                      opacity: 0.75,
-                    }}
-                  >
-                    {d.role}
-                  </span>
-                </div>
-                <div>
-                  <div className="team2__count">
-                    <AnimNum value={d.count} />
-                    <span className="serif-it" style={{ opacity: 0.7 }}>
-                      +
-                    </span>
-                  </div>
-                  <div className="team2__label">{d.label}</div>
-                </div>
-                <p className="team2__detail">{d.detail}</p>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="team2__grid m-desktop-only">
+              {departments.map((d, i) => renderCell(d, i, total))}
+            </div>
+            <MobileCarousel
+              ariaLabel="UrMedz team"
+              cardWidth="84%"
+              maxCardWidth={360}
+              gap={14}
+              edgePadding={24}
+            >
+              {departments.map((d, i) => renderCell(d, i, total))}
+            </MobileCarousel>
+          </>
         )}
 
         {credentials.length > 0 && (

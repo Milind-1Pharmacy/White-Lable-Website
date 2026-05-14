@@ -478,6 +478,136 @@ a {
   width: 100%;
 }
 
+/* ── Mobile carousel (generic) ─────────────────────────────────────────
+   Reusable horizontal scroll-snap carousel for mobile/tablet.
+   Desktop: hidden (sibling desktop layout renders instead).
+   Tune per instance via CSS vars set inline on the wrapper:
+     --mc-card-w   (card width — % or px)
+     --mc-card-max (max card width — px)
+     --mc-card-min (min card width — px)
+     --mc-gap      (gap between cards — px)
+     --mc-edge     (left/right edge padding — px, sets peek of next card)
+   ──────────────────────────────────────────────────────────────────────── */
+.m-carousel {
+  display: none;
+}
+
+.m-carousel__track {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--mc-gap, 14px);
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--mc-edge, 24px);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px var(--mc-edge, 24px) 8px;
+  margin: 0 calc(var(--mc-edge, 24px) * -1);
+}
+
+.m-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.m-carousel__item {
+  flex: 0 0 var(--mc-card-w, 84%);
+  max-width: var(--mc-card-max, 360px);
+  min-width: var(--mc-card-min, 0);
+  scroll-snap-align: start;
+  display: flex;
+}
+
+.m-carousel__item > * {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .m-carousel {
+    display: block;
+  }
+
+  /* Sibling desktop layouts opt out on mobile/tablet by adding .m-desktop-only */
+  .m-desktop-only {
+    display: none !important;
+  }
+
+  /* Features: inside the carousel, why-cells need card chrome
+     since the desktop layout relies on border separators between siblings. */
+  .why__carousel .why-cell {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px 22px;
+    height: 100%;
+  }
+}
+
+/* ── Legal page video player ──────────────────────────────────────────
+   Sized for a portrait phone-recording. The video sits inside a soft
+   cream surround that frames it like a product shot and keeps the
+   player from feeling like a raw <video> element on a sparse page. */
+.legal-video {
+  width: 100%;
+  max-width: 340px;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 18px;
+  box-shadow: 0 24px 60px -30px rgba(10, 23, 76, 0.25),
+              0 2px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.legal-video__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 12px 30px -18px rgba(10, 23, 76, 0.35);
+}
+
+.legal-video__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  background: #000;
+}
+
+.legal-video__caption {
+  margin-top: 14px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+  text-align: center;
+  max-width: 340px;
+}
+
+@media (max-width: 560px) {
+  .legal-video {
+    max-width: 280px;
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  .legal-video__frame {
+    border-radius: 16px;
+  }
+
+  .legal-video__caption {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    max-width: 280px;
+  }
+}
+
 /* ── Image placeholders ────────────────────────────────────────────── */
 .imgbox {
   position: relative;
@@ -1434,23 +1564,22 @@ a {
   }
 }
 
+/* Savings card — typographic split: serif name top, oversized accent % bottom */
+/* ── Savings card — content-sized, no dead space ─────────────────────── */
 .sv-card {
   position: relative;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding: clamp(26px, 3vw, 38px) clamp(26px, 3vw, 38px) clamp(26px, 3vw, 36px) clamp(36px, 3.5vw, 48px);
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  overflow: hidden;
-  transition: transform .5s cubic-bezier(.2, .7, .2, 1),
-              box-shadow .5s cubic-bezier(.2, .7, .2, 1),
-              border-color .3s ease;
+  gap: 18px;
   opacity: 0;
   transform: translateY(14px);
   animation: sv-card-in .7s cubic-bezier(.2, .7, .2, 1) forwards;
   animation-delay: var(--card-delay, 0ms);
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
 }
 
 @keyframes sv-card-in {
@@ -1460,105 +1589,62 @@ a {
   }
 }
 
-.sv-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--card-accent, var(--accent));
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform .7s cubic-bezier(.2, .7, .2, 1);
-  transition-delay: calc(var(--card-delay, 0ms) + 200ms);
-}
-
-.sv-card.is-seen::before {
-  transform: scaleY(1);
-}
-
 .sv-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   border-color: var(--card-accent, var(--accent));
-  box-shadow: 0 18px 40px -28px rgba(10, 23, 76, .25);
+  box-shadow: 0 16px 40px -20px color-mix(in srgb, var(--card-accent, var(--accent)) 50%, transparent);
 }
 
-.sv-card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.sv-card__cat {
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--mute);
-  font-variant-numeric: tabular-nums;
-}
-
-.sv-card__pct {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: var(--card-accent, var(--accent));
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  font-weight: 500;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.sv-card__name {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(24px, 2.4vw, 32px);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin: 0;
-}
-
-.sv-card__foot {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin-top: auto;
-  padding-top: 22px;
-  border-top: 1px dashed var(--line);
-}
-
-.sv-card__tag {
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--mute);
-}
-
-.sv-card__price {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
+.sv-card__title {
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: clamp(34px, 3.6vw, 48px);
-  letter-spacing: -0.03em;
-  line-height: 1;
+  font-size: clamp(22px, 2vw, 28px);
+  letter-spacing: -0.02em;
+  margin: 0;
   color: var(--ink);
+  line-height: 1.15;
+}
+
+/* Credential row — badge + label sit together, hugging the bottom of
+   the card. No space-between, no void. */
+.sv-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.sv-card__badge {
+  display: inline-flex;
+  align-items: baseline;
+  padding: 6px 11px 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-accent, var(--accent)) 14%, transparent);
+  color: var(--card-accent, var(--accent));
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
 
-.sv-card__cur {
-  font-size: 0.65em;
+.sv-card__badge-num {
+  font-size: 18px;
+}
+
+.sv-card__badge-sym {
+  font-size: 11px;
+  margin-left: 1px;
+  opacity: 0.85;
+}
+
+.sv-card__label {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--mute);
-  font-weight: 400;
-  margin-right: 2px;
 }
 
 .sv-foot {
@@ -2415,6 +2501,21 @@ a {
   color: var(--mute);
 }
 
+.faq__a-link {
+  display: inline;
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: color .25s ease, border-color .25s ease;
+  white-space: nowrap;
+}
+
+.faq__a-link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
 /* ── Footer ─────────────────────────────────────────────────────── */
 .footer {
   background: var(--ink);
@@ -2638,6 +2739,61 @@ body {
 /* ── Responsive: ≤880px (tablet + mobile) ───────────────────────── */
 @media (max-width: 880px) {
 
+  /* Section padding — much tighter on tablet/mobile so sections don't
+     swallow huge vertical space between content blocks. */
+  .section {
+    padding: 36px 0;
+  }
+
+  /* Reduce the gap between hero/section heads and their content
+     on mobile/tablet. Inline marginBottom values in modules
+     (Features=56, Team=56, Stats=56, Services=64, Savings=40,
+     Gallery=40) get tightened here. */
+  .wrap > div[style*="margin-bottom: 56"],
+  .wrap > div[style*="marginBottom:56"],
+  .wrap > div[style*="margin-bottom: 64"],
+  .wrap > div[style*="marginBottom:64"],
+  .wrap > div[style*="margin-bottom: 40"],
+  .wrap > div[style*="marginBottom:40"] {
+    margin-bottom: 20px !important;
+  }
+
+  /* AppStrip section wrapper (it's a bare .wrap, not .section) — kill
+     the inline 24/24 padding so the dark card sits tight against neighbors */
+  section.wrap[id="app"] {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  /* Team quote block — kills 88px of dead space below the pull-quote */
+  .team2__quote {
+    padding-bottom: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* Marquee strip — tighten the inline 40/28/28 (96px) vertical real estate */
+  .marquee[style*="margin-top: 40"],
+  .marquee[style*="marginTop:40"] {
+    margin-top: 20px !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  .marquee__track > span {
+    font-size: clamp(28px, 5vw, 44px);
+    gap: 36px;
+  }
+
+  .marquee,
+  .marquee__track {
+    gap: 36px;
+  }
+
+  /* About head + section heads need less breathing room */
+  .about2__head {
+    margin-bottom: 24px;
+  }
+
   /* Stack all .between flex rows on mobile */
   .between {
     flex-direction: column;
@@ -2657,7 +2813,11 @@ body {
   /* Restore vertical rhythm now that they're block-level */
   .between.section-head > * + *,
   .split__head > * + * {
-    margin-top: 64px;
+    margin-top: 24px;
+  }
+
+  .between.section-head {
+    margin-bottom: 28px !important;
   }
 
   .section-head__sub {
@@ -2769,9 +2929,78 @@ body {
     padding: 5px 10px;
   }
 
-  /* AppStrip left */
+  /* AppStrip — compact vertical card on tablet */
+  .appstrip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 18px 18px;
+    border-radius: 18px;
+  }
+
+  .appstrip::before {
+    width: 340px;
+    height: 340px;
+    right: -140px;
+    top: -140px;
+  }
+
   .appstrip__left {
+    flex-direction: row;
+    align-items: flex-start;
     min-width: 0;
+    gap: 14px;
+  }
+
+  .appstrip__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    margin-top: 2px;
+  }
+
+  .appstrip__h {
+    font-size: clamp(20px, 2.6vw, 24px);
+    line-height: 1.15;
+    margin: 0 0 3px;
+  }
+
+  .appstrip__body {
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
+  .appstrip__badges {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .store-badge {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 9px 12px;
+    gap: 10px;
+    border-radius: 11px;
+    justify-content: flex-start;
+  }
+
+  .store-badge > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .store-badge__small {
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+    opacity: 0.55;
+  }
+
+  .store-badge__big {
+    font-size: 14px;
+    margin-top: 1px;
+    line-height: 1.15;
   }
 
   /* Steps */
@@ -2817,7 +3046,43 @@ body {
 
   /* Section padding tighter */
   .section {
-    padding: clamp(40px, 8vw, 72px) 0;
+    padding: 28px 0;
+  }
+
+  /* Section-head spacing tightens further on phones */
+  .wrap > div[style*="margin-bottom: 56"],
+  .wrap > div[style*="marginBottom:56"],
+  .wrap > div[style*="margin-bottom: 64"],
+  .wrap > div[style*="marginBottom:64"],
+  .wrap > div[style*="margin-bottom: 40"],
+  .wrap > div[style*="marginBottom:40"] {
+    margin-bottom: 16px !important;
+  }
+
+  .about2__head {
+    margin-bottom: 20px;
+  }
+
+  .between.section-head {
+    margin-bottom: 16px !important;
+  }
+
+  .between.section-head > * + *,
+  .split__head > * + * {
+    margin-top: 12px;
+  }
+
+  /* AppStrip section wrapper — tightest on phones */
+  section.wrap[id="app"] {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* Team quote — collapse the dead space under the pull-quote */
+  .team2__quote {
+    padding-bottom: 16px;
+    margin-bottom: 14px;
+    gap: 14px;
   }
 
   /* Hero */
@@ -2865,28 +3130,79 @@ body {
     font-size: clamp(38px, 10vw, 60px);
   }
 
-  /* AppStrip — vertical stack */
+  /* AppStrip — compact vertical card (logo inline with heading) */
   .appstrip {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-    padding: 24px 20px;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 14px;
+    border-radius: 16px;
+  }
+
+  .appstrip::before {
+    width: 280px;
+    height: 280px;
+    right: -120px;
+    top: -120px;
   }
 
   .appstrip__left {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 12px;
+    min-width: 0;
+  }
+
+  .appstrip__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    padding: 4px;
+    margin-top: 2px;
+  }
+
+  .appstrip__h {
+    font-size: 20px;
+    line-height: 1.15;
+    margin: 0 0 2px;
+  }
+
+  .appstrip__body {
+    font-size: 12px;
+    line-height: 1.4;
   }
 
   .appstrip__badges {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
     width: 100%;
+    gap: 8px;
   }
 
   .store-badge {
-    width: 100%;
+    flex: 1 1 0;
+    min-width: 0;
     justify-content: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  .store-badge > svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .store-badge__small {
+    font-size: 8px;
+    letter-spacing: 0.11em;
+    opacity: 0.55;
+  }
+
+  .store-badge__big {
+    font-size: 13px;
+    margin-top: 0;
+    line-height: 1.15;
   }
 
   /* About pillars */
@@ -3070,16 +3386,29 @@ body {
     gap: 6px;
   }
 
-  /* Sticky CTA */
+  /* Sticky CTA — content-sized pill, not a full-width banner */
   .cta-bar {
-    width: calc(100% - 32px);
-    bottom: 12px;
-    padding: 10px 12px 10px 14px;
+    width: auto;
+    max-width: calc(100% - 32px);
+    bottom: 14px;
+    padding: 6px 8px 6px 14px;
+    gap: 10px;
     font-size: 12.5px;
   }
 
-  .cta-bar>span:not(.pulse):not(.btn) {
+  .cta-bar > span:not(.pulse):not(.btn) {
     display: none;
+  }
+
+  .cta-bar .btn {
+    padding: 8px 14px !important;
+    font-size: 12.5px !important;
+  }
+
+  /* Pad the bottom of the page so the sticky bar doesn't permanently
+     cover footer content. */
+  .footer {
+    padding-bottom: 80px;
   }
 }
 
@@ -3174,13 +3503,21 @@ body {
     font-size: 19px;
   }
 
-  .sv-card__price {
-    font-size: clamp(28px, 8vw, 36px);
+  .sv-card {
+    padding: 22px;
+    gap: 14px;
   }
 
-  .sv-card__pct {
-    font-size: 10.5px;
-    padding: 5px 10px;
+  .sv-card__title {
+    font-size: 20px;
+  }
+
+  .sv-card__badge-num {
+    font-size: 16px;
+  }
+
+  .sv-card__badge-sym {
+    font-size: 10px;
   }
 
   .faq__btn {
@@ -3193,7 +3530,44 @@ body {
   }
 
   .appstrip {
-    padding: 20px 16px;
+    padding: 16px 14px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+
+  .appstrip__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    padding: 4px;
+    margin-top: 1px;
+  }
+
+  .appstrip__h {
+    font-size: 18px;
+  }
+
+  .appstrip__body {
+    font-size: 11.5px;
+  }
+
+  .store-badge {
+    padding: 7px 9px;
+    gap: 7px;
+    border-radius: 9px;
+  }
+
+  .store-badge > svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .store-badge__small {
+    font-size: 7.5px;
+  }
+
+  .store-badge__big {
+    font-size: 12px;
   }
 
   .appstrip__phone {

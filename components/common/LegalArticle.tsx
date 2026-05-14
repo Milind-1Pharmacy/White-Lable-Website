@@ -48,6 +48,28 @@ export function LegalArticle({ data }: Props) {
   return (
     <article className="prose prose-neutral max-w-3xl space-y-5 text-[var(--brand-text)]/85">
       {data.intro && <p className="font-medium">{data.intro}</p>}
+      {data.video?.src && (
+        <figure className="not-prose my-8 flex flex-col items-center">
+          <div className="legal-video">
+            <div className="legal-video__frame">
+              <video
+                className="legal-video__media"
+                src={data.video.src}
+                poster={data.video.poster}
+                controls
+                playsInline
+                preload="metadata"
+                controlsList="nodownload"
+              />
+            </div>
+          </div>
+          {data.video.caption && (
+            <figcaption className="legal-video__caption mono">
+              {data.video.caption}
+            </figcaption>
+          )}
+        </figure>
+      )}
       {top.map((b, i) =>
         renderBlock(b, i, i === 0 && !data.intro && top.length > 1),
       )}

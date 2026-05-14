@@ -74,7 +74,20 @@ export function Faq({ data }: FaqProps) {
                 </button>
                 <div className="faq__a">
                   <div>
-                    <div className="faq__a-inner body">{f.answer}</div>
+                    <div className="faq__a-inner body">
+                      {f.answer}
+                      {f.learnMoreLabel && f.learnMoreHref && (
+                        <>
+                          {" "}
+                          <Link
+                            className="faq__a-link"
+                            href={f.learnMoreHref}
+                          >
+                            {f.learnMoreLabel} →
+                          </Link>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

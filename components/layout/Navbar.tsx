@@ -96,6 +96,9 @@ export function Navbar({ app }: NavbarProps) {
                 style={{
                   padding: c.variant === "primary" ? "10px 18px" : "10px 16px",
                 }}
+                {...(c.external
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
               >
                 {c.label}
               </Link>
@@ -134,6 +137,9 @@ export function Navbar({ app }: NavbarProps) {
                 href={c.href}
                 className={ctaClass(c.variant)}
                 onClick={closeMenu}
+                {...(c.external
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
               >
                 {c.label}
               </Link>
