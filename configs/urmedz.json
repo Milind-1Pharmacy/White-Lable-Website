@@ -92,11 +92,7 @@
           "value": "80k",
           "label": "SKUs — medicines, OTC & wellness"
         }
-      ],
-      "rail": {
-        "liveLabel": "Live",
-        "locationText": "Now serving Bengaluru & Hyderabad. Pin-code check in the app."
-      }
+      ]
     },
 
     "about": {

@@ -11,8 +11,7 @@ import { buildMetadata } from "@/lib/seoBuilder";
 
 type Params = { slug: string };
 
-export const dynamicParams = true;
-export const revalidate = 3600;
+export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Params[]> {
   const tenants = await listConfigs();
