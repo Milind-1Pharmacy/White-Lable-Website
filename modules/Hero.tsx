@@ -7,19 +7,19 @@ import type { HeroContent } from "@/types/config.types";
 
 const HERO_SLIDES = [
   {
-    img: "https://www.urmedz.in/wp-content/uploads/2024/12/banners_final-03-1jpg.jpg",
-    tag: "Authentic · Traceable",
-    cap: "Authentic medicines at your fingertips",
-  },
-  {
-    img: "https://www.urmedz.in/wp-content/uploads/2024/10/banners-new.jpg",
+    img: "/urmedz/gallery/img-1.png",
     tag: "Quick commerce",
     cap: "Same-day delivery, neighbourhood-fast",
   },
   {
-    img: "https://www.urmedz.in/wp-content/uploads/2024/10/bnr2-2.jpg",
+    img: "/urmedz/gallery/img-3.png",
     tag: "Hi-tech fulfilment",
     cap: "India's most advanced pharma centres",
+  },
+  {
+    img: "/urmedz/gallery/img-2.png",
+    tag: "Retail stores",
+    cap: "Safe, private, and staffed by licensed pharmacists",
   },
 ];
 

@@ -21,7 +21,7 @@ export function AIStore({ data: _ }: AIStoreProps) {
             </span>
             <h2
               className="h-display h-2"
-              style={{ marginTop: 14, minHeight: 64, lineHeight: 1.1 }}
+              style={{ marginTop: 14, minHeight: 80, lineHeight: 1.1 }}
             >
               Our{" "}
               <span className="serif-it" style={{ color: "var(--accent)" }}>

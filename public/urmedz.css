@@ -2605,11 +2605,19 @@ body {
     gap: 20px;
   }
 
-  /* section-head combo: ensure sub-element goes full width when stacked */
-  .between.section-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+  /* section-head combo: drop flex entirely on mobile so heading + subhead
+     stack in normal block flow. This is the most robust fix — it ignores
+     all inline alignItems/flexWrap overrides set in modules (Stats,
+     HowItWorks, Savings, AIStore). */
+  .between.section-head,
+  .split__head {
+    display: block !important;
+  }
+
+  /* Restore vertical rhythm now that they're block-level */
+  .between.section-head > * + *,
+  .split__head > * + * {
+    margin-top: 64px;
   }
 
   .section-head__sub {
@@ -2804,17 +2812,53 @@ body {
   /* About pillars */
   .about2__pillars {
     grid-template-columns: 1fr;
-    margin: 0 20px;
+    margin: 0;
+  }
+
+  .about2__pillar {
+    min-height: 220px;
+    padding: 26px 22px;
+  }
+
+  .about2__pillar-badge {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
   }
 
   .mobile-btn {
-    display: block; 
-    margin: 20px;
+    display: inline-flex;
+    margin: 0;
+  }
+
+  /* Buttons — tighter on phones so they don't dominate the screen */
+  .btn {
+    padding: 11px 16px;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  /* When a button doubles as section-head__sub (HowItWorks), keep it inline */
+  .btn.section-head__sub {
+    align-self: flex-start;
+    max-width: 100%;
   }
 
   /* Services */
   .services__grid {
     grid-template-columns: 1fr;
+  }
+
+  .service {
+    min-height: 220px;
+    padding: 22px;
+  }
+
+  .service__arrow {
+    top: 18px;
+    right: 18px;
+    width: 30px;
+    height: 30px;
   }
 
   /* Savings ladder — 2-col prices */
@@ -2908,6 +2952,11 @@ body {
     font-size: clamp(24px, 7vw, 38px);
   }
 
+  .team2__cell {
+    min-height: 240px;
+    padding: 20px;
+  }
+
   .team2__creds {
     grid-template-columns: 1fr;
   }
@@ -2996,5 +3045,94 @@ body {
   .bts {
     min-height: 0 !important;
     aspect-ratio: 16/9;
+  }
+
+  /* AIStore tiles aren't absurdly tall when split goes 1-col */
+  .split__tile {
+    aspect-ratio: 16/10;
+  }
+
+  .service {
+    min-height: 240px;
+  }
+
+  .team2__cell {
+    min-height: 260px;
+  }
+}
+
+/* ── Responsive: ≤380px (small phones, iPhone SE 1st gen) ──────────── */
+@media (max-width: 380px) {
+  .hero__meta {
+    gap: 10px;
+  }
+
+  .hero__meta .num {
+    font-size: clamp(18px, 5.4vw, 22px);
+  }
+
+  .hero__meta .lbl {
+    max-width: 64px;
+    font-size: 10.5px;
+  }
+
+  .stat-cell .v {
+    font-size: clamp(32px, 9vw, 44px);
+  }
+
+  .stat-cell {
+    padding: 16px 12px;
+  }
+
+  .team2__count {
+    font-size: clamp(46px, 13vw, 60px);
+  }
+
+  .team2__cell {
+    padding: 18px;
+    min-height: 220px;
+  }
+
+  .service {
+    padding: 20px;
+  }
+
+  .service__title {
+    font-size: 19px;
+  }
+
+  .sv__price-amt {
+    font-size: clamp(22px, 7vw, 28px);
+  }
+
+  .sv__arrow-pct {
+    font-size: 10.5px;
+    padding: 5px 8px;
+  }
+
+  .faq__btn {
+    grid-template-columns: 28px 1fr 32px;
+    gap: 8px;
+  }
+
+  .faq__num {
+    font-size: 10px;
+  }
+
+  .appstrip {
+    padding: 20px 16px;
+  }
+
+  .appstrip__phone {
+    min-height: 540px;
+  }
+
+  .footer__bottom {
+    font-size: 10.5px;
+  }
+
+  .btn {
+    padding: 10px 14px;
+    font-size: 12.5px;
   }
 }

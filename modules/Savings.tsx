@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { SavingsSectionData } from "@/types/config.types";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
@@ -116,6 +117,7 @@ type SavingsProps = {
 
 export function Savings({ data }: SavingsProps) {
   const [playing, setPlaying] = useState(false);
+  const isMobile = useIsMobile();
 
   return (
     <section className="section section--cream">
@@ -134,7 +136,7 @@ export function Savings({ data }: SavingsProps) {
               style={{
                 marginTop: 14,
                 maxWidth: 760,
-                minHeight: 108,
+                minHeight: isMobile ? 64 : 108,
                 lineHeight: 1.1,
               }}
             >

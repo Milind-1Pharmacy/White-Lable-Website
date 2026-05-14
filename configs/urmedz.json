@@ -37,7 +37,7 @@
       "eyebrow": "Est. 2024 · Bengaluru",
       "headline": "Authentic medicines, at your door.",
       "tagline": "A network of 25 retail stores and India's largest pharma fulfilment centres — delivering trusted medicines to you.",
-      "image": "https://www.urmedz.in/wp-content/uploads/2024/12/banners_final-03-1jpg.jpg",
+      "image": "/urmedz/hero.png",
       "cta": {
         "label": "Learn More",
         "type": "safe-action"
@@ -188,8 +188,8 @@
               "color": "#E5326C"
             }
           ],
-          "videoPoster": "https://www.urmedz.in/wp-content/uploads/2024/12/img.jpg",
-          "videoUrl": "https://www.urmedz.in/wp-content/uploads/2024/11/ur_medz_video-3.mp4"
+          "videoPoster": "/urmedz/savings-poster.png",
+          "videoUrl": "/urmedz/savings.mp4"
         }
       },
 
@@ -199,8 +199,8 @@
           "tag": "Behind the scenes",
           "heading": "A look at our hi-tech fulfilment centres",
           "ctaLabel": "Watch Now",
-          "poster": "https://www.urmedz.in/wp-content/uploads/2024/11/video.jpg",
-          "videoUrl": "https://www.urmedz.in/wp-content/uploads/2024/11/new-ur_medz_video-4.mp4",
+          "poster": "/urmedz/video-poster.png",
+          "videoUrl": "/urmedz/video.mp4",
           "marquee": [
             "Authentic",
             "Traceable",
@@ -231,32 +231,32 @@
           "heading": "From the store to the fulfilment floor",
           "images": [
             {
-              "src": "https://www.urmedz.in/wp-content/uploads/2024/12/banners_final-03-1jpg.jpg",
+              "src": "/urmedz/gallery/img-1.png",
               "alt": "Inside a UrMedz retail store with organised shelves",
               "caption": "Retail stores"
             },
             {
-              "src": "https://www.urmedz.in/wp-content/uploads/2024/11/video.jpg",
+              "src": "/urmedz/gallery/img-2.png",
               "alt": "Interior of the UrMedz hi-tech fulfilment centre",
               "caption": "Fulfilment centre"
             },
             {
-              "src": "https://www.urmedz.in/wp-content/uploads/2025/08/shopn.png",
+              "src": "/urmedz/gallery/img-3.png",
               "alt": "UrMedz AI-driven store floor",
               "caption": "Store floor"
             },
             {
-              "src": "https://www.urmedz.in/wp-content/uploads/2024/10/banners-new.jpg",
+              "src": "/urmedz/gallery/img-1.png",
               "alt": "Quick commerce delivery network",
               "caption": "Quick commerce"
             },
             {
-              "src": "https://www.urmedz.in/wp-content/uploads/2024/12/img.jpg",
+              "src": "/urmedz/gallery/img-2.png",
               "alt": "Brand options savings demonstration",
               "caption": "Brand options"
             },
             {
-              "src": "https://www.urmedz.in/wp-content/uploads/2024/10/bnr2-2.jpg",
+              "src": "/urmedz/gallery/img-3.png",
               "alt": "Licensed pharmacist at the dispensing counter",
               "caption": "Dispensing"
             }

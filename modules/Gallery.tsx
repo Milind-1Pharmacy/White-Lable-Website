@@ -4,27 +4,27 @@ import type { GallerySectionData } from "@/types/config.types";
 
 const CDN_IMAGES = [
   {
-    src: "https://www.urmedz.in/wp-content/uploads/2024/12/banners_final-03-1jpg.jpg",
+    src: "/urmedz/gallery/img-1.png",
     cap: "Retail stores",
   },
   {
-    src: "https://www.urmedz.in/wp-content/uploads/2024/11/video.jpg",
+    src: "/urmedz/gallery/img-2.png",
     cap: "Fulfilment centre",
   },
   {
-    src: "https://www.urmedz.in/wp-content/uploads/2025/08/shopn.png",
+    src: "/urmedz/gallery/img-3.png",
     cap: "Store floor",
   },
   {
-    src: "https://www.urmedz.in/wp-content/uploads/2024/10/banners-new.jpg",
+    src: "/urmedz/gallery/img-1.png",
     cap: "Quick commerce",
   },
   {
-    src: "https://www.urmedz.in/wp-content/uploads/2024/12/img.jpg",
+    src: "/urmedz/gallery/img-2.png",
     cap: "Brand options",
   },
   {
-    src: "https://www.urmedz.in/wp-content/uploads/2024/10/bnr2-2.jpg",
+    src: "/urmedz/gallery/img-3.png",
     cap: "Dispensing",
   },
 ];
