@@ -207,7 +207,6 @@ export type TeamSectionData = {
 export type SavingsItem = {
   name: string;
   cat: string;
-  brandPrice: number;
   ourPrice: number;
   pct: number;
   color?: string;
@@ -361,11 +360,22 @@ export type FooterConfig = {
   bottomTag?: string;
 };
 
+export type LegalBlock =
+  | { type: "p"; text: string }
+  | { type: "list"; ordered?: boolean; items: string[] };
+
+export type LegalSection = {
+  heading?: string;
+  subheading?: string;
+  body: Array<string | LegalBlock>;
+};
+
 export type LegalPage = {
   eyebrow?: string;
   heading?: string;
-  body?: string[];
-  sections?: Array<{ heading?: string; body: string[] }>;
+  intro?: string;
+  body?: Array<string | LegalBlock>;
+  sections?: LegalSection[];
 };
 
 export type ContactPageConfig = {

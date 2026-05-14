@@ -51,64 +51,45 @@ function AnimNum({
   return <span ref={ref}>{fmt ? fmt(n) : n}</span>;
 }
 
-function SavingsRow({
+function SavingsCard({
   row,
+  index,
 }: {
   row: {
     name: string;
     cat: string;
-    brandPrice: number;
     ourPrice: number;
     pct: number;
     color?: string;
   };
+  index: number;
 }) {
   const [ref, seen] = useReveal();
   const color = row.color ?? "var(--accent)";
   return (
-    <div className="sv__row" ref={ref}>
-      <div className="sv__row-l">
-        <span
-          className="mono"
-          style={{ fontSize: 11, letterSpacing: ".14em", color: "var(--mute)" }}
-        >
-          {row.cat}
+    <article
+      className={"sv-card" + (seen ? " is-seen" : "")}
+      ref={ref}
+      style={{
+        ["--card-accent" as string]: color,
+        ["--card-delay" as string]: `${index * 80}ms`,
+      }}
+    >
+      <header className="sv-card__head">
+        <span className="sv-card__cat mono">{row.cat}</span>
+        <span className="sv-card__pct">
+          <AnimNum value={row.pct} />% saved
         </span>
-        <span className="sv__row-name">{row.name}</span>
-      </div>
-      <div className="sv__row-ladder">
-        <div className="sv__price sv__price--brand">
-          <span className="sv__price-tag">Branded</span>
-          <span className="sv__price-amt">
-            ₹<AnimNum value={row.brandPrice} />
-          </span>
-        </div>
-        <div className="sv__row-arrow">
-          <span className="sv__arrow-line" />
-          <span className="sv__arrow-pct" style={{ background: color }}>
-            <AnimNum value={row.pct} />% saved
-          </span>
-        </div>
-        <div className="sv__price sv__price--ours">
-          <span className="sv__price-tag">Our pick</span>
-          <span className="sv__price-amt">
-            ₹<AnimNum value={row.ourPrice} />
-          </span>
-        </div>
-      </div>
-      <div className="sv__row-bar">
-        <div className="sv__row-bar-track">
-          <div
-            className="sv__row-bar-fill"
-            style={{
-              width: seen ? row.pct + "%" : 0,
-              background: color,
-              transition: "width 1.2s cubic-bezier(.4,0,.2,1)",
-            }}
-          />
-        </div>
-      </div>
-    </div>
+      </header>
+      <h3 className="sv-card__name">{row.name}</h3>
+      <footer className="sv-card__foot">
+        <span className="sv-card__tag mono">Our pick</span>
+        <span className="sv-card__price">
+          <span className="sv-card__cur">₹</span>
+          <AnimNum value={row.ourPrice} />
+        </span>
+      </footer>
+    </article>
   );
 }
 
@@ -154,62 +135,59 @@ export function Savings({ data }: SavingsProps) {
                 </h2>
               )}
             </div>
-            {data.lede && (
-              <p className="body section-head__sub">{data.lede}</p>
-            )}
+            {data.lede && <p className="body section-head__sub">{data.lede}</p>}
           </div>
         )}
 
-        <div className="sv__ledger">
-          {ledger &&
-            (ledger.receiptLabel || ledger.averageLabel || ledger.averageValue) && (
-              <div className="sv__ledger-head">
-                {ledger.receiptLabel && (
-                  <span className="label">{ledger.receiptLabel}</span>
-                )}
-                {ledger.averageLabel && (
-                  <span className="label">{ledger.averageLabel}</span>
-                )}
-                {ledger.averageValue && (
-                  <span className="sv__ledger-tag">
-                    <span
-                      className="serif-it"
-                      style={{
-                        fontSize: 30,
-                        color: "var(--accent)",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {ledger.averageValue}
-                    </span>
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: 10.5,
-                        letterSpacing: ".14em",
-                        color: "var(--mute)",
-                      }}
-                    >
-                      avg.
-                    </span>
+        {ledger &&
+          (ledger.receiptLabel ||
+            ledger.averageLabel ||
+            ledger.averageValue) && (
+            <div className="sv-meta">
+              {ledger.receiptLabel && (
+                <span className="sv-meta__label mono">
+                  {ledger.receiptLabel}
+                </span>
+              )}
+              {ledger.averageLabel && (
+                <span className="sv-meta__label mono">
+                  {ledger.averageLabel}
+                </span>
+              )}
+              {ledger.averageValue && (
+                <span className="sv-meta__tag">
+                  <span
+                    className="serif-it"
+                    style={{
+                      fontSize: 30,
+                      color: "var(--accent)",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {ledger.averageValue}
                   </span>
-                )}
-              </div>
-            )}
-          {data.items.map((row, idx) => (
-            <SavingsRow key={idx} row={row} />
-          ))}
-          {ledger?.footnote && (
-            <div className="sv__ledger-foot">
-              <span
-                className="mono"
-                style={{ fontSize: 11, letterSpacing: ".14em" }}
-              >
-                {ledger.footnote}
-              </span>
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: 10.5,
+                      letterSpacing: ".14em",
+                      color: "var(--mute)",
+                    }}
+                  >
+                    avg.
+                  </span>
+                </span>
+              )}
             </div>
           )}
+
+        <div className="sv-grid">
+          {data.items.map((row, idx) => (
+            <SavingsCard key={idx} row={row} index={idx} />
+          ))}
         </div>
+
+        {ledger?.footnote && <p className="sv-foot mono">{ledger.footnote}</p>}
 
         {data.videoUrl && (
           <div className="sv__video">

@@ -19,7 +19,7 @@
       "/services",
       "/contact",
       "/privacy-policy",
-      "/terms-and-conditions",
+      "/terms-conditions",
       "/disclaimer"
     ],
     "fallback": "/not-found"
