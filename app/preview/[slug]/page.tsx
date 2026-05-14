@@ -77,8 +77,16 @@ export default async function TenantPreviewPage({
 
       <Hero data={app.content.hero} />
       <About data={app.content.about} />
-      <Services data={app.content.services} />
-      <SectionRenderer sections={app.content.sections} />
+      {app.content.services && app.content.services.length > 0 && (
+        <Services
+          data={app.content.services}
+          meta={app.content.servicesMeta}
+        />
+      )}
+      <SectionRenderer
+        sections={app.content.sections}
+        branding={app.branding}
+      />
     </>
   );
 }

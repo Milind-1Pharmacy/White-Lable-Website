@@ -7,6 +7,7 @@
   "branding": {
     "logo": "/urmedz/logo.png",
     "logoFull": "/urmedz/logo-full.png",
+    "stylesheet": "/urmedz.css",
     "colors": {
       "primary": "#0A174C",
       "secondary": "#F4EFE6",
@@ -34,8 +35,16 @@
 
   "content": {
     "hero": {
-      "eyebrow": "Est. 2024 · Bengaluru",
-      "headline": "Authentic medicines, at your door.",
+      "eyebrow": "Pharmacy & Health-Tech · Est. 2024",
+      "headline": "Authentic medicines, fingertip-fast.",
+      "headlineRich": {
+        "parts": [
+          { "text": "Authentic", "br": true },
+          { "text": "medicines, " },
+          { "text": "fingertip-", "emphasis": "italic" },
+          { "text": "fast." }
+        ]
+      },
       "tagline": "A network of 25 retail stores and India's largest pharma fulfilment centres — delivering trusted medicines to you.",
       "image": "/urmedz/hero.png",
       "cta": {
@@ -50,12 +59,61 @@
         "25+ retail stores",
         "10,000+ orders daily",
         "80,000 SKUs catalogued"
-      ]
+      ],
+      "slides": [
+        {
+          "image": "/urmedz/gallery/img-1.png",
+          "tag": "Quick commerce",
+          "caption": "Same-day delivery, neighbourhood-fast"
+        },
+        {
+          "image": "/urmedz/gallery/img-3.png",
+          "tag": "Hi-tech fulfilment",
+          "caption": "India's most advanced pharma centres"
+        },
+        {
+          "image": "/urmedz/gallery/img-2.png",
+          "tag": "Retail stores",
+          "caption": "Safe, private, and staffed by licensed pharmacists"
+        }
+      ],
+      "meta": [
+        {
+          "value": "25",
+          "suffix": "+",
+          "label": "Retail stores across South India"
+        },
+        {
+          "value": "10k",
+          "suffix": " / day",
+          "label": "Orders dispensed by licensed pharmacists"
+        },
+        {
+          "value": "80k",
+          "label": "SKUs — medicines, OTC & wellness"
+        }
+      ],
+      "rail": {
+        "liveLabel": "Live",
+        "locationText": "Now serving Bengaluru & Hyderabad. Pin-code check in the app."
+      }
     },
 
     "about": {
       "description": "UrMedz is building India's most trusted pharmaceutical infrastructure — connecting patients with authentic, affordable medicines through a network of licensed retail stores, hi-tech fulfilment centres, and trained pharmacists. Founded in Bengaluru in 2024, we believe that access to genuine medicine should never be a question of geography or cost.",
       "image": "/urmedz/about.jpg",
+      "eyebrow": "About UrMedz · Est. 2024 · Bengaluru",
+      "title": {
+        "parts": [
+          { "text": "Medicines are " },
+          { "text": "indispensable.", "emphasis": "italic", "br": true },
+          { "text": "Access", "emphasis": "italic-accent" },
+          { "text": " and " },
+          { "text": "affordability", "emphasis": "italic-accent" },
+          { "text": " change everything." }
+        ]
+      },
+      "lede": "The pharma sector is experiencing a much-needed transformation. UrMedz is the pharmacy-and-platform layer that brings a wide range of options — and real choice — to your doorstep.",
       "pillars": [
         {
           "n": "01",
@@ -104,11 +162,30 @@
       }
     ],
 
+    "servicesMeta": {
+      "eyebrow": "What we do",
+      "heading": {
+        "parts": [
+          { "text": "Four pillars. " },
+          { "text": "One network.", "emphasis": "italic" }
+        ]
+      },
+      "ctaLabel": "All services →",
+      "ctaHref": "/services"
+    },
+
     "sections": [
       {
         "type": "appStrip",
         "data": {
-          "heading": "Download the UrMedz app",
+          "logo": "/urmedz/logo.png",
+          "heading": {
+            "parts": [
+              { "text": "Download the " },
+              { "text": "UrMedz", "emphasis": "italic-accent" },
+              { "text": " app" }
+            ]
+          },
           "descriptor": "Authentic medicines · licensed pharmacists · doorstep delivery",
           "appStoreUrl": "https://apps.apple.com/in/app/urmedz/id6753715891",
           "googlePlayUrl": "https://play.google.com/store/apps/details?id=com.urmedzB2C"
@@ -120,6 +197,7 @@
         "data": {
           "eyebrow": "By the numbers",
           "headline": "A network sized for the country.",
+          "descriptor": "A pharmacy-and-platform footprint sized for the country, built quietly in the background.",
           "items": [
             {
               "value": "25",
@@ -153,43 +231,22 @@
         "type": "savings",
         "data": {
           "eyebrow": "Customer savings · Q1 2026",
-          "heading": "Unravelling the magic of brand options in medicines.",
-          "items": [
-            {
-              "name": "Diabetes Tablets",
-              "cat": "Cat. 01 · Metformin 500mg",
-              "brandPrice": 1240,
-              "ourPrice": 670,
-              "pct": 46,
-              "color": "#F5A623"
-            },
-            {
-              "name": "Blood Sugar Tablets",
-              "cat": "Cat. 02 · Glimepiride 2mg",
-              "brandPrice": 980,
-              "ourPrice": 431,
-              "pct": 56,
-              "color": "#1FAFA6"
-            },
-            {
-              "name": "Blood Pressure Tablets",
-              "cat": "Cat. 03 · Amlodipine 5mg",
-              "brandPrice": 1480,
-              "ourPrice": 296,
-              "pct": 80,
-              "color": "#6B3FA0"
-            },
-            {
-              "name": "Gastric Relief Tablets",
-              "cat": "Cat. 04 · Pantoprazole 40mg",
-              "brandPrice": 1120,
-              "ourPrice": 504,
-              "pct": 55,
-              "color": "#E5326C"
-            }
-          ],
+          "heading": {
+            "parts": [
+              { "text": "Unraveling the magic of " },
+              { "text": "brand options", "emphasis": "italic-accent" },
+              { "text": " in medicines." }
+            ]
+          },
+          "lede": "Prices vary dramatically from brand to brand, yet the composition stays identical. The UrMedz engine surfaces the optimal pick for every prescription.",
+
           "videoPoster": "/urmedz/savings-poster.png",
-          "videoUrl": "/urmedz/savings.mp4"
+          "videoUrl": "/urmedz/savings.mp4",
+          "videoCopy": {
+            "tag": "▶ 2:14 · How brand options work",
+            "headline": "See it on the pharmacy floor.",
+            "ctaLabel": "Watch the demo"
+          }
         }
       },
 
@@ -197,7 +254,13 @@
         "type": "videoFeature",
         "data": {
           "tag": "Behind the scenes",
-          "heading": "A look at our hi-tech fulfilment centres",
+          "heading": {
+            "parts": [
+              { "text": "A look at our " },
+              { "text": "hi-tech", "emphasis": "italic-accent" },
+              { "text": " fulfilment centres." }
+            ]
+          },
           "ctaLabel": "Watch Now",
           "poster": "/urmedz/video-poster.png",
           "videoUrl": "/urmedz/video.mp4",
@@ -215,51 +278,64 @@
       },
 
       {
-        "type": "aiStore",
-        "data": {}
-      },
-
-      {
         "type": "team",
-        "data": {}
-      },
-
-      {
-        "type": "gallery",
         "data": {
-          "eyebrow": "Inside UrMedz",
-          "heading": "From the store to the fulfilment floor",
-          "images": [
+          "eyebrow": "Our team of specialists · 200+ strong",
+          "logoMark": "/urmedz/logo.png",
+          "quote": {
+            "parts": [
+              { "text": "United by a single purpose — to make healthcare " },
+              { "text": "accessible, affordable", "emphasis": "italic-accent" },
+              { "text": " and", "br": true },
+              { "text": "trustworthy", "emphasis": "italic-accent" },
+              { "text": " for everyone." }
+            ]
+          },
+          "signatureLabel": "Signed,",
+          "signature": "the UrMedz team",
+          "departments": [
             {
-              "src": "/urmedz/gallery/img-1.png",
-              "alt": "Inside a UrMedz retail store with organised shelves",
-              "caption": "Retail stores"
+              "code": "01",
+              "count": 75,
+              "label": "Pharmacists",
+              "role": "Licensed dispensing",
+              "bg": "#F5A623",
+              "fg": "#1B2A5B",
+              "detail": "Registered with the Karnataka State Pharmacy Council. Every order reviewed."
             },
             {
-              "src": "/urmedz/gallery/img-2.png",
-              "alt": "Interior of the UrMedz hi-tech fulfilment centre",
-              "caption": "Fulfilment centre"
+              "code": "02",
+              "count": 25,
+              "label": "Doctors",
+              "role": "Consulting clinicians",
+              "bg": "#1FAFA6",
+              "fg": "#FFFFFF",
+              "detail": "On-call for prescription validation, refills and pharmacist escalations."
             },
             {
-              "src": "/urmedz/gallery/img-3.png",
-              "alt": "UrMedz AI-driven store floor",
-              "caption": "Store floor"
+              "code": "03",
+              "count": 60,
+              "label": "Supply chain",
+              "role": "Sourcing & logistics",
+              "bg": "#6B3FA0",
+              "fg": "#FFFFFF",
+              "detail": "From manufacturer pickup to last-mile — batch-traceable end to end."
             },
             {
-              "src": "/urmedz/gallery/img-1.png",
-              "alt": "Quick commerce delivery network",
-              "caption": "Quick commerce"
-            },
-            {
-              "src": "/urmedz/gallery/img-2.png",
-              "alt": "Brand options savings demonstration",
-              "caption": "Brand options"
-            },
-            {
-              "src": "/urmedz/gallery/img-3.png",
-              "alt": "Licensed pharmacist at the dispensing counter",
-              "caption": "Dispensing"
+              "code": "04",
+              "count": 40,
+              "label": "Health guardians",
+              "role": "Customer support",
+              "bg": "#E5326C",
+              "fg": "#FFFFFF",
+              "detail": "Reachable in four languages, average first reply under nine minutes."
             }
+          ],
+          "credentials": [
+            { "label": "Regulatory", "value": "Drug Licence · KA-RX-001" },
+            { "label": "Quality", "value": "ISO 9001:2015 audited" },
+            { "label": "Affiliations", "value": "IPA · ASCRS · NABP-equiv." },
+            { "label": "Care SLA", "value": "Avg. reply < 9 min · 4 languages" }
           ]
         }
       },
@@ -267,7 +343,14 @@
       {
         "type": "features",
         "data": {
-          "heading": "Why UrMedz",
+          "eyebrow": "Why UrMedz",
+          "heading": {
+            "parts": [
+              { "text": "Pharmacy infrastructure, " },
+              { "text": "quietly", "emphasis": "italic-accent" },
+              { "text": " done right." }
+            ]
+          },
           "items": [
             {
               "title": "Authenticity at the source",
@@ -292,7 +375,16 @@
       {
         "type": "howItWorks",
         "data": {
-          "heading": "How it works",
+          "eyebrow": "How it works",
+          "heading": {
+            "parts": [
+              { "text": "Prescription to " },
+              { "text": "pocket", "emphasis": "italic-accent" },
+              { "text": " — in three steps." }
+            ]
+          },
+          "ctaLabel": "Start an order →",
+          "ctaHref": "/contact",
           "steps": [
             {
               "step": 1,
@@ -316,7 +408,16 @@
       {
         "type": "faq",
         "data": {
-          "heading": "Frequently asked",
+          "eyebrow": "Frequently asked",
+          "heading": {
+            "parts": [
+              { "text": "Questions,", "br": true },
+              { "text": "answered.", "emphasis": "italic-accent" }
+            ]
+          },
+          "lede": "Anything we missed? Reach out — our team replies within a working day.",
+          "ctaLabel": "Contact support →",
+          "ctaHref": "/contact",
           "items": [
             {
               "question": "Where do you source your medicines from?",
@@ -360,5 +461,147 @@
   "compliance": {
     "mode": "business-profile-safe",
     "disclaimer": "UrMedz Retail Pvt. Ltd. is a licensed pharmaceutical retail and fulfilment company. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication."
+  },
+
+  "layout": {
+    "nav": {
+      "links": [
+        { "label": "About", "href": "/about" },
+        { "label": "Services", "href": "/services" },
+        { "label": "Fulfilment", "href": "/services" },
+        { "label": "Team", "href": "/about" },
+        { "label": "FAQ", "href": "/contact" },
+        { "label": "Contact", "href": "/contact" }
+      ],
+      "ctas": [
+        { "label": "Get the app", "href": "/contact", "variant": "ghost" }
+      ]
+    },
+    "stickyCta": {
+      "enabled": true,
+      "text": "The UrMedz app is here.",
+      "ctaLabel": "Download →",
+      "ctaHref": "#app"
+    },
+    "footer": {
+      "headline": {
+        "parts": [
+          { "text": "Authentic medicines,", "br": true },
+          { "text": "delivered with", "emphasis": "italic-accent" },
+          { "text": " care." }
+        ]
+      },
+      "ctaLabel": "Start an order →",
+      "ctaHref": "/contact",
+      "description": "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
+      "addressLabel": "Head office",
+      "bottomTag": "RX-001 · DRG-LIC-KA · ISO 9001:2015",
+      "columns": [
+        {
+          "heading": "Company",
+          "links": [
+            { "label": "About", "href": "/about" },
+            { "label": "Team", "href": "/about" },
+            { "label": "Careers", "href": "/contact" },
+            { "label": "Press", "href": "/contact" }
+          ]
+        },
+        {
+          "heading": "Services",
+          "links": [
+            { "label": "Retail stores", "href": "/services" },
+            { "label": "Quick commerce", "href": "/services" },
+            { "label": "Fulfilment", "href": "/services" },
+            { "label": "E-commerce partner", "href": "/services" }
+          ]
+        },
+        {
+          "heading": "Resources",
+          "links": [
+            { "label": "FAQ", "href": "/contact" },
+            { "label": "Support", "href": "/contact" },
+            { "label": "Privacy", "href": "/privacy-policy" },
+            { "label": "Terms", "href": "/terms-and-conditions" }
+          ]
+        }
+      ]
+    },
+    "pages": {
+      "contact": {
+        "eyebrow": "Contact",
+        "heading": "Get in touch with UrMedz",
+        "lede": "We're happy to answer questions about our offerings. Reach out via any of the channels below and our team will get back to you."
+      },
+      "disclaimer": {
+        "eyebrow": "Legal",
+        "heading": "Disclaimer",
+        "body": [
+          "UrMedz Retail Pvt. Ltd. is a licensed pharmaceutical retail and fulfilment company. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication.",
+          "The information presented on this website is provided in good faith for general informational purposes only. UrMedz makes no representation or warranty, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.",
+          "Any reliance you place on such information is strictly at your own risk. We will not be liable for any loss or damage incurred as a result of the use of this website or the information contained herein."
+        ]
+      },
+      "privacyPolicy": {
+        "eyebrow": "Legal",
+        "heading": "Privacy Policy",
+        "body": [
+          "UrMedz respects the privacy of every visitor to this website. This page describes the limited information we collect and how it is used."
+        ],
+        "sections": [
+          {
+            "heading": "Information we collect",
+            "body": [
+              "We collect only the information you choose to provide — for example when you contact us by email or phone. We do not run trackers, advertising pixels, or third-party analytics on this informational website."
+            ]
+          },
+          {
+            "heading": "How we use information",
+            "body": [
+              "Information you share with us is used solely to respond to your enquiry. We do not sell or share personal information with third parties."
+            ]
+          },
+          {
+            "heading": "Contact",
+            "body": [
+              "For privacy questions, please contact us at care@urmedz.in."
+            ]
+          }
+        ]
+      },
+      "termsAndConditions": {
+        "eyebrow": "Legal",
+        "heading": "Terms & Conditions",
+        "body": [
+          "By using this website, you agree to the terms below. These terms govern your access to and use of the UrMedz website."
+        ],
+        "sections": [
+          {
+            "heading": "Use of content",
+            "body": [
+              "The content on this website is provided for general informational purposes. You may view and share it for personal, non-commercial use."
+            ]
+          },
+          {
+            "heading": "No professional advice",
+            "body": [
+              "Information published here is not a substitute for professional advice. Please consult a qualified practitioner for specific recommendations."
+            ]
+          },
+          {
+            "heading": "Changes",
+            "body": [
+              "We may update these terms from time to time. Continued use of the website after changes are posted constitutes acceptance of the updated terms."
+            ]
+          }
+        ]
+      },
+      "notFound": {
+        "code": "404",
+        "heading": "Page not found",
+        "body": "The page you're looking for doesn't exist or has been moved.",
+        "ctaLabel": "Back to home",
+        "ctaHref": "/"
+      }
+    }
   }
 }

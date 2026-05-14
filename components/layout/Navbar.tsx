@@ -3,20 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig, NavCta } from "@/types/config.types";
 
 type NavbarProps = {
   app: AppConfig;
 };
 
-const NAV_LINKS = [
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Fulfilment", href: "/services" },
-  { label: "Team", href: "/about" },
-  { label: "FAQ", href: "/contact" },
-  { label: "Contact", href: "/contact" },
-];
+function ctaClass(variant: NavCta["variant"]) {
+  switch (variant) {
+    case "primary":
+      return "btn btn-primary";
+    case "accent":
+      return "btn btn-accent";
+    case "ghost":
+    default:
+      return "btn btn-ghost";
+  }
+}
 
 export function Navbar({ app }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
@@ -29,7 +32,6 @@ export function Navbar({ app }: NavbarProps) {
     return () => window.removeEventListener("scroll", on);
   }, []);
 
-  // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -39,6 +41,8 @@ export function Navbar({ app }: NavbarProps) {
 
   const iconLogo = app.branding?.logo;
   const fullLogo = app.branding?.logoFull ?? iconLogo;
+  const links = app.layout?.nav?.links ?? [];
+  const ctas = app.layout?.nav?.ctas ?? [];
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -72,61 +76,70 @@ export function Navbar({ app }: NavbarProps) {
           )}
         </Link>
 
-        <nav className="nav__links">
-          {NAV_LINKS.map((l) => (
-            <Link key={l.label} href={l.href}>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
+        {links.length > 0 && (
+          <nav className="nav__links">
+            {links.map((l) => (
+              <Link key={l.label} href={l.href}>
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        )}
 
-        <div className="nav__cta">
-          <Link
-            href="/contact"
-            className="btn btn-ghost"
-            style={{ padding: "10px 16px" }}
-          >
-            Get the app
-          </Link>
-          <Link
-            href="/contact"
-            className="btn btn-primary"
-            style={{ padding: "10px 18px" }}
-          >
-            Order now →
-          </Link>
-        </div>
+        {ctas.length > 0 && (
+          <div className="nav__cta">
+            {ctas.map((c, i) => (
+              <Link
+                key={i}
+                href={c.href}
+                className={ctaClass(c.variant)}
+                style={{
+                  padding: c.variant === "primary" ? "10px 18px" : "10px 16px",
+                }}
+              >
+                {c.label}
+              </Link>
+            ))}
+          </div>
+        )}
 
-        <button
-          className={"nav__hamburger" + (menuOpen ? " is-open" : "")}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        {(links.length > 0 || ctas.length > 0) && (
+          <button
+            className={"nav__hamburger" + (menuOpen ? " is-open" : "")}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        )}
       </header>
 
-      {/* Mobile slide-in menu */}
       <div
         className={"nav__mobile-menu" + (menuOpen ? " is-open" : "")}
         aria-hidden={!menuOpen}
       >
-        {NAV_LINKS.map((l) => (
+        {links.map((l) => (
           <Link key={l.label} href={l.href} onClick={closeMenu}>
             {l.label}
           </Link>
         ))}
-        <div className="nav__mobile-cta">
-          <Link href="/contact" className="btn btn-ghost" onClick={closeMenu}>
-            Get the app
-          </Link>
-          <Link href="/contact" className="btn btn-primary" onClick={closeMenu}>
-            Order now →
-          </Link>
-        </div>
+        {ctas.length > 0 && (
+          <div className="nav__mobile-cta">
+            {ctas.map((c, i) => (
+              <Link
+                key={i}
+                href={c.href}
+                className={ctaClass(c.variant)}
+                onClick={closeMenu}
+              >
+                {c.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

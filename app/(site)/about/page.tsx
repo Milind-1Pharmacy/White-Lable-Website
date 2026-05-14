@@ -19,6 +19,7 @@ export default async function AboutPage() {
       <About data={app.content.about} />
       <SectionRenderer
         sections={app.content.sections.filter((s) => s.type === "features")}
+        branding={app.branding}
       />
     </>
   );

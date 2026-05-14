@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { AppConfig } from "@/types/config.types";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 type FooterProps = {
   app: AppConfig;
@@ -9,24 +10,52 @@ type FooterProps = {
 export function Footer({ app }: FooterProps) {
   const year = new Date().getFullYear();
   const fullLogo = app.branding?.logoFull ?? app.branding?.logo;
+  const footer = app.layout?.footer;
+  const headline = renderRichHeading(footer?.headline);
+  const columns = footer?.columns ?? [];
+  const hasContact =
+    !!(app.contact?.address || app.contact?.email || app.contact?.phone);
 
   return (
     <footer className="footer" id="contact">
       <div className="wrap">
-        <div className="between" style={{ alignItems: "end", flexWrap: "wrap", gap: 32 }}>
-          <h2 className="h-display h-big" style={{ maxWidth: 980, lineHeight: 0.92 }}>
-            Authentic medicines,<br />
-            <span className="serif-it" style={{ color: "var(--accent)" }}>delivered with</span> care.
-          </h2>
-          <Link href="/contact" className="btn btn-accent" style={{ padding: "18px 28px" }}>
-            Start an order →
-          </Link>
-        </div>
+        {(headline || footer?.ctaLabel) && (
+          <div
+            className="between"
+            style={{ alignItems: "end", flexWrap: "wrap", gap: 32 }}
+          >
+            {headline && (
+              <h2
+                className="h-display h-big"
+                style={{ maxWidth: 980, lineHeight: 0.92 }}
+              >
+                {headline}
+              </h2>
+            )}
+            {footer?.ctaLabel && (
+              <Link
+                href={footer.ctaHref ?? "/contact"}
+                className="btn btn-accent"
+                style={{ padding: "18px 28px" }}
+              >
+                {footer.ctaLabel}
+              </Link>
+            )}
+          </div>
+        )}
 
         <div className="footer__grid">
           <div className="footer__col">
             {fullLogo && (
-              <div style={{ background: "var(--cream)", borderRadius: 14, padding: "18px 22px", display: "inline-block", marginBottom: 22 }}>
+              <div
+                style={{
+                  background: "var(--cream)",
+                  borderRadius: 14,
+                  padding: "18px 22px",
+                  display: "inline-block",
+                  marginBottom: 22,
+                }}
+              >
                 <Image
                   src={fullLogo}
                   alt={app.tenant.name}
@@ -36,12 +65,38 @@ export function Footer({ app }: FooterProps) {
                 />
               </div>
             )}
-            <p className="body-s" style={{ color: "rgba(244,239,230,.55)", maxWidth: 320 }}>
-              A pharmacy &amp; health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.
-            </p>
-            {(app.contact?.address || app.contact?.email || app.contact?.phone) && (
-              <div style={{ marginTop: 24, fontSize: 13, color: "rgba(244,239,230,.7)", display: "flex", flexDirection: "column", gap: 6 }}>
-                <span className="mono" style={{ fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(244,239,230,.45)" }}>Head office</span>
+            {footer?.description && (
+              <p
+                className="body-s"
+                style={{ color: "rgba(244,239,230,.55)", maxWidth: 320 }}
+              >
+                {footer.description}
+              </p>
+            )}
+            {hasContact && (
+              <div
+                style={{
+                  marginTop: 24,
+                  fontSize: 13,
+                  color: "rgba(244,239,230,.7)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
+                }}
+              >
+                {footer?.addressLabel && (
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: 11,
+                      letterSpacing: ".14em",
+                      textTransform: "uppercase",
+                      color: "rgba(244,239,230,.45)",
+                    }}
+                  >
+                    {footer.addressLabel}
+                  </span>
+                )}
                 {app.contact.address && <span>{app.contact.address}</span>}
                 {(app.contact.email || app.contact.phone) && (
                   <span style={{ marginTop: 8 }}>
@@ -54,35 +109,18 @@ export function Footer({ app }: FooterProps) {
             )}
           </div>
 
-          <div className="footer__col">
-            <h5>Company</h5>
-            <ul>
-              <li><Link href="/about">About</Link></li>
-              <li><Link href="/about">Team</Link></li>
-              <li><Link href="/contact">Careers</Link></li>
-              <li><Link href="/contact">Press</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer__col">
-            <h5>Services</h5>
-            <ul>
-              <li><Link href="/services">Retail stores</Link></li>
-              <li><Link href="/services">Quick commerce</Link></li>
-              <li><Link href="/services">Fulfilment</Link></li>
-              <li><Link href="/services">E-commerce partner</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer__col">
-            <h5>Resources</h5>
-            <ul>
-              <li><Link href="/contact">FAQ</Link></li>
-              <li><Link href="/contact">Support</Link></li>
-              <li><Link href="/privacy-policy">Privacy</Link></li>
-              <li><Link href="/terms-and-conditions">Terms</Link></li>
-            </ul>
-          </div>
+          {columns.map((col, i) => (
+            <div key={i} className="footer__col">
+              <h5>{col.heading}</h5>
+              <ul>
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link href={l.href}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         {app.compliance?.disclaimer && (
@@ -90,8 +128,10 @@ export function Footer({ app }: FooterProps) {
         )}
 
         <div className="footer__bottom">
-          <span>© {year} {app.tenant.name}.</span>
-          <span>RX-001 · DRG-LIC-KA · ISO 9001:2015</span>
+          <span>
+            © {year} {app.tenant.name}.
+          </span>
+          {footer?.bottomTag && <span>{footer.bottomTag}</span>}
         </div>
       </div>
     </footer>

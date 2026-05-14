@@ -1,11 +1,15 @@
-import type { ServiceItem } from "@/types/config.types";
+import type { ServiceItem, ServicesMeta } from "@/types/config.types";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 type ServicesProps = {
   data: ServiceItem[];
+  meta?: ServicesMeta;
 };
 
-export function Services({ data }: ServicesProps) {
+export function Services({ data, meta }: ServicesProps) {
   if (!data?.length) return null;
+
+  const heading = renderRichHeading(meta?.heading);
 
   return (
     <section className="section section--cream" id="services">
@@ -15,21 +19,27 @@ export function Services({ data }: ServicesProps) {
           style={{ marginBottom: 64, alignItems: "end" }}
         >
           <div style={{ maxWidth: 720 }}>
-            <span className="eyebrow">
-              <span className="dot" />
-              What we do
-            </span>
-            <h2 className="h-display h-2" style={{ marginTop: 14 }}>
-              Four pillars. <span className="serif-it">One network.</span>
-            </h2>
+            {meta?.eyebrow && (
+              <span className="eyebrow">
+                <span className="dot" />
+                {meta.eyebrow}
+              </span>
+            )}
+            {heading && (
+              <h2 className="h-display h-2" style={{ marginTop: 14 }}>
+                {heading}
+              </h2>
+            )}
           </div>
-          <a
-            className="btn btn-ghost mobile-btn"
-            href="/services"
-            style={{ background: "transparent", marginTop: 16 }}
-          >
-            All services →
-          </a>
+          {meta?.ctaLabel && (
+            <a
+              className="btn btn-ghost mobile-btn"
+              href={meta.ctaHref ?? "/services"}
+              style={{ background: "transparent", marginTop: 16 }}
+            >
+              {meta.ctaLabel}
+            </a>
+          )}
         </div>
         <div className="services__grid">
           {data.map((s, i) => (

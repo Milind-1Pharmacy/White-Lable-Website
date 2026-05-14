@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SavingsSectionData } from "@/types/config.types";
 import { useIsMobile } from "@/lib/useIsMobile";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
@@ -89,7 +90,7 @@ function SavingsRow({
           </span>
         </div>
         <div className="sv__price sv__price--ours">
-          <span className="sv__price-tag">UrMedz pick</span>
+          <span className="sv__price-tag">Our pick</span>
           <span className="sv__price-amt">
             ₹<AnimNum value={row.ourPrice} />
           </span>
@@ -118,77 +119,96 @@ type SavingsProps = {
 export function Savings({ data }: SavingsProps) {
   const [playing, setPlaying] = useState(false);
   const isMobile = useIsMobile();
+  if (!data?.items?.length) return null;
+
+  const heading = renderRichHeading(data.heading);
+  const ledger = data.ledger;
+  const video = data.videoCopy;
 
   return (
     <section className="section section--cream">
       <div className="wrap">
-        <div
-          className="between section-head"
-          style={{ marginBottom: 40, alignItems: "end", flexWrap: "wrap" }}
-        >
-          <div>
-            <span className="eyebrow">
-              <span className="dot" />
-              {data.eyebrow ?? "Customer savings · Q1 2026"}
-            </span>
-            <h2
-              className="h-display h-2"
-              style={{
-                marginTop: 14,
-                maxWidth: 760,
-                minHeight: isMobile ? 64 : 108,
-                lineHeight: 1.1,
-              }}
-            >
-              Unraveling the magic of{" "}
-              <span className="serif-it" style={{ color: "var(--accent)" }}>
-                brand options
-              </span>{" "}
-              in medicines.
-            </h2>
+        {(data.eyebrow || heading || data.lede) && (
+          <div
+            className="between section-head"
+            style={{ marginBottom: 40, alignItems: "end", flexWrap: "wrap" }}
+          >
+            <div>
+              {data.eyebrow && (
+                <span className="eyebrow">
+                  <span className="dot" />
+                  {data.eyebrow}
+                </span>
+              )}
+              {heading && (
+                <h2
+                  className="h-display h-2"
+                  style={{
+                    marginTop: 14,
+                    maxWidth: 760,
+                    minHeight: isMobile ? 64 : 108,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {heading}
+                </h2>
+              )}
+            </div>
+            {data.lede && (
+              <p className="body section-head__sub">{data.lede}</p>
+            )}
           </div>
-          <p className="body section-head__sub">
-            Prices vary dramatically from brand to brand, yet the composition
-            stays identical. The UrMedz engine surfaces the optimal pick for
-            every prescription.
-          </p>
-        </div>
+        )}
 
         <div className="sv__ledger">
-          <div className="sv__ledger-head">
-            <span className="label">Receipt no. URM-SV-2026Q1</span>
-            <span className="label">Avg. saving across 80,000 SKUs</span>
-            <span className="sv__ledger-tag">
-              <span
-                className="serif-it"
-                style={{ fontSize: 30, color: "var(--accent)", lineHeight: 1 }}
-              >
-                59%
-              </span>
-              <span
-                className="mono"
-                style={{
-                  fontSize: 10.5,
-                  letterSpacing: ".14em",
-                  color: "var(--mute)",
-                }}
-              >
-                avg.
-              </span>
-            </span>
-          </div>
+          {ledger &&
+            (ledger.receiptLabel || ledger.averageLabel || ledger.averageValue) && (
+              <div className="sv__ledger-head">
+                {ledger.receiptLabel && (
+                  <span className="label">{ledger.receiptLabel}</span>
+                )}
+                {ledger.averageLabel && (
+                  <span className="label">{ledger.averageLabel}</span>
+                )}
+                {ledger.averageValue && (
+                  <span className="sv__ledger-tag">
+                    <span
+                      className="serif-it"
+                      style={{
+                        fontSize: 30,
+                        color: "var(--accent)",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {ledger.averageValue}
+                    </span>
+                    <span
+                      className="mono"
+                      style={{
+                        fontSize: 10.5,
+                        letterSpacing: ".14em",
+                        color: "var(--mute)",
+                      }}
+                    >
+                      avg.
+                    </span>
+                  </span>
+                )}
+              </div>
+            )}
           {data.items.map((row, idx) => (
             <SavingsRow key={idx} row={row} />
           ))}
-          <div className="sv__ledger-foot">
-            <span
-              className="mono"
-              style={{ fontSize: 11, letterSpacing: ".14em" }}
-            >
-              * Indicative for a 30-day pack. Actual savings vary by
-              composition, strength &amp; location.
-            </span>
-          </div>
+          {ledger?.footnote && (
+            <div className="sv__ledger-foot">
+              <span
+                className="mono"
+                style={{ fontSize: 11, letterSpacing: ".14em" }}
+              >
+                {ledger.footnote}
+              </span>
+            </div>
+          )}
         </div>
 
         {data.videoUrl && (
@@ -197,41 +217,47 @@ export function Savings({ data }: SavingsProps) {
               <>
                 {data.videoPoster && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={data.videoPoster} alt="Brand options unraveled" />
+                  <img src={data.videoPoster} alt={video?.headline ?? ""} />
                 )}
                 <div className="sv__video-overlay">
-                  <span
-                    className="imgbox__tag"
-                    style={{
-                      background: "rgba(255,255,255,.92)",
-                      color: "var(--ink)",
-                    }}
-                  >
-                    ▶ 2:14 · How brand options work
-                  </span>
+                  {video?.tag && (
+                    <span
+                      className="imgbox__tag"
+                      style={{
+                        background: "rgba(255,255,255,.92)",
+                        color: "var(--ink)",
+                      }}
+                    >
+                      {video.tag}
+                    </span>
+                  )}
                   <div className="sv__video-bottom">
-                    <h3
-                      className="bts__headline"
-                      style={{ color: "#fff", maxWidth: 600 }}
-                    >
-                      See it on the pharmacy floor.
-                    </h3>
-                    <button
-                      className="btn btn-accent"
-                      onClick={() => setPlaying(true)}
-                    >
-                      <span
-                        style={{
-                          width: 0,
-                          height: 0,
-                          borderLeft: "10px solid currentColor",
-                          borderTop: "7px solid transparent",
-                          borderBottom: "7px solid transparent",
-                          marginRight: 2,
-                        }}
-                      />
-                      Watch the demo
-                    </button>
+                    {video?.headline && (
+                      <h3
+                        className="bts__headline"
+                        style={{ color: "#fff", maxWidth: 600 }}
+                      >
+                        {video.headline}
+                      </h3>
+                    )}
+                    {video?.ctaLabel && (
+                      <button
+                        className="btn btn-accent"
+                        onClick={() => setPlaying(true)}
+                      >
+                        <span
+                          style={{
+                            width: 0,
+                            height: 0,
+                            borderLeft: "10px solid currentColor",
+                            borderTop: "7px solid transparent",
+                            borderBottom: "7px solid transparent",
+                            marginRight: 2,
+                          }}
+                        />
+                        {video.ctaLabel}
+                      </button>
+                    )}
                   </div>
                 </div>
               </>

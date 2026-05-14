@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { Features } from "@/modules/Features";
 import { HowItWorks } from "@/modules/HowItWorks";
 import { Gallery } from "@/modules/Gallery";
-import type { Section } from "@/types/config.types";
+import type { Branding, Section } from "@/types/config.types";
 
 // Lazy-load below-the-fold client modules
 const Stats = dynamic(() =>
@@ -30,9 +30,10 @@ const Team = dynamic(() =>
 
 type SectionRendererProps = {
   sections: Section[];
+  branding?: Branding;
 };
 
-export function SectionRenderer({ sections }: SectionRendererProps) {
+export function SectionRenderer({ sections, branding }: SectionRendererProps) {
   if (!sections?.length) return null;
   return (
     <>
@@ -51,13 +52,25 @@ export function SectionRenderer({ sections }: SectionRendererProps) {
           case "videoFeature":
             return <VideoFeature key={`vf-${idx}`} data={section.data} />;
           case "appStrip":
-            return <AppStrip key={`app-strip-${idx}`} data={section.data} />;
+            return (
+              <AppStrip
+                key={`app-strip-${idx}`}
+                data={section.data}
+                branding={branding}
+              />
+            );
           case "faq":
             return <Faq key={`faq-${idx}`} data={section.data} />;
           case "aiStore":
             return <AIStore key={`ai-store-${idx}`} data={section.data} />;
           case "team":
-            return <Team key={`team-${idx}`} data={section.data} />;
+            return (
+              <Team
+                key={`team-${idx}`}
+                data={section.data}
+                branding={branding}
+              />
+            );
           default:
             return null;
         }

@@ -61,39 +61,52 @@ type StatsProps = {
 };
 
 export function Stats({ data }: StatsProps) {
+  if (!data?.items?.length) return null;
+
   return (
     <section className="section section--ink">
       <div className="wrap">
-        <div
-          className="between section-head"
-          style={{ marginBottom: 56, alignItems: "end", flexWrap: "wrap" }}
-        >
-          <div>
-            <span className="eyebrow" style={{ color: "rgba(244,239,230,.5)" }}>
-              <span className="dot" style={{ background: "var(--accent)" }} />
-              {data.eyebrow ?? "By the numbers"}
-            </span>
-            {data.headline && (
-              <h2
-                className="h-display h-2"
-                style={{
-                  color: "var(--cream)",
-                  marginTop: 14,
-                  minHeight: 64,
-                }}
+        {(data.eyebrow || data.headline || data.descriptor) && (
+          <div
+            className="between section-head"
+            style={{ marginBottom: 56, alignItems: "end", flexWrap: "wrap" }}
+          >
+            <div>
+              {data.eyebrow && (
+                <span
+                  className="eyebrow"
+                  style={{ color: "rgba(244,239,230,.5)" }}
+                >
+                  <span
+                    className="dot"
+                    style={{ background: "var(--accent)" }}
+                  />
+                  {data.eyebrow}
+                </span>
+              )}
+              {data.headline && (
+                <h2
+                  className="h-display h-2"
+                  style={{
+                    color: "var(--cream)",
+                    marginTop: 14,
+                    minHeight: 64,
+                  }}
+                >
+                  {data.headline}
+                </h2>
+              )}
+            </div>
+            {data.descriptor && (
+              <p
+                className="body section-head__sub"
+                style={{ color: "rgba(244,239,230,.62)" }}
               >
-                {data.headline}
-              </h2>
+                {data.descriptor}
+              </p>
             )}
           </div>
-          <p
-            className="body section-head__sub"
-            style={{ color: "rgba(244,239,230,.62)" }}
-          >
-            A pharmacy-and-platform footprint sized for the country, built
-            quietly in the background.
-          </p>
-        </div>
+        )}
         <div
           className="stats__grid"
           style={{ borderColor: "rgba(244,239,230,.16)" }}

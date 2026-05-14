@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { FaqSectionData } from "@/types/config.types";
 import { useIsMobile } from "@/lib/useIsMobile";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 type FaqProps = {
   data: FaqSectionData;
@@ -12,41 +13,48 @@ type FaqProps = {
 export function Faq({ data }: FaqProps) {
   const [open, setOpen] = useState<number>(0);
   const isMobile = useIsMobile();
+  if (!data?.items?.length) return null;
+
+  const heading = renderRichHeading(data.heading);
+
   return (
     <section className="section" id="faq">
       <div className="wrap">
         <div className="faq__layout" style={{ alignItems: "start", gap: 64 }}>
           <div>
-            <span className="eyebrow">
-              <span className="dot" />
-              Frequently asked
-            </span>
-            <h2
-              className="h-display h-1"
-              style={{
-                marginTop: 18,
-                maxWidth: 480,
-                lineHeight: 1,
-                minHeight: isMobile ? 80 : 180,
-              }}
-            >
-              Questions,
-              <br />
-              <span className="serif-it" style={{ color: "var(--accent)" }}>
-                answered.
+            {data.eyebrow && (
+              <span className="eyebrow">
+                <span className="dot" />
+                {data.eyebrow}
               </span>
-            </h2>
-            <p className="body" style={{ marginTop: 20, maxWidth: 360 }}>
-              Anything we missed? Reach out — our team replies within a working
-              day.
-            </p>
-            <Link
-              className="btn btn-ghost"
-              href="/contact"
-              style={{ marginTop: 20, display: "inline-block" }}
-            >
-              Contact support →
-            </Link>
+            )}
+            {heading && (
+              <h2
+                className="h-display h-1"
+                style={{
+                  marginTop: 18,
+                  maxWidth: 480,
+                  lineHeight: 1,
+                  minHeight: isMobile ? 80 : 180,
+                }}
+              >
+                {heading}
+              </h2>
+            )}
+            {data.lede && (
+              <p className="body" style={{ marginTop: 20, maxWidth: 360 }}>
+                {data.lede}
+              </p>
+            )}
+            {data.ctaLabel && (
+              <Link
+                className="btn btn-ghost"
+                href={data.ctaHref ?? "/contact"}
+                style={{ marginTop: 20, display: "inline-block" }}
+              >
+                {data.ctaLabel}
+              </Link>
+            )}
           </div>
           <div className="faq__list">
             {data.items.map((f, i) => (

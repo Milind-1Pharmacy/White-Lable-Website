@@ -10,19 +10,37 @@ export const revalidate = 3600;
 
 export default async function HomePage() {
   const { app } = await getConfig();
+  const { content, branding } = app;
 
-  const appStripSection = app.content.sections.find((s) => s.type === "appStrip");
-  const remainingSections = app.content.sections.filter((s) => s.type !== "appStrip");
+  const appStripSection = content.sections.find((s) => s.type === "appStrip");
+  const remainingSections = content.sections.filter(
+    (s) => s.type !== "appStrip",
+  );
+
+  const hasAbout =
+    !!content.about &&
+    (!!content.about.eyebrow ||
+      !!content.about.title ||
+      !!content.about.lede ||
+      !!content.about.description ||
+      !!(content.about.pillars && content.about.pillars.length));
+
+  const services = content.services ?? [];
 
   return (
     <>
-      <Hero data={app.content.hero} />
+      <Hero data={content.hero} />
       {appStripSection && (
-        <AppStrip data={appStripSection.data as AppStripSectionData} />
+        <AppStrip
+          data={appStripSection.data as AppStripSectionData}
+          branding={branding}
+        />
       )}
-      <About data={app.content.about} />
-      <Services data={app.content.services} />
-      <SectionRenderer sections={remainingSections} />
+      {hasAbout && <About data={content.about} />}
+      {services.length > 0 && (
+        <Services data={services} meta={content.servicesMeta} />
+      )}
+      <SectionRenderer sections={remainingSections} branding={branding} />
     </>
   );
 }

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import type { HowItWorksSectionData } from "@/types/config.types";
 import { useIsMobile } from "@/lib/useIsMobile";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 type HowItWorksProps = {
   data: HowItWorksSectionData;
@@ -9,38 +10,48 @@ type HowItWorksProps = {
 
 export function HowItWorks({ data }: HowItWorksProps) {
   const isMobile = useIsMobile();
+  if (!data?.steps?.length) return null;
+  const heading = renderRichHeading(data.heading);
+
   return (
     <section className="section">
       <div className="wrap">
-        <div
-          className="between section-head"
-          style={{ marginBottom: 32, alignItems: "end", flexWrap: "wrap" }}
-        >
-          <div>
-            <span className="eyebrow">
-              <span className="dot" />
-              How it works
-            </span>
-            <h2
-              className="h-display h-2"
-              style={{
-                marginTop: 14,
-                maxWidth: 720,
-                minHeight: isMobile ? 64 : 108,
-                lineHeight: 1.1,
-              }}
-            >
-              Prescription to{" "}
-              <span className="serif-it" style={{ color: "var(--accent)" }}>
-                pocket
-              </span>{" "}
-              — in three steps.
-            </h2>
+        {(data.eyebrow || heading || data.ctaLabel) && (
+          <div
+            className="between section-head"
+            style={{ marginBottom: 32, alignItems: "end", flexWrap: "wrap" }}
+          >
+            <div>
+              {data.eyebrow && (
+                <span className="eyebrow">
+                  <span className="dot" />
+                  {data.eyebrow}
+                </span>
+              )}
+              {heading && (
+                <h2
+                  className="h-display h-2"
+                  style={{
+                    marginTop: 14,
+                    maxWidth: 720,
+                    minHeight: isMobile ? 64 : 108,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {heading}
+                </h2>
+              )}
+            </div>
+            {data.ctaLabel && (
+              <Link
+                href={data.ctaHref ?? "/contact"}
+                className="btn btn-primary section-head__sub"
+              >
+                {data.ctaLabel}
+              </Link>
+            )}
           </div>
-          <Link href="/contact" className="btn btn-primary section-head__sub">
-            Start an order →
-          </Link>
-        </div>
+        )}
         <div className="steps">
           {data.steps.map((s) => (
             <div key={s.step} className="step">

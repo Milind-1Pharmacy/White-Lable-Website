@@ -22,7 +22,6 @@ export default async function SiteLayout({
 }>) {
   const config = await getConfig();
   const tenant = process.env.TENANT ?? "app_master";
-  const isUrmedz = tenant === "urmedz";
 
   return (
     <>
@@ -35,7 +34,7 @@ export default async function SiteLayout({
         <Navbar app={config.app} />
         <main className="flex-1">{children}</main>
         <Footer app={config.app} />
-        {isUrmedz && <StickyCta />}
+        <StickyCta config={config.app.layout?.stickyCta} />
       </div>
     </>
   );

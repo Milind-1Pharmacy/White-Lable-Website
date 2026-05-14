@@ -1,90 +1,102 @@
 "use client";
 
 import { useState } from "react";
-import type { AIStoreSectionData } from "@/types/config.types";
+import type { AIStoreSectionData, AIStoreTile } from "@/types/config.types";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 type AIStoreProps = {
   data: AIStoreSectionData;
 };
 
-export function AIStore({ data: _ }: AIStoreProps) {
+function Tile({ tile }: { tile: AIStoreTile }) {
   const [playing, setPlaying] = useState(false);
+  const tagStyle: React.CSSProperties = {
+    background: tile.tagBg ?? "rgba(255,255,255,.92)",
+    color: tile.tagColor ?? "var(--ink)",
+  };
+  const wrapperStyle: React.CSSProperties = tile.background
+    ? { background: tile.background }
+    : {};
+
+  if (tile.videoUrl) {
+    return (
+      <div className="split__tile" style={wrapperStyle}>
+        {!playing ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={tile.image}
+              alt={tile.alt ?? ""}
+              style={{ opacity: 0.55 }}
+            />
+            <button
+              className="play-btn"
+              onClick={() => setPlaying(true)}
+              aria-label="Play video"
+            />
+            {tile.tag && (
+              <span className="imgbox__tag" style={tagStyle}>
+                {tile.tag}
+              </span>
+            )}
+          </>
+        ) : (
+          <video autoPlay controls src={tile.videoUrl} />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="split__tile" style={wrapperStyle}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={tile.image} alt={tile.alt ?? ""} />
+      {tile.tag && (
+        <span className="imgbox__tag" style={tagStyle}>
+          {tile.tag}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export function AIStore({ data }: AIStoreProps) {
+  if (!data?.tiles || data.tiles.length === 0) return null;
+
+  const heading = renderRichHeading(data.heading);
 
   return (
     <section className="section">
       <div className="wrap">
-        <div className="split__head">
-          <div>
-            <span className="eyebrow">
-              <span className="dot" />
-              Technology · 2026
-            </span>
-            <h2
-              className="h-display h-2"
-              style={{ marginTop: 14, minHeight: 80, lineHeight: 1.1 }}
-            >
-              Our{" "}
-              <span className="serif-it" style={{ color: "var(--accent)" }}>
-                AI-driven
-              </span>{" "}
-              retail stores.
-            </h2>
-          </div>
-          <p className="body" style={{ maxWidth: 380, margin: 0 }}>
-            A store-assistant that knows your prescription history, your
-            alternatives and your pickup time — quietly working alongside our
-            pharmacists.
-          </p>
-        </div>
-        <div className="split__grid">
-          <div className="split__tile">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://www.urmedz.in/wp-content/uploads/2025/08/shopn.png"
-              alt="UrMedz AI-driven retail store"
-            />
-            <span
-              className="imgbox__tag"
-              style={{
-                background: "rgba(255,255,255,.92)",
-                color: "var(--ink)",
-              }}
-            >
-              STORE FLOOR · WHITEFIELD
-            </span>
-          </div>
-          <div className="split__tile" style={{ background: "var(--ink)" }}>
-            {!playing ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://www.urmedz.in/wp-content/uploads/2025/08/shopn.png"
-                  alt="Store assistant preview"
-                  style={{ opacity: 0.55 }}
-                />
-                <button
-                  className="play-btn"
-                  onClick={() => setPlaying(true)}
-                  aria-label="Play store assistant video"
-                />
-                <span
-                  className="imgbox__tag"
-                  style={{
-                    background: "rgba(0,178,122,.95)",
-                    color: "var(--ink)",
-                  }}
-                >
-                  STORE ASSISTANT · DEMO
+        {(data.eyebrow || heading || data.lede) && (
+          <div className="split__head">
+            <div>
+              {data.eyebrow && (
+                <span className="eyebrow">
+                  <span className="dot" />
+                  {data.eyebrow}
                 </span>
-              </>
-            ) : (
-              <video
-                autoPlay
-                controls
-                src="https://www.urmedz.in/wp-content/uploads/2025/08/Urmedz-Store-Assistant.mp4"
-              />
+              )}
+              {heading && (
+                <h2
+                  className="h-display h-2"
+                  style={{ marginTop: 14, minHeight: 80, lineHeight: 1.1 }}
+                >
+                  {heading}
+                </h2>
+              )}
+            </div>
+            {data.lede && (
+              <p className="body" style={{ maxWidth: 380, margin: 0 }}>
+                {data.lede}
+              </p>
             )}
           </div>
+        )}
+        <div className="split__grid">
+          {data.tiles.map((tile, i) => (
+            <Tile key={i} tile={tile} />
+          ))}
         </div>
       </div>
     </section>

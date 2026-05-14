@@ -20,6 +20,7 @@ export type BrandingColors = {
 export type Branding = {
   logo?: string;
   logoFull?: string;
+  stylesheet?: string;
   colors: BrandingColors;
 };
 
@@ -30,6 +31,16 @@ export type Seo = {
   ogImage?: string;
 };
 
+export type RichHeadingPart = {
+  text: string;
+  emphasis?: "italic-accent" | "italic" | "accent";
+  br?: boolean;
+};
+
+export type RichHeading = {
+  parts: RichHeadingPart[];
+};
+
 export type HeroProofItem = string;
 
 export type HeroSecondaryCta = {
@@ -37,14 +48,37 @@ export type HeroSecondaryCta = {
   href?: string;
 };
 
+export type HeroSlide = {
+  image: string;
+  tag?: string;
+  caption?: string;
+};
+
+export type HeroMetaItem = {
+  value: string;
+  suffix?: string;
+  label: string;
+};
+
+export type HeroRail = {
+  liveLabel?: string;
+  locationText?: string;
+  badgeColors?: string[];
+  badgeText?: string;
+};
+
 export type HeroContent = {
   headline: string;
+  headlineRich?: RichHeading;
   tagline: string;
   image?: string;
   eyebrow?: string;
   cta: SafeActionCta;
   secondaryCta?: HeroSecondaryCta;
   proof?: HeroProofItem[];
+  slides?: HeroSlide[];
+  meta?: HeroMetaItem[];
+  rail?: HeroRail;
 };
 
 export type PillarItem = {
@@ -58,6 +92,9 @@ export type PillarItem = {
 export type AboutContent = {
   description: string;
   image?: string;
+  eyebrow?: string;
+  title?: RichHeading;
+  lede?: string;
   pillars?: PillarItem[];
 };
 
@@ -67,13 +104,21 @@ export type ServiceItem = {
   image?: string;
 };
 
+export type ServicesMeta = {
+  eyebrow?: string;
+  heading?: RichHeading;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
 export type FeatureItem = {
   title: string;
   description: string;
 };
 
 export type FeaturesSectionData = {
-  heading?: string;
+  eyebrow?: string;
+  heading?: RichHeading;
   items: FeatureItem[];
 };
 
@@ -84,7 +129,10 @@ export type HowItWorksStep = {
 };
 
 export type HowItWorksSectionData = {
-  heading?: string;
+  eyebrow?: string;
+  heading?: RichHeading;
+  ctaLabel?: string;
+  ctaHref?: string;
   steps: HowItWorksStep[];
 };
 
@@ -95,7 +143,7 @@ export type GalleryImage = {
 };
 
 export type GallerySectionData = {
-  heading?: string;
+  heading?: RichHeading;
   eyebrow?: string;
   images: GalleryImage[];
 };
@@ -110,15 +158,50 @@ export type StatItem = {
 export type StatsSectionData = {
   eyebrow?: string;
   headline?: string;
+  descriptor?: string;
   items: StatItem[];
 };
 
+export type AIStoreTile = {
+  image: string;
+  alt?: string;
+  tag?: string;
+  tagBg?: string;
+  tagColor?: string;
+  videoUrl?: string;
+  background?: string;
+};
+
 export type AIStoreSectionData = {
-  _placeholder?: true;
+  eyebrow?: string;
+  heading?: RichHeading;
+  lede?: string;
+  tiles?: AIStoreTile[];
+};
+
+export type TeamDepartment = {
+  code: string;
+  count: number;
+  label: string;
+  role: string;
+  bg: string;
+  fg: string;
+  detail: string;
+};
+
+export type TeamCredential = {
+  label: string;
+  value: string;
 };
 
 export type TeamSectionData = {
-  _placeholder?: true;
+  eyebrow?: string;
+  quote?: RichHeading;
+  signature?: string;
+  signatureLabel?: string;
+  logoMark?: string;
+  departments?: TeamDepartment[];
+  credentials?: TeamCredential[];
 };
 
 export type SavingsItem = {
@@ -130,17 +213,34 @@ export type SavingsItem = {
   color?: string;
 };
 
+export type SavingsLedger = {
+  receiptLabel?: string;
+  receiptValue?: string;
+  averageLabel?: string;
+  averageValue?: string;
+  footnote?: string;
+};
+
+export type SavingsVideoCopy = {
+  tag?: string;
+  headline?: string;
+  ctaLabel?: string;
+};
+
 export type SavingsSectionData = {
   eyebrow?: string;
-  heading?: string;
+  heading?: RichHeading;
+  lede?: string;
   items: SavingsItem[];
+  ledger?: SavingsLedger;
   videoPoster?: string;
   videoUrl?: string;
+  videoCopy?: SavingsVideoCopy;
 };
 
 export type VideoFeatureSectionData = {
   tag?: string;
-  heading: string;
+  heading?: RichHeading;
   ctaLabel?: string;
   poster?: string;
   videoUrl?: string;
@@ -148,8 +248,9 @@ export type VideoFeatureSectionData = {
 };
 
 export type AppStripSectionData = {
-  heading?: string;
+  heading?: RichHeading;
   descriptor?: string;
+  logo?: string;
   appStoreUrl?: string;
   googlePlayUrl?: string;
 };
@@ -160,7 +261,11 @@ export type FaqItem = {
 };
 
 export type FaqSectionData = {
-  heading?: string;
+  eyebrow?: string;
+  heading?: RichHeading;
+  lede?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
   items: FaqItem[];
 };
 
@@ -190,8 +295,9 @@ export type Section =
 
 export type Content = {
   hero: HeroContent;
-  about: AboutContent;
-  services: ServiceItem[];
+  about?: AboutContent;
+  services?: ServiceItem[];
+  servicesMeta?: ServicesMeta;
   sections: Section[];
 };
 
@@ -213,6 +319,84 @@ export type Compliance = {
   disclaimer: string;
 };
 
+export type NavLink = {
+  label: string;
+  href: string;
+};
+
+export type NavCta = {
+  label: string;
+  href: string;
+  variant?: "primary" | "ghost" | "accent";
+};
+
+export type NavConfig = {
+  links?: NavLink[];
+  ctas?: NavCta[];
+};
+
+export type StickyCtaConfig = {
+  enabled?: boolean;
+  text?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
+export type FooterColumn = {
+  heading: string;
+  links: NavLink[];
+};
+
+export type FooterBottomTag = {
+  text: string;
+};
+
+export type FooterConfig = {
+  headline?: RichHeading;
+  ctaLabel?: string;
+  ctaHref?: string;
+  description?: string;
+  addressLabel?: string;
+  columns?: FooterColumn[];
+  bottomTag?: string;
+};
+
+export type LegalPage = {
+  eyebrow?: string;
+  heading?: string;
+  body?: string[];
+  sections?: Array<{ heading?: string; body: string[] }>;
+};
+
+export type ContactPageConfig = {
+  eyebrow?: string;
+  heading?: string;
+  lede?: string;
+};
+
+export type NotFoundConfig = {
+  code?: string;
+  heading?: string;
+  body?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
+export type PagesConfig = {
+  contact?: ContactPageConfig;
+  disclaimer?: LegalPage;
+  privacyPolicy?: LegalPage;
+  termsAndConditions?: LegalPage;
+  notFound?: NotFoundConfig;
+};
+
+export type Layout = {
+  nav?: NavConfig;
+  footer?: FooterConfig;
+  stickyCta?: StickyCtaConfig;
+  pages?: PagesConfig;
+};
+
 export type AppConfig = {
   tenant: Tenant;
   branding: Branding;
@@ -221,6 +405,7 @@ export type AppConfig = {
   contact: Contact;
   features: Features;
   compliance: Compliance;
+  layout?: Layout;
 };
 
 export type SystemConfig = {

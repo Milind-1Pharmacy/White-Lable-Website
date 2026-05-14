@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { VideoFeatureSectionData } from "@/types/config.types";
+import { renderRichHeading } from "@/modules/RichHeading";
 
 type VideoFeatureProps = {
   data: VideoFeatureSectionData;
@@ -9,7 +10,12 @@ type VideoFeatureProps = {
 
 export function VideoFeature({ data }: VideoFeatureProps) {
   const [playing, setPlaying] = useState(false);
-  const words = data.marquee ?? ["Authentic", "Traceable", "Compliant", "Fast", "Scalable", "Trusted"];
+  const words = data.marquee ?? [];
+  const heading = renderRichHeading(data.heading);
+
+  if (!data.poster && !data.videoUrl && !heading && words.length === 0) {
+    return null;
+  }
 
   return (
     <section className="section" id="fulfilment">
@@ -19,20 +25,28 @@ export function VideoFeature({ data }: VideoFeatureProps) {
             <>
               {data.poster && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={data.poster} alt="Inside a UrMedz fulfilment centre" />
+                <img src={data.poster} alt={data.tag ?? ""} />
               )}
               <div className="bts__overlay">
-                <span className="bts__tag">{data.tag ?? "Behind the scenes · Fulfilment"}</span>
+                {data.tag && <span className="bts__tag">{data.tag}</span>}
                 <div className="bts__bottom">
-                  <h3 className="bts__headline">
-                    A look at our{" "}
-                    <span className="serif-it" style={{ color: "var(--accent)" }}>hi-tech</span>{" "}
-                    fulfilment centres.
-                  </h3>
-                  {data.videoUrl && (
-                    <button className="btn btn-accent" onClick={() => setPlaying(true)}>
-                      <span style={{ width: 0, height: 0, borderLeft: "10px solid currentColor", borderTop: "7px solid transparent", borderBottom: "7px solid transparent", marginRight: 2 }} />
-                      {data.ctaLabel ?? "Watch the tour · 3:42"}
+                  {heading && <h3 className="bts__headline">{heading}</h3>}
+                  {data.videoUrl && data.ctaLabel && (
+                    <button
+                      className="btn btn-accent"
+                      onClick={() => setPlaying(true)}
+                    >
+                      <span
+                        style={{
+                          width: 0,
+                          height: 0,
+                          borderLeft: "10px solid currentColor",
+                          borderTop: "7px solid transparent",
+                          borderBottom: "7px solid transparent",
+                          marginRight: 2,
+                        }}
+                      />
+                      {data.ctaLabel}
                     </button>
                   )}
                 </div>
@@ -49,17 +63,28 @@ export function VideoFeature({ data }: VideoFeatureProps) {
           )}
         </div>
 
-        <div className="marquee" style={{ marginTop: 40, paddingTop: 28, paddingBottom: 28, borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
-          <div className="marquee__track">
-            {[0, 1].map((g) => (
-              <span key={g}>
-                {words.map((w, wi) => (
-                  <span key={wi}>{w}</span>
-                ))}
-              </span>
-            ))}
+        {words.length > 0 && (
+          <div
+            className="marquee"
+            style={{
+              marginTop: 40,
+              paddingTop: 28,
+              paddingBottom: 28,
+              borderTop: "1px solid var(--line)",
+              borderBottom: "1px solid var(--line)",
+            }}
+          >
+            <div className="marquee__track">
+              {[0, 1].map((g) => (
+                <span key={g}>
+                  {words.map((w, wi) => (
+                    <span key={wi}>{w}</span>
+                  ))}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

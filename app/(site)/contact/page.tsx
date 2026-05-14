@@ -14,15 +14,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const { app } = await getConfig();
+  const page = app.layout?.pages?.contact;
+
   return (
     <SectionWrapper
-      eyebrow="Contact"
-      heading={`Get in touch with ${app.tenant.name}`}
+      eyebrow={page?.eyebrow}
+      heading={page?.heading ?? app.tenant.name}
     >
-      <p className="mb-8 max-w-2xl text-base leading-relaxed text-[var(--brand-text)]/75">
-        We&apos;re happy to answer questions about our offerings. Reach out via
-        any of the channels below and our team will get back to you.
-      </p>
+      {page?.lede && (
+        <p className="mb-8 max-w-2xl text-base leading-relaxed text-[var(--brand-text)]/75">
+          {page.lede}
+        </p>
+      )}
       <ContactDisplay contact={app.contact} />
     </SectionWrapper>
   );

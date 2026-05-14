@@ -45,16 +45,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const config = await getConfig();
-  const tenant = process.env.TENANT ?? "app_master";
+  const stylesheet = config.app.branding?.stylesheet;
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
-        {tenant === "urmedz" && (
-          <link rel="stylesheet" href="/urmedz.css" />
-        )}
+        {stylesheet && <link rel="stylesheet" href={stylesheet} />}
       </head>
       <body
         suppressHydrationWarning
