@@ -33,8 +33,13 @@ export function Hero({ data }: HeroProps) {
 
   useEffect(() => {
     if (timer.current) clearInterval(timer.current);
-    timer.current = setInterval(() => setI((v) => (v + 1) % HERO_SLIDES.length), 5500);
-    return () => { if (timer.current) clearInterval(timer.current); };
+    timer.current = setInterval(
+      () => setI((v) => (v + 1) % HERO_SLIDES.length),
+      5500,
+    );
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
   }, []);
 
   const go = (n: number) => {
@@ -54,8 +59,9 @@ export function Hero({ data }: HeroProps) {
           </div>
 
           <h1 className="hero__h">
-            Authentic<br />
-            medicines, <em>fingertip-</em><br />
+            Authentic
+            <br />
+            medicines, <em style={{ letterSpacing: 1.2 }}>fingertip-</em>
             fast.
           </h1>
 
@@ -68,7 +74,10 @@ export function Hero({ data }: HeroProps) {
               {data.cta.label} <span style={{ marginLeft: 4 }}>→</span>
             </Link>
             {data.secondaryCta && (
-              <Link className="btn btn-ghost" href={data.secondaryCta.href ?? "/services"}>
+              <Link
+                className="btn btn-ghost"
+                href={data.secondaryCta.href ?? "/services"}
+              >
                 {data.secondaryCta.label}
               </Link>
             )}
@@ -77,15 +86,36 @@ export function Hero({ data }: HeroProps) {
           <div className="hero__meta">
             <div className="stack">
               <span className="num">
-                25<em style={{ color: "var(--accent)", fontFamily: "var(--font-display)", fontStyle: "italic" }}>+</em>
+                25
+                <em
+                  style={{
+                    color: "var(--accent)",
+                    fontFamily: "var(--font-display)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  +
+                </em>
               </span>
               <span className="lbl">Retail stores across South India</span>
             </div>
             <div className="stack">
               <span className="num">
-                10k<em style={{ color: "var(--accent)", fontFamily: "var(--font-display)", fontStyle: "italic" }}>/day</em>
+                10k
+                <em
+                  style={{
+                    color: "var(--accent)",
+                    fontFamily: "var(--font-display)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {" "}
+                  / day
+                </em>
               </span>
-              <span className="lbl">Orders dispensed by licensed pharmacists</span>
+              <span className="lbl">
+                Orders dispensed by licensed pharmacists
+              </span>
             </div>
             <div className="stack">
               <span className="num">80k</span>
@@ -96,7 +126,10 @@ export function Hero({ data }: HeroProps) {
 
         <div className="hero__media">
           {HERO_SLIDES.map((s, idx) => (
-            <div key={idx} className={"slide" + (idx === i ? " is-active" : "")}>
+            <div
+              key={idx}
+              className={"slide" + (idx === i ? " is-active" : "")}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={s.img} alt={s.cap} />
               <div className="overlay" />
@@ -107,8 +140,12 @@ export function Hero({ data }: HeroProps) {
             {HERO_SLIDES[i].tag}
           </span>
           <div className="arr">
-            <button aria-label="Previous" onClick={() => go(i - 1)}>‹</button>
-            <button aria-label="Next" onClick={() => go(i + 1)}>›</button>
+            <button aria-label="Previous" onClick={() => go(i - 1)}>
+              ‹
+            </button>
+            <button aria-label="Next" onClick={() => go(i + 1)}>
+              ›
+            </button>
           </div>
           <div className="dots">
             {HERO_SLIDES.map((_, idx) => (
@@ -125,18 +162,60 @@ export function Hero({ data }: HeroProps) {
 
       <div className="hero__rail" style={{ marginTop: 56 }}>
         <span className="pill">
-          <span style={{ width: 6, height: 6, borderRadius: 999, background: "var(--accent)", display: "inline-block", marginRight: 4 }} />
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 999,
+              background: "var(--accent)",
+              display: "inline-block",
+              marginRight: 4,
+            }}
+          />
           Live
         </span>
-        <span className="body-s">Now serving Bengaluru &amp; Hyderabad. Pin-code check in the app.</span>
+        <span className="body-s">
+          Now serving Bengaluru &amp; Hyderabad. Pin-code check in the app.
+        </span>
         <span className="sep" />
         <span className="row" style={{ gap: 6 }}>
-          <span style={{ width: 8, height: 8, borderRadius: 999, background: "#F5A623" }} />
-          <span style={{ width: 8, height: 8, borderRadius: 999, background: "#6B3FA0" }} />
-          <span style={{ width: 8, height: 8, borderRadius: 999, background: "#1FAFA6" }} />
-          <span style={{ width: 8, height: 8, borderRadius: 999, background: "#E5326C" }} />
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#F5A623",
+            }}
+          />
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#6B3FA0",
+            }}
+          />
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#1FAFA6",
+            }}
+          />
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#E5326C",
+            }}
+          />
         </span>
-        <span className="body-s mono" style={{ fontSize: 12, letterSpacing: ".06em" }}>
+        <span
+          className="body-s mono"
+          style={{ fontSize: 12, letterSpacing: ".06em" }}
+        >
           RX-001 · DRG-LIC-KA · ISO 9001:2015
         </span>
       </div>

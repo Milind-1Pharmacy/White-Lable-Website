@@ -10,7 +10,10 @@ export function Services({ data }: ServicesProps) {
   return (
     <section className="section section--cream" id="services">
       <div className="wrap">
-        <div className="between" style={{ marginBottom: 56, alignItems: "end" }}>
+        <div
+          className="between"
+          style={{ marginBottom: 64, alignItems: "end" }}
+        >
           <div style={{ maxWidth: 720 }}>
             <span className="eyebrow">
               <span className="dot" />
@@ -20,7 +23,11 @@ export function Services({ data }: ServicesProps) {
               Four pillars. <span className="serif-it">One network.</span>
             </h2>
           </div>
-          <a className="btn btn-ghost" href="/services" style={{ background: "transparent" }}>
+          <a
+            className="btn btn-ghost mobile-btn"
+            href="/services"
+            style={{ background: "transparent", marginTop: 16 }}
+          >
             All services →
           </a>
         </div>
@@ -28,7 +35,10 @@ export function Services({ data }: ServicesProps) {
           {data.map((s, i) => (
             <div key={i} className="service">
               <div>
-                <div className="service__num">{String(i + 1).padStart(2, "0")} / {String(data.length).padStart(2, "0")}</div>
+                <div className="service__num">
+                  {String(i + 1).padStart(2, "0")} /{" "}
+                  {String(data.length).padStart(2, "0")}
+                </div>
               </div>
               <div>
                 <h3 className="service__title">{s.title}</h3>

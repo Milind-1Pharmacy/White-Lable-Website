@@ -32,7 +32,9 @@ export function Navbar({ app }: NavbarProps) {
   // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   const iconLogo = app.branding?.logo;
@@ -48,8 +50,8 @@ export function Navbar({ app }: NavbarProps) {
             <Image
               src={fullLogo}
               alt={app.tenant.name}
-              width={160}
-              height={48}
+              width={200}
+              height={64}
               className="nav__logo-full"
               priority
             />
@@ -64,21 +66,33 @@ export function Navbar({ app }: NavbarProps) {
             />
           )}
           {!fullLogo && !iconLogo && (
-            <span style={{ fontWeight: 700, fontSize: 18 }}>{app.tenant.name}</span>
+            <span style={{ fontWeight: 700, fontSize: 18 }}>
+              {app.tenant.name}
+            </span>
           )}
         </Link>
 
         <nav className="nav__links">
           {NAV_LINKS.map((l) => (
-            <Link key={l.label} href={l.href}>{l.label}</Link>
+            <Link key={l.label} href={l.href}>
+              {l.label}
+            </Link>
           ))}
         </nav>
 
         <div className="nav__cta">
-          <Link href="/contact" className="btn btn-ghost" style={{ padding: "10px 16px" }}>
+          <Link
+            href="/contact"
+            className="btn btn-ghost"
+            style={{ padding: "10px 16px" }}
+          >
             Get the app
           </Link>
-          <Link href="/contact" className="btn btn-primary" style={{ padding: "10px 18px" }}>
+          <Link
+            href="/contact"
+            className="btn btn-primary"
+            style={{ padding: "10px 18px" }}
+          >
             Order now →
           </Link>
         </div>
@@ -96,9 +110,14 @@ export function Navbar({ app }: NavbarProps) {
       </header>
 
       {/* Mobile slide-in menu */}
-      <div className={"nav__mobile-menu" + (menuOpen ? " is-open" : "")} aria-hidden={!menuOpen}>
+      <div
+        className={"nav__mobile-menu" + (menuOpen ? " is-open" : "")}
+        aria-hidden={!menuOpen}
+      >
         {NAV_LINKS.map((l) => (
-          <Link key={l.label} href={l.href} onClick={closeMenu}>{l.label}</Link>
+          <Link key={l.label} href={l.href} onClick={closeMenu}>
+            {l.label}
+          </Link>
         ))}
         <div className="nav__mobile-cta">
           <Link href="/contact" className="btn btn-ghost" onClick={closeMenu}>

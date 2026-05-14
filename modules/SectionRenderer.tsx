@@ -6,13 +6,27 @@ import { Gallery } from "@/modules/Gallery";
 import type { Section } from "@/types/config.types";
 
 // Lazy-load below-the-fold client modules
-const Stats = dynamic(() => import("@/modules/Stats").then((m) => ({ default: m.Stats })));
-const Savings = dynamic(() => import("@/modules/Savings").then((m) => ({ default: m.Savings })));
-const VideoFeature = dynamic(() => import("@/modules/VideoFeature").then((m) => ({ default: m.VideoFeature })));
-const AppStrip = dynamic(() => import("@/modules/AppStrip").then((m) => ({ default: m.AppStrip })));
-const Faq = dynamic(() => import("@/modules/Faq").then((m) => ({ default: m.Faq })));
-const AIStore = dynamic(() => import("@/modules/AIStore").then((m) => ({ default: m.AIStore })));
-const Team = dynamic(() => import("@/modules/Team").then((m) => ({ default: m.Team })));
+const Stats = dynamic(() =>
+  import("@/modules/Stats").then((m) => ({ default: m.Stats })),
+);
+const Savings = dynamic(() =>
+  import("@/modules/Savings").then((m) => ({ default: m.Savings })),
+);
+const VideoFeature = dynamic(() =>
+  import("@/modules/VideoFeature").then((m) => ({ default: m.VideoFeature })),
+);
+const AppStrip = dynamic(() =>
+  import("@/modules/AppStrip").then((m) => ({ default: m.AppStrip })),
+);
+const Faq = dynamic(() =>
+  import("@/modules/Faq").then((m) => ({ default: m.Faq })),
+);
+const AIStore = dynamic(() =>
+  import("@/modules/AIStore").then((m) => ({ default: m.AIStore })),
+);
+const Team = dynamic(() =>
+  import("@/modules/Team").then((m) => ({ default: m.Team })),
+);
 
 type SectionRendererProps = {
   sections: Section[];

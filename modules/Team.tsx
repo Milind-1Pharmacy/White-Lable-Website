@@ -5,10 +5,46 @@ import Image from "next/image";
 import type { TeamSectionData } from "@/types/config.types";
 
 const DEPTS = [
-  { code: "01", count: 75,  label: "Pharmacists",      role: "Licensed dispensing",   bg: "#F5A623", fg: "#1B2A5B", detail: "Registered with the Karnataka State Pharmacy Council. Every order reviewed." },
-  { code: "02", count: 25,  label: "Doctors",           role: "Consulting clinicians", bg: "#1FAFA6", fg: "#FFFFFF", detail: "On-call for prescription validation, refills and pharmacist escalations." },
-  { code: "03", count: 60,  label: "Supply chain",      role: "Sourcing & logistics",  bg: "#6B3FA0", fg: "#FFFFFF", detail: "From manufacturer pickup to last-mile — batch-traceable end to end." },
-  { code: "04", count: 40,  label: "Health guardians",  role: "Customer support",      bg: "#E5326C", fg: "#FFFFFF", detail: "Reachable in four languages, average first reply under nine minutes." },
+  {
+    code: "01",
+    count: 75,
+    label: "Pharmacists",
+    role: "Licensed dispensing",
+    bg: "#F5A623",
+    fg: "#1B2A5B",
+    detail:
+      "Registered with the Karnataka State Pharmacy Council. Every order reviewed.",
+  },
+  {
+    code: "02",
+    count: 25,
+    label: "Doctors",
+    role: "Consulting clinicians",
+    bg: "#1FAFA6",
+    fg: "#FFFFFF",
+    detail:
+      "On-call for prescription validation, refills and pharmacist escalations.",
+  },
+  {
+    code: "03",
+    count: 60,
+    label: "Supply chain",
+    role: "Sourcing & logistics",
+    bg: "#6B3FA0",
+    fg: "#FFFFFF",
+    detail:
+      "From manufacturer pickup to last-mile — batch-traceable end to end.",
+  },
+  {
+    code: "04",
+    count: 40,
+    label: "Health guardians",
+    role: "Customer support",
+    bg: "#E5326C",
+    fg: "#FFFFFF",
+    detail:
+      "Reachable in four languages, average first reply under nine minutes.",
+  },
 ];
 
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
@@ -17,8 +53,13 @@ function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   useEffect(() => {
     if (!ref.current) return;
     const io = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } },
-      { threshold: 0.25 }
+      ([e]) => {
+        if (e.isIntersecting) {
+          setSeen(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
     );
     io.observe(ref.current);
     return () => io.disconnect();
@@ -65,28 +106,64 @@ export function Team({ data: _ }: TeamProps) {
           <span className="team2__mark">
             <Image src="/urmedz/logo.png" alt="" width={64} height={64} />
           </span>
-          <p className="team2__pull">
-            United by a single purpose — to make healthcare<br />
-            <span className="serif-it" style={{ color: "var(--accent)" }}>accessible, affordable</span> and<br />
-            <span className="serif-it" style={{ color: "var(--accent)" }}>trustworthy</span> for everyone.
+          <p className="team2__pull" style={{ lineHeight: 1.2 }}>
+            United by a single purpose — to make healthcare{" "}
+            <span className="serif-it" style={{ color: "var(--accent)" }}>
+              accessible, affordable
+            </span>{" "}
+            and
+            <br />
+            <span className="serif-it" style={{ color: "var(--accent)" }}>
+              trustworthy
+            </span>{" "}
+            for everyone.
           </p>
           <div className="team2__sig">
             <span className="label">Signed,</span>
-            <span className="serif-it" style={{ fontSize: 22, color: "var(--ink)" }}>the UrMedz team</span>
+            <span
+              className="serif-it"
+              style={{ fontSize: 22, color: "var(--ink)" }}
+            >
+              the UrMedz team
+            </span>
           </div>
         </div>
 
         <div className="team2__grid">
           {DEPTS.map((d, i) => (
-            <div key={i} className="team2__cell" style={{ background: d.bg, color: d.fg }}>
+            <div
+              key={i}
+              className="team2__cell"
+              style={{ background: d.bg, color: d.fg }}
+            >
               <div className="team2__cell-top">
-                <span className="mono" style={{ fontSize: 11, letterSpacing: ".14em", opacity: 0.75 }}>{d.code} / 04</span>
-                <span className="mono" style={{ fontSize: 11, letterSpacing: ".14em", opacity: 0.75 }}>{d.role}</span>
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: ".14em",
+                    opacity: 0.75,
+                  }}
+                >
+                  {d.code} / 04
+                </span>
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: ".14em",
+                    opacity: 0.75,
+                  }}
+                >
+                  {d.role}
+                </span>
               </div>
               <div>
                 <div className="team2__count">
                   <AnimNum value={d.count} />
-                  <span className="serif-it" style={{ opacity: 0.7 }}>+</span>
+                  <span className="serif-it" style={{ opacity: 0.7 }}>
+                    +
+                  </span>
                 </div>
                 <div className="team2__label">{d.label}</div>
               </div>
