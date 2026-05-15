@@ -85,11 +85,31 @@
           "eyebrow": "Inside the studio",
           "heading": "A space built for stillness",
           "images": [
-            { "src": "/demo_proj/services/hatha-yoga.png", "alt": "Mats laid out in the practice room", "caption": "The practice room" },
-            { "src": "/demo_proj/services/meditation.png", "alt": "Meditation cushion in soft afternoon light", "caption": "Meditation corner" },
-            { "src": "/demo_proj/about.png", "alt": "Inner courtyard with skylight", "caption": "Inner courtyard" },
-            { "src": "/demo_proj/services/breathwork.png", "alt": "Breathwork ceremony with incense", "caption": "Workshop space" },
-            { "src": "/demo_proj/services/wellness-consultation.png", "alt": "Consultation chairs by the window", "caption": "Consultation lounge" }
+            {
+              "src": "/demo_proj/services/hatha-yoga.png",
+              "alt": "Mats laid out in the practice room",
+              "caption": "The practice room"
+            },
+            {
+              "src": "/demo_proj/services/meditation.png",
+              "alt": "Meditation cushion in soft afternoon light",
+              "caption": "Meditation corner"
+            },
+            {
+              "src": "/demo_proj/about.png",
+              "alt": "Inner courtyard with skylight",
+              "caption": "Inner courtyard"
+            },
+            {
+              "src": "/demo_proj/services/breathwork.png",
+              "alt": "Breathwork ceremony with incense",
+              "caption": "Workshop space"
+            },
+            {
+              "src": "/demo_proj/services/wellness-consultation.png",
+              "alt": "Consultation chairs by the window",
+              "caption": "Consultation lounge"
+            }
           ]
         }
       },
