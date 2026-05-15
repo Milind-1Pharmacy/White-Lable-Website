@@ -14,14 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ServicesPage() {
   const { app } = await getConfig();
+  const services = app.content.services ?? [];
   return (
     <>
-      <Services
-        items={app.content.services}
-        heading={`Services from ${app.tenant.name}`}
-      />
+      {services.length > 0 && (
+        <Services data={services} meta={app.content.servicesMeta} />
+      )}
       <SectionRenderer
         sections={app.content.sections.filter((s) => s.type === "howItWorks")}
+        branding={app.branding}
       />
     </>
   );

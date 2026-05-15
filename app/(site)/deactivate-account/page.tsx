@@ -9,12 +9,12 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
-  return buildMetadata(config, "Privacy Policy");
+  return buildMetadata(config, "Deactivate Account");
 }
 
-export default async function PrivacyPolicyPage() {
+export default async function DeactivateAccountPage() {
   const { app } = await getConfig();
-  const page = app.layout?.pages?.privacyPolicy;
+  const page = app.layout?.pages?.deactivateAccount;
 
   return (
     <SectionWrapper eyebrow={page?.eyebrow} heading={page?.heading}>

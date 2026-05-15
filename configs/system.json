@@ -19,7 +19,7 @@
       "/services",
       "/contact",
       "/privacy-policy",
-      "/terms-and-conditions",
+      "/terms-conditions",
       "/disclaimer"
     ],
     "fallback": "/not-found"
@@ -37,16 +37,32 @@
     "services",
     "features",
     "howItWorks",
-    "gallery"
+    "gallery",
+    "stats",
+    "savings",
+    "videoFeature",
+    "appStrip",
+    "testimonials",
+    "faq",
+    "aiStore",
+    "team"
   ],
 
   "sectionMapping": {
     "hero": "modules/Hero.tsx",
+    "appStrip": "modules/AppStrip.tsx",
     "about": "modules/About.tsx",
     "services": "modules/Services.tsx",
     "features": "modules/Features.tsx",
     "howItWorks": "modules/HowItWorks.tsx",
-    "gallery": "modules/Gallery.tsx"
+    "gallery": "modules/Gallery.tsx",
+    "stats": "modules/Stats.tsx",
+    "savings": "modules/Savings.tsx",
+    "videoFeature": "modules/VideoFeature.tsx",
+    "testimonials": "modules/Testimonials.tsx",
+    "faq": "modules/Faq.tsx",
+    "aiStore": "modules/AIStore.tsx",
+    "team": "modules/Team.tsx"
   },
 
   "compliance": {
@@ -69,10 +85,7 @@
       "Subscribe & Pay"
     ],
     "safeCtaFallback": "Learn More",
-    "forceDisabledFeatures": [
-      "enablePayments",
-      "enableCart"
-    ],
+    "forceDisabledFeatures": ["enablePayments", "enableCart"],
     "defaultDisclaimer": "The information presented on this website is for general informational purposes only and should not be relied upon as professional advice."
   },
 

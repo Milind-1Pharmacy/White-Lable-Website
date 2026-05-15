@@ -11,8 +11,7 @@ import { buildMetadata } from "@/lib/seoBuilder";
 
 type Params = { slug: string };
 
-export const dynamicParams = true;
-export const revalidate = 3600;
+export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Params[]> {
   const tenants = await listConfigs();
@@ -75,10 +74,18 @@ export default async function TenantPreviewPage({
         </div>
       </div>
 
-      <Hero content={app.content.hero} tenant={app.tenant} />
-      <About content={app.content.about} tenant={app.tenant} />
-      <Services items={app.content.services} />
-      <SectionRenderer sections={app.content.sections} />
+      <Hero data={app.content.hero} />
+      <About data={app.content.about} />
+      {app.content.services && app.content.services.length > 0 && (
+        <Services
+          data={app.content.services}
+          meta={app.content.servicesMeta}
+        />
+      )}
+      <SectionRenderer
+        sections={app.content.sections}
+        branding={app.branding}
+      />
     </>
   );
 }

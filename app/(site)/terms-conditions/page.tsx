@@ -9,12 +9,12 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
-  return buildMetadata(config, "Privacy Policy");
+  return buildMetadata(config, "Terms & Conditions");
 }
 
-export default async function PrivacyPolicyPage() {
+export default async function TermsPage() {
   const { app } = await getConfig();
-  const page = app.layout?.pages?.privacyPolicy;
+  const page = app.layout?.pages?.termsAndConditions;
 
   return (
     <SectionWrapper eyebrow={page?.eyebrow} heading={page?.heading}>

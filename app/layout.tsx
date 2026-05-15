@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
 import { MotionProvider } from "@/components/motion/MotionProvider";
@@ -24,6 +24,14 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
   return buildMetadata(config);
@@ -37,11 +45,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const config = await getConfig();
+  const stylesheet = config.app.branding?.stylesheet;
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
+      <head>
+        {stylesheet && <link rel="stylesheet" href={stylesheet} />}
+      </head>
       <body
         suppressHydrationWarning
         className="flex min-h-full flex-col text-[var(--brand-text)]"

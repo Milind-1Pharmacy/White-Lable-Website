@@ -39,8 +39,8 @@ export default async function PreviewIndex() {
         {tenants.length === 0 ? (
           <p className="text-neutral-500">
             No tenant configs found. Add a JSON file to <code>configs/</code>{" "}
-            (excluding <code>system.json</code> and{" "}
-            <code>app_master.json</code>).
+            (excluding <code>system.json</code> and <code>app_master.json</code>
+            ).
           </p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,32 +90,38 @@ export default async function PreviewIndex() {
 
                 {/* Color swatches */}
                 <div className="mt-5 flex items-center gap-2">
-                  {(["primary", "secondary", "accent", "background", "text"] as const).map(
-                    (key) => {
-                      const c = t.colors?.[key];
-                      if (!c) return null;
-                      return (
-                        <span
-                          key={key}
-                          className="block h-5 w-5 rounded-full ring-1 ring-black/5"
-                          style={{ background: c }}
-                          title={`${key}: ${c}`}
-                        />
-                      );
-                    },
-                  )}
+                  {(
+                    [
+                      "primary",
+                      "secondary",
+                      "accent",
+                      "background",
+                      "text",
+                    ] as const
+                  ).map((key) => {
+                    const c = t.colors?.[key];
+                    if (!c) return null;
+                    return (
+                      <span
+                        key={key}
+                        className="block h-5 w-5 rounded-full ring-1 ring-black/5"
+                        style={{ background: c }}
+                        title={`${key}: ${c}`}
+                      />
+                    );
+                  })}
                 </div>
 
                 <div className="mt-6 flex items-center justify-between border-t border-neutral-100 pt-4">
-                  <code className="text-xs text-neutral-500">{t.slug}.json</code>
+                  <code className="text-xs text-neutral-500">
+                    {t.slug}.json
+                  </code>
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-700 transition-colors group-hover:text-neutral-900">
                     Preview
                     <span
                       aria-hidden
                       className="inline-block translate-x-0 transition-transform duration-300 group-hover:translate-x-0.5"
-                    >
-                      →
-                    </span>
+                    ></span>
                   </span>
                 </div>
               </Link>
@@ -135,10 +141,9 @@ export default async function PreviewIndex() {
             >
               /
             </Link>{" "}
-            always renders <code>configs/app_master.json</code>. To go live
-            with a different tenant, copy any{" "}
-            <code>configs/&lt;slug&gt;.json</code> over{" "}
-            <code>configs/app_master.json</code> and rebuild. This{" "}
+            always renders <code>configs/app_master.json</code>. To go live with
+            a different tenant, copy any <code>configs/&lt;slug&gt;.json</code>{" "}
+            over <code>configs/app_master.json</code> and rebuild. This{" "}
             <code>/preview</code> route lets you visually inspect any tenant
             before swapping.
           </p>
