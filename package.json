@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:urmedz": "TENANT=urmedz next build",
+    "sync:urmedz": "aws s3 sync out/ s3://www.urmedz.in/ --delete --profile urmedz",
+    "invalidate:urmedz": "aws cloudfront create-invalidation --profile urmedz --paths \"/*\" --distribution-id \"$(aws cloudfront list-distributions --profile urmedz --query \"DistributionList.Items[?contains(Aliases.Items, 'www.urmedz.in')].Id | [0]\" --output text)\"",
+    "deploy:urmedz": "npm run build:urmedz && npm run sync:urmedz"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
