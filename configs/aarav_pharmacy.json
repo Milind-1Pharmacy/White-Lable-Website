@@ -40,7 +40,7 @@
       "headlineRich": {
         "parts": [
           { "text": "Care packed in", "br": false },
-          { "text": "every ", "emphasis": "italic" },
+          { "text": " every ", "emphasis": "italic" },
           { "text": "prescription.", "emphasis": "italic-accent" }
         ]
       },
