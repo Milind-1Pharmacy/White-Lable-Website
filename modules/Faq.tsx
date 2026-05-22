@@ -34,7 +34,7 @@ export function Faq({ data }: FaqProps) {
                 style={{
                   marginTop: 18,
                   lineHeight: 1,
-                  minHeight: isMobile ? 80 : 172,
+                  minHeight: isMobile ? 48 : 172,
                 }}
               >
                 {heading}

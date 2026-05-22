@@ -228,8 +228,7 @@
           "eyebrow": "Featured categories",
           "heading": {
             "parts": [
-              { "text": "Everything your family needs," },
-              { "text": " under ", "br": true },
+              { "text": "Everything your family needs, under " },
               { "text": "one trusted roof.", "emphasis": "italic-accent" }
             ]
           },
@@ -394,9 +393,7 @@
         { "label": "FAQ", "href": "/#faq" },
         { "label": "Contact", "href": "/contact" }
       ],
-      "ctas": [
-        { "label": "Get the app", "href": "/#app", "variant": "accent" }
-      ]
+      "ctas": [{ "label": "Get the app", "href": "/#app", "variant": "accent" }]
     },
     "stickyCta": {
       "enabled": true,

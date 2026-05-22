@@ -37,7 +37,7 @@ export function Features({ data }: FeaturesProps) {
                 className="h-display h-2"
                 style={{
                   marginTop: 14,
-                  minHeight: isMobile ? 64 : 32,
+                  minHeight: isMobile ? 32 : 32,
                   lineHeight: 1.1,
                 }}
               >

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { CategoriesSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 type CategoriesProps = {
   data: CategoriesSectionData;
@@ -18,6 +19,8 @@ export function Categories({ data }: CategoriesProps) {
   const total = String(items.length).padStart(2, "0");
   const current = items[active] ?? items[0];
 
+  const isMobile = useIsMobile();
+
   return (
     <section className="section section--cream" id="categories">
       <div className="wrap">
@@ -32,7 +35,7 @@ export function Categories({ data }: CategoriesProps) {
             {heading && (
               <h2
                 className="h-display h-2"
-                style={{ marginTop: 20, minHeight: 80 }}
+                style={{ marginTop: 20, minHeight: isMobile ? 88 : 120 }}
               >
                 {heading}
               </h2>
