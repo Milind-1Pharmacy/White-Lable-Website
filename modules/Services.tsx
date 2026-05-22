@@ -1,6 +1,8 @@
+"use client";
 import type { ServiceItem, ServicesMeta } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 type ServicesProps = {
   data: ServiceItem[];
@@ -9,6 +11,8 @@ type ServicesProps = {
 
 export function Services({ data, meta }: ServicesProps) {
   if (!data?.length) return null;
+
+  const isMobile = useIsMobile();
 
   const heading = renderRichHeading(meta?.heading);
   const total = String(data.length).padStart(2, "0");
@@ -20,6 +24,14 @@ export function Services({ data, meta }: ServicesProps) {
           {String(i + 1).padStart(2, "0")} / {total}
         </div>
       </div>
+      {s.icon && (
+        <div className="service__icon">
+          <span className="service__icon-plate">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={s.icon} alt="" aria-hidden="true" />
+          </span>
+        </div>
+      )}
       <div>
         <h3 className="service__title">{s.title}</h3>
         <p className="service__desc">{s.description}</p>
@@ -35,7 +47,7 @@ export function Services({ data, meta }: ServicesProps) {
           className="between"
           style={{ marginBottom: 64, alignItems: "end" }}
         >
-          <div style={{ maxWidth: 720 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             {meta?.eyebrow && (
               <span className="eyebrow">
                 <span className="dot" />
@@ -43,7 +55,10 @@ export function Services({ data, meta }: ServicesProps) {
               </span>
             )}
             {heading && (
-              <h2 className="h-display h-2" style={{ marginTop: 14 }}>
+              <h2
+                className="h-display h-2"
+                style={{ marginTop: 14, minHeight: isMobile ? 32 : 32 }}
+              >
                 {heading}
               </h2>
             )}
@@ -62,7 +77,7 @@ export function Services({ data, meta }: ServicesProps) {
           {data.map(renderCard)}
         </div>
         <MobileCarousel
-          ariaLabel="UrMedz services"
+          ariaLabel="Aarav Pharmacy services"
           cardWidth="84%"
           maxCardWidth={340}
           gap={14}

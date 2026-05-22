@@ -33,9 +33,8 @@ export function Faq({ data }: FaqProps) {
                 className="h-display h-1"
                 style={{
                   marginTop: 18,
-                  maxWidth: 480,
                   lineHeight: 1,
-                  minHeight: isMobile ? 80 : 180,
+                  minHeight: isMobile ? 80 : 172,
                 }}
               >
                 {heading}

@@ -1,9 +1,6 @@
 "use client";
 import { useIsMobile } from "@/lib/useIsMobile";
-import type {
-  FeatureItem,
-  FeaturesSectionData,
-} from "@/types/config.types";
+import type { FeatureItem, FeaturesSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 
@@ -40,8 +37,7 @@ export function Features({ data }: FeaturesProps) {
                 className="h-display h-2"
                 style={{
                   marginTop: 14,
-                  maxWidth: 720,
-                  minHeight: isMobile ? 64 : 108,
+                  minHeight: isMobile ? 64 : 32,
                   lineHeight: 1.1,
                 }}
               >
