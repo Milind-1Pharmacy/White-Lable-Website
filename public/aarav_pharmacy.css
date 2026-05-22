@@ -878,6 +878,12 @@ a {
   color: var(--ink);
 }
 
+/* breathing room between the number and its accent suffix (yrs / + / %) */
+.hero__meta .num em {
+  margin-left: 3px;
+  letter-spacing: 0;
+}
+
 .hero__meta .lbl {
   color: var(--mute);
   font-size: 13.5px;
@@ -3449,6 +3455,17 @@ body {
   .hero__h {
     font-size: clamp(26px, 7.5vw, 38px);
     line-height: 1.05;
+  }
+
+  /* smaller, calmer hero tagline on mobile */
+  .hero__copy .body-l {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* a touch more gap between the number and its accent suffix on mobile */
+  .hero__meta .num em {
+    margin-left: 2px;
   }
 
   .hero__rail {
