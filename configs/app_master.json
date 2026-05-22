@@ -39,9 +39,9 @@
       "headline": "Care packed in every prescription.",
       "headlineRich": {
         "parts": [
-          { "text": "Care packed in", "br": true },
-          { "text": "every ", "emphasis": "italic" },
-          { "text": "prescription.", "emphasis": "italic-accent" }
+          { "text": "Care packed in", "br": false },
+          { "text": " every ", "emphasis": "italic" },
+          { "text": "Prescription.", "emphasis": "italic-accent" }
         ]
       },
       "tagline": "Standing by you when health matters most — genuine medicines, wellness essentials, and caring, expert support for every family.",
@@ -77,9 +77,21 @@
         "Experienced pharmacy support"
       ],
       "meta": [
-        { "value": "21", "suffix": "yrs", "label": "Trusted pharmacy service in Ghatlodia, Ahmedabad" },
-        { "value": "8", "suffix": "+", "label": "Healthcare categories under one roof" },
-        { "value": "100", "suffix": "%", "label": "Genuine, quality-assured medicines" }
+        {
+          "value": "21",
+          "suffix": " yrs",
+          "label": "Trusted pharmacy service in Ghatlodia, Ahmedabad"
+        },
+        {
+          "value": "8",
+          "suffix": "+",
+          "label": "Healthcare categories under one roof"
+        },
+        {
+          "value": "100",
+          "suffix": "%",
+          "label": "Genuine, quality-assured medicines"
+        }
       ]
     },
 
@@ -223,14 +235,46 @@
           },
           "tagline": "From everyday medicines to baby care, wellness and health devices — explore the complete range we keep in stock for you.",
           "items": [
-            { "title": "Medicines", "icon": "/aarav_pharmacy/categories/medicines.png", "description": "Genuine prescription and over-the-counter medicines, dispensed accurately by our experienced pharmacy team." },
-            { "title": "Baby Care", "icon": "/aarav_pharmacy/categories/baby-care.png", "description": "Baby food, diapers, gentle skincare and daily essentials — everything to care for your little one." },
-            { "title": "Personal Care", "icon": "/aarav_pharmacy/categories/personal-care.png", "description": "Skincare, haircare and everyday hygiene products from trusted, well-known brands." },
-            { "title": "Diabetic Care", "icon": "/aarav_pharmacy/categories/diabetic-care.png", "description": "Glucometers, test strips, lancets and specialised supplies to help manage diabetes with confidence." },
-            { "title": "Ayurvedic Products", "icon": "/aarav_pharmacy/categories/ayurvedic.png", "description": "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing." },
-            { "title": "Surgical Items", "icon": "/aarav_pharmacy/categories/surgical.png", "description": "Masks, gloves, dressings and surgical accessories for care, safety and recovery at home." },
-            { "title": "Vitamins & Supplements", "icon": "/aarav_pharmacy/categories/vitamins.png", "description": "Multivitamins, immunity boosters and nutritional supplements to keep the whole family healthy." },
-            { "title": "Health Devices", "icon": "/aarav_pharmacy/categories/health-devices.png", "description": "BP monitors, thermometers and home health devices for easy, reliable everyday monitoring." }
+            {
+              "title": "Medicines",
+              "icon": "/aarav_pharmacy/categories/medicines.png",
+              "description": "Genuine prescription and over-the-counter medicines, dispensed accurately by our experienced pharmacy team."
+            },
+            {
+              "title": "Baby Care",
+              "icon": "/aarav_pharmacy/categories/baby-care.png",
+              "description": "Baby food, diapers, gentle skincare and daily essentials — everything to care for your little one."
+            },
+            {
+              "title": "Personal Care",
+              "icon": "/aarav_pharmacy/categories/personal-care.png",
+              "description": "Skincare, haircare and everyday hygiene products from trusted, well-known brands."
+            },
+            {
+              "title": "Diabetic Care",
+              "icon": "/aarav_pharmacy/categories/diabetic-care.png",
+              "description": "Glucometers, test strips, lancets and specialised supplies to help manage diabetes with confidence."
+            },
+            {
+              "title": "Ayurvedic Products",
+              "icon": "/aarav_pharmacy/categories/ayurvedic.png",
+              "description": "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing."
+            },
+            {
+              "title": "Surgical Items",
+              "icon": "/aarav_pharmacy/categories/surgical.png",
+              "description": "Masks, gloves, dressings and surgical accessories for care, safety and recovery at home."
+            },
+            {
+              "title": "Vitamins & Supplements",
+              "icon": "/aarav_pharmacy/categories/vitamins.png",
+              "description": "Multivitamins, immunity boosters and nutritional supplements to keep the whole family healthy."
+            },
+            {
+              "title": "Health Devices",
+              "icon": "/aarav_pharmacy/categories/health-devices.png",
+              "description": "BP monitors, thermometers and home health devices for easy, reliable everyday monitoring."
+            }
           ]
         }
       },
@@ -349,9 +393,6 @@
         { "label": "Categories", "href": "/#categories" },
         { "label": "FAQ", "href": "/#faq" },
         { "label": "Contact", "href": "/contact" }
-      ],
-      "ctas": [
-        { "label": "Get the app", "href": "/#app", "variant": "primary" }
       ]
     },
     "stickyCta": {
@@ -377,7 +418,11 @@
             { "label": "About", "href": "/#about" },
             { "label": "Services", "href": "/#services" },
             { "label": "Contact", "href": "/contact" },
-            { "label": "WhatsApp support", "href": "https://wa.me/919898389140", "external": true }
+            {
+              "label": "WhatsApp support",
+              "href": "https://wa.me/919898389140",
+              "external": true
+            }
           ]
         },
         {
