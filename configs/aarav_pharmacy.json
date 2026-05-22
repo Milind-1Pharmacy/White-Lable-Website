@@ -349,6 +349,9 @@
         { "label": "Categories", "href": "/#categories" },
         { "label": "FAQ", "href": "/#faq" },
         { "label": "Contact", "href": "/contact" }
+      ],
+      "ctas": [
+        { "label": "Get the app", "href": "/#app", "variant": "accent" }
       ]
     },
     "stickyCta": {
