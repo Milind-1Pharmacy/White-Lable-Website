@@ -342,6 +342,18 @@
   },
 
   "layout": {
+    "nav": {
+      "links": [
+        { "label": "About", "href": "/#about" },
+        { "label": "Services", "href": "/#services" },
+        { "label": "Categories", "href": "/#categories" },
+        { "label": "FAQ", "href": "/#faq" },
+        { "label": "Contact", "href": "/contact" }
+      ],
+      "ctas": [
+        { "label": "Get the app", "href": "/#app", "variant": "primary" }
+      ]
+    },
     "stickyCta": {
       "enabled": true,
       "text": "The Aarav Pharmacy app is here.",

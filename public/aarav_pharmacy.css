@@ -306,8 +306,10 @@ a {
 }
 
 .nav__logo-full {
-  height: 64px;
-  width: auto;
+  height: 48px !important;
+  width: auto !important;
+  max-width: 240px;
+  object-fit: contain;
   display: block;
   transition: opacity .3s ease, transform .3s ease;
   transform-origin: left center;
@@ -324,18 +326,16 @@ a {
   display: none;
 }
 
-/* When not scrolled: show full logo (navy lockup over white hero) */
-.nav:not(.is-scrolled) .nav__mark {
-  display: none;
+/* This tenant ships only a wide lockup (no separate square mark), so keep the
+   full logo at all scroll states and never swap to the crammed square icon. */
+.nav__mark {
+  display: none !important;
 }
 
-/* When scrolled: swap to icon only */
 .nav.is-scrolled .nav__logo-full {
-  display: none;
-}
-
-.nav.is-scrolled .nav__mark {
   display: block;
+  height: 30px !important;
+  width: auto !important;
 }
 
 /* Full-bleed hero variant: invert logo to white over dark image */
@@ -956,11 +956,13 @@ a {
 }
 
 .appstrip__icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: auto !important;
+  height: 44px !important;
+  max-width: 150px;
+  object-fit: contain;
+  border-radius: 12px;
   background: #fff;
-  padding: 5px;
+  padding: 6px 10px;
   flex: 0 0 auto;
 }
 
@@ -1592,6 +1594,13 @@ a {
 }
 
 @media (max-width: 720px) {
+  /* wide lockup logo — keep it compact in the mobile header */
+  .nav__logo-full,
+  .nav.is-scrolled .nav__logo-full {
+    height: 28px !important;
+    width: auto !important;
+  }
+
   .sv-meta {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -3299,8 +3308,9 @@ body {
   }
 
   .appstrip__icon {
-    width: 44px;
-    height: 44px;
+    width: auto !important;
+    height: 40px !important;
+    max-width: 140px;
     border-radius: 11px;
     margin-top: 2px;
   }
@@ -3500,10 +3510,11 @@ body {
   }
 
   .appstrip__icon {
-    width: 40px;
-    height: 40px;
+    width: auto !important;
+    height: 38px !important;
+    max-width: 130px;
     border-radius: 10px;
-    padding: 4px;
+    padding: 5px 8px;
     margin-top: 2px;
   }
 
@@ -3858,10 +3869,11 @@ body {
   }
 
   .appstrip__icon {
-    width: 36px;
-    height: 36px;
+    width: auto !important;
+    height: 34px !important;
+    max-width: 120px;
     border-radius: 9px;
-    padding: 4px;
+    padding: 5px 7px;
     margin-top: 1px;
   }
 

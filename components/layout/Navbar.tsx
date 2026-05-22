@@ -54,8 +54,8 @@ export function Navbar({ app }: NavbarProps) {
             <Image
               src={fullLogo}
               alt={app.tenant.name}
-              width={200}
-              height={64}
+              width={198}
+              height={100}
               className="nav__logo-full"
               priority
             />
