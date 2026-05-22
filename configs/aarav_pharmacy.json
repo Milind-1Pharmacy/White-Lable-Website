@@ -41,7 +41,7 @@
         "parts": [
           { "text": "Care packed in", "br": false },
           { "text": " every ", "emphasis": "italic" },
-          { "text": "prescription.", "emphasis": "italic-accent" }
+          { "text": "Prescription.", "emphasis": "italic-accent" }
         ]
       },
       "tagline": "Standing by you when health matters most — genuine medicines, wellness essentials, and caring, expert support for every family.",
@@ -79,7 +79,7 @@
       "meta": [
         {
           "value": "21",
-          "suffix": "yrs",
+          "suffix": " yrs",
           "label": "Trusted pharmacy service in Ghatlodia, Ahmedabad"
         },
         {
