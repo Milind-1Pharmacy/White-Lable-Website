@@ -228,8 +228,7 @@
           "eyebrow": "Featured categories",
           "heading": {
             "parts": [
-              { "text": "Everything your family needs," },
-              { "text": " under ", "br": true },
+              { "text": "Everything your family needs, under " },
               { "text": "one trusted roof.", "emphasis": "italic-accent" }
             ]
           },
