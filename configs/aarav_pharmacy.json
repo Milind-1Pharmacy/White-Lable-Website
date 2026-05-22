@@ -39,7 +39,8 @@
       "headline": "Care packed in every prescription.",
       "headlineRich": {
         "parts": [
-          { "text": "Care packed in every", "br": true },
+          { "text": "Care packed in", "br": true },
+          { "text": "every ", "emphasis": "italic" },
           { "text": "prescription.", "emphasis": "italic-accent" }
         ]
       },
@@ -76,21 +77,9 @@
         "Experienced pharmacy support"
       ],
       "meta": [
-        {
-          "value": "21",
-          "suffix": "yrs",
-          "label": "Trusted pharmacy service in Ghatlodia, Ahmedabad"
-        },
-        {
-          "value": "8",
-          "suffix": "+",
-          "label": "Healthcare categories under one roof"
-        },
-        {
-          "value": "100",
-          "suffix": "%",
-          "label": "Genuine, quality-assured medicines"
-        }
+        { "value": "21", "suffix": "yrs", "label": "Trusted pharmacy service in Ghatlodia, Ahmedabad" },
+        { "value": "8", "suffix": "+", "label": "Healthcare categories under one roof" },
+        { "value": "100", "suffix": "%", "label": "Genuine, quality-assured medicines" }
       ]
     },
 
@@ -228,51 +217,20 @@
           "heading": {
             "parts": [
               { "text": "Everything your family needs," },
-              { "text": " under ", "br": false },
+              { "text": " under ", "br": true },
               { "text": "one trusted roof.", "emphasis": "italic-accent" }
             ]
           },
+          "tagline": "From everyday medicines to baby care, wellness and health devices — explore the complete range we keep in stock for you.",
           "items": [
-            {
-              "title": "Medicines",
-              "icon": "/aarav_pharmacy/categories/medicines.png",
-              "description": "Genuine prescription and over-the-counter medicines, dispensed accurately by our experienced pharmacy team."
-            },
-            {
-              "title": "Baby Care",
-              "icon": "/aarav_pharmacy/categories/baby-care.png",
-              "description": "Baby food, diapers, gentle skincare and daily essentials — everything to care for your little one."
-            },
-            {
-              "title": "Personal Care",
-              "icon": "/aarav_pharmacy/categories/personal-care.png",
-              "description": "Skincare, haircare and everyday hygiene products from trusted, well-known brands."
-            },
-            {
-              "title": "Diabetic Care",
-              "icon": "/aarav_pharmacy/categories/diabetic-care.png",
-              "description": "Glucometers, test strips, lancets and specialised supplies to help manage diabetes with confidence."
-            },
-            {
-              "title": "Ayurvedic Products",
-              "icon": "/aarav_pharmacy/categories/ayurvedic.png",
-              "description": "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing."
-            },
-            {
-              "title": "Surgical Items",
-              "icon": "/aarav_pharmacy/categories/surgical.png",
-              "description": "Masks, gloves, dressings and surgical accessories for care, safety and recovery at home."
-            },
-            {
-              "title": "Vitamins & Supplements",
-              "icon": "/aarav_pharmacy/categories/vitamins.png",
-              "description": "Multivitamins, immunity boosters and nutritional supplements to keep the whole family healthy."
-            },
-            {
-              "title": "Health Devices",
-              "icon": "/aarav_pharmacy/categories/health-devices.png",
-              "description": "BP monitors, thermometers and home health devices for easy, reliable everyday monitoring."
-            }
+            { "title": "Medicines", "icon": "/aarav_pharmacy/categories/medicines.png", "description": "Genuine prescription and over-the-counter medicines, dispensed accurately by our experienced pharmacy team." },
+            { "title": "Baby Care", "icon": "/aarav_pharmacy/categories/baby-care.png", "description": "Baby food, diapers, gentle skincare and daily essentials — everything to care for your little one." },
+            { "title": "Personal Care", "icon": "/aarav_pharmacy/categories/personal-care.png", "description": "Skincare, haircare and everyday hygiene products from trusted, well-known brands." },
+            { "title": "Diabetic Care", "icon": "/aarav_pharmacy/categories/diabetic-care.png", "description": "Glucometers, test strips, lancets and specialised supplies to help manage diabetes with confidence." },
+            { "title": "Ayurvedic Products", "icon": "/aarav_pharmacy/categories/ayurvedic.png", "description": "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing." },
+            { "title": "Surgical Items", "icon": "/aarav_pharmacy/categories/surgical.png", "description": "Masks, gloves, dressings and surgical accessories for care, safety and recovery at home." },
+            { "title": "Vitamins & Supplements", "icon": "/aarav_pharmacy/categories/vitamins.png", "description": "Multivitamins, immunity boosters and nutritional supplements to keep the whole family healthy." },
+            { "title": "Health Devices", "icon": "/aarav_pharmacy/categories/health-devices.png", "description": "BP monitors, thermometers and home health devices for easy, reliable everyday monitoring." }
           ]
         }
       },
