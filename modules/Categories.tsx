@@ -53,6 +53,7 @@ export function Categories({ data }: CategoriesProps) {
                 {items.map(
                   (c, i) =>
                     c.icon && (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         key={i}
                         src={c.icon}

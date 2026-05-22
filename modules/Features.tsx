@@ -51,7 +51,7 @@ export function Features({ data }: FeaturesProps) {
         </div>
         <MobileCarousel
           className="why__carousel"
-          ariaLabel="Why UrMedz"
+          ariaLabel="Why choose us"
           cardWidth="84%"
           maxCardWidth={340}
           gap={14}

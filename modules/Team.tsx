@@ -153,7 +153,7 @@ export function Team({ data, branding }: TeamProps) {
               {departments.map((d, i) => renderCell(d, i, total))}
             </div>
             <MobileCarousel
-              ariaLabel="UrMedz team"
+              ariaLabel="Our team"
               cardWidth="84%"
               maxCardWidth={360}
               gap={14}

@@ -25,32 +25,6 @@ function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   return [ref, seen];
 }
 
-function AnimNum({
-  value,
-  fmt,
-}: {
-  value: number;
-  fmt?: (n: number) => string;
-}) {
-  const [ref, seen] = useReveal();
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    if (!seen) return;
-    const start = performance.now();
-    const dur = 1600;
-    let raf: number;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / dur);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setN(Math.round(value * eased));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [seen, value]);
-  return <span ref={ref}>{fmt ? fmt(n) : n}</span>;
-}
-
 function SavingsCard({
   row,
   index,

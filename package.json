@@ -10,7 +10,11 @@
     "build:urmedz": "TENANT=urmedz next build",
     "sync:urmedz": "aws s3 sync out/ s3://www.urmedz.in/ --delete --profile urmedz",
     "invalidate:urmedz": "aws cloudfront create-invalidation --profile urmedz --paths \"/*\" --distribution-id \"$(aws cloudfront list-distributions --profile urmedz --query \"DistributionList.Items[?contains(Aliases.Items, 'www.urmedz.in')].Id | [0]\" --output text)\"",
-    "deploy:urmedz": "npm run build:urmedz && npm run sync:urmedz"
+    "deploy:urmedz": "npm run build:urmedz && npm run sync:urmedz",
+    "build:aarav": "TENANT=aarav_pharmacy next build",
+    "sync:aarav": "aws s3 sync out/ s3://AARAV_BUCKET_PLACEHOLDER/ --delete --profile AARAV_PROFILE_PLACEHOLDER",
+    "invalidate:aarav": "aws cloudfront create-invalidation --profile AARAV_PROFILE_PLACEHOLDER --paths \"/*\" --distribution-id \"AARAV_DISTRIBUTION_ID_PLACEHOLDER\"",
+    "deploy:aarav": "npm run build:aarav && npm run sync:aarav"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

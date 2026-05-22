@@ -68,7 +68,7 @@ export function About({ data }: AboutProps) {
               {pillars.map(renderPillar)}
             </div>
             <MobileCarousel
-              ariaLabel="UrMedz pillars"
+              ariaLabel="What sets us apart"
               cardWidth="84%"
               maxCardWidth={340}
               gap={14}

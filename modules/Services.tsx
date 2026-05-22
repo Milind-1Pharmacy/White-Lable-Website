@@ -10,9 +10,9 @@ type ServicesProps = {
 };
 
 export function Services({ data, meta }: ServicesProps) {
-  if (!data?.length) return null;
-
   const isMobile = useIsMobile();
+
+  if (!data?.length) return null;
 
   const heading = renderRichHeading(meta?.heading);
   const total = String(data.length).padStart(2, "0");
@@ -77,7 +77,7 @@ export function Services({ data, meta }: ServicesProps) {
           {data.map(renderCard)}
         </div>
         <MobileCarousel
-          ariaLabel="Aarav Pharmacy services"
+          ariaLabel="Our services"
           cardWidth="84%"
           maxCardWidth={340}
           gap={14}

@@ -14,6 +14,10 @@ type Params = { slug: string };
 export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Params[]> {
+  // In a tenant-scoped production build (TENANT set) only emit that tenant's
+  // preview, so other tenants' pages never ship. Locally (no TENANT) list all.
+  const tenant = process.env.TENANT?.trim()?.replace(/\.json$/, "");
+  if (tenant) return [{ slug: tenant }];
   const tenants = await listConfigs();
   return tenants.map((t) => ({ slug: t.slug }));
 }
