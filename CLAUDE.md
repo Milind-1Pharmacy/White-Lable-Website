@@ -47,6 +47,13 @@ modules/*.tsx             ← receives sanitized props, renders
 
 `configs/system.json` holds architecture defaults and the compliance ruleset that `complianceFilter.ts` enforces. It is not tenant-specific.
 
+## Tenant selection (multi-tenant)
+
+- `lib/getConfig.ts` reads `process.env.TENANT` → loads `configs/<TENANT>.json` (e.g. `TENANT=aarav_pharmacy`). If `TENANT` is unset/unreadable it **falls back to `configs/app_master.json`**.
+- **Edit BOTH the tenant file AND `app_master.json`** for any content change to a live tenant — a plain `npm run build` (no TENANT) serves `app_master.json`, so they must stay in sync. Easiest: `cp configs/<tenant>.json configs/app_master.json`.
+- Per-tenant build/deploy scripts in `package.json` follow `build:<tenant>` / `sync:<tenant>` / `deploy:<tenant>` (`TENANT=<tenant> next build`).
+- `app/preview/[slug]/page.tsx` builds a preview page per config; `generateStaticParams` is gated so a `TENANT`-scoped build emits only that tenant — a plain build ships **all** tenants' `/preview/*` pages.
+
 `lib/themeLoader.ts` reads `branding.colors` and exposes them as CSS variables for Tailwind. `lib/seoBuilder.ts` builds Next.js `Metadata` from `seo.*`.
 
 ## Section mapping
@@ -63,6 +70,14 @@ modules/*.tsx             ← receives sanitized props, renders
 | `gallery`      | `modules/Gallery.tsx`    |
 
 When adding a new section type: define its shape in `types/config.types.ts`, add the mapping in the section dispatcher, and ensure the module renders nothing (not an error) if its data is missing.
+
+## Gotchas learned
+
+- After editing config JSON / the stylesheet, validate: `node -e "JSON.parse(require('fs').readFileSync('configs/<f>.json','utf8'))"` and check CSS braces balance. `Edit` matches break often because a linter reformats the JSON (multi-line ↔ single-line) — re-Read before editing.
+- `useIsMobile()` (and all hooks) must be called BEFORE any early `return null` — eslint `rules-of-hooks` errors otherwise. `npm run build` does not fail on lint; run `npm run lint` separately.
+- Section headings use rich `parts[]` with `br`/`emphasis` (`italic`, `italic-accent`); keep tenant `ariaLabel`s on `MobileCarousel` generic, never hardcode a tenant name in a shared module.
+- Logo is a wide ~2:1 lockup (no square mark): set `next/image` width/height to that ratio + size via CSS height/`width:auto`, or it stretches.
+- Compliance: the website is **non-transactional** (links to the app/WhatsApp to order); WhatsApp is **support/enquiry only — never "order on WhatsApp"** (Meta policy).
 
 ## Compliance invariants
 
