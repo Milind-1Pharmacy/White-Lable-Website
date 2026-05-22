@@ -115,7 +115,14 @@ export function Footer({ app }: FooterProps) {
               <ul>
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <Link href={l.href}>{l.label}</Link>
+                    <Link
+                      href={l.href}
+                      {...(l.external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                    >
+                      {l.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
