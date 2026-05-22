@@ -102,6 +102,7 @@ export type ServiceItem = {
   title: string;
   description: string;
   image?: string;
+  icon?: string;
 };
 
 export type ServicesMeta = {
@@ -120,6 +121,19 @@ export type FeaturesSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
   items: FeatureItem[];
+};
+
+export type CategoryItem = {
+  title: string;
+  icon?: string;
+  description?: string;
+};
+
+export type CategoriesSectionData = {
+  eyebrow?: string;
+  heading?: RichHeading;
+  tagline?: string;
+  items: CategoryItem[];
 };
 
 export type HowItWorksStep = {
@@ -272,6 +286,7 @@ export type FaqSectionData = {
 
 export type SectionType =
   | "features"
+  | "categories"
   | "howItWorks"
   | "gallery"
   | "stats"
@@ -284,6 +299,7 @@ export type SectionType =
 
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
+  | { type: "categories"; data: CategoriesSectionData }
   | { type: "howItWorks"; data: HowItWorksSectionData }
   | { type: "gallery"; data: GallerySectionData }
   | { type: "stats"; data: StatsSectionData }
@@ -323,6 +339,7 @@ export type Compliance = {
 export type NavLink = {
   label: string;
   href: string;
+  external?: boolean;
 };
 
 export type NavCta = {

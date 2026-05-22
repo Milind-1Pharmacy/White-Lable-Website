@@ -27,6 +27,9 @@ const AIStore = dynamic(() =>
 const Team = dynamic(() =>
   import("@/modules/Team").then((m) => ({ default: m.Team })),
 );
+const Categories = dynamic(() =>
+  import("@/modules/Categories").then((m) => ({ default: m.Categories })),
+);
 
 type SectionRendererProps = {
   sections: Section[];
@@ -41,6 +44,10 @@ export function SectionRenderer({ sections, branding }: SectionRendererProps) {
         switch (section.type) {
           case "features":
             return <Features key={`features-${idx}`} data={section.data} />;
+          case "categories":
+            return (
+              <Categories key={`categories-${idx}`} data={section.data} />
+            );
           case "howItWorks":
             return <HowItWorks key={`how-${idx}`} data={section.data} />;
           case "gallery":
