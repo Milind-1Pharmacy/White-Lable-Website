@@ -1,3 +1,15 @@
+/**
+ * @file ContactDisplay.tsx
+ * @description Read-only contact card with email, phone, and address.
+ * @responsibilities
+ *  - Build display items from available contact fields.
+ *  - Link email (mailto) and phone (tel); show address as text.
+ *  - Render nothing when no contact details exist.
+ * @dependencies Card/CardContent UI, Contact config type
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { Card, CardContent } from "@/components/ui/card";
 import type { Contact } from "@/types/config.types";
 
@@ -5,6 +17,12 @@ type ContactDisplayProps = {
   contact: Contact;
 };
 
+/**
+ * ContactDisplay - Shows tenant email, phone, and address in a card grid.
+ * @props {Contact} contact - Tenant contact details from config
+ * @returns JSX element
+ */
+// Note: non-transactional display only; no order/checkout flows.
 export function ContactDisplay({ contact }: ContactDisplayProps) {
   const items: Array<{ label: string; value: string; href?: string }> = [];
 

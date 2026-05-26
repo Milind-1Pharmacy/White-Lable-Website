@@ -1,6 +1,31 @@
+/**
+ * @file MobileCarousel.tsx
+ * @description Horizontal swipe carousel for cards on small screens.
+ * @responsibilities
+ *  - Wrap children in a scrollable, snapping track.
+ *  - Expose sizing/gap/padding as CSS variables for styling.
+ *  - Apply accessible region roles with a generic aria label.
+ * @dependencies cn util, MobileCarouselProps UI type
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { cn } from "@/lib/utils";
 import type { MobileCarouselProps } from "@/types/ui.types";
 
+/**
+ * MobileCarousel - Scrollable horizontal track of cards for mobile views.
+ * @props {React.ReactNode} children - Cards to lay out in the track
+ * @props {string} [className] - Extra classes on the carousel root
+ * @props {string|number} [cardWidth] - Card width (CSS var --mc-card-w)
+ * @props {number} [maxCardWidth] - Max card width in px
+ * @props {number} [minCardWidth] - Min card width in px
+ * @props {number} [gap] - Gap between cards in px
+ * @props {number} [edgePadding] - Track edge padding in px
+ * @props {number} [breakpoint] - Px breakpoint for carousel behavior
+ * @props {string} [ariaLabel] - Region label; keep generic, no tenant name
+ * @returns JSX element
+ */
 export function MobileCarousel({
   children,
   className,

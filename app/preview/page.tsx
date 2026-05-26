@@ -1,3 +1,15 @@
+/**
+ * @file page.tsx
+ * @description Internal preview index listing all available tenant configs.
+ * @responsibilities
+ *  - List tenant configs found in the configs directory.
+ *  - Render a card per tenant with colors, logo, and slug.
+ *  - Link each card to its tenant preview page.
+ * @dependencies listConfigs, Container, next/image, next/link
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -13,6 +25,10 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-static";
 
+/**
+ * PreviewIndex - Shows a grid of tenant config cards to preview.
+ * @returns JSX element
+ */
 export default async function PreviewIndex() {
   const tenants = await listConfigs();
 

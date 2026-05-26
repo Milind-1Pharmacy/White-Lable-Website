@@ -1,7 +1,24 @@
+/**
+ * @file card.tsx
+ * @description shadcn card primitives: container plus header/title/content parts.
+ * @responsibilities
+ *  - Provide composable Card sections via data-slot styling hooks.
+ *  - Support default and small (sm) sizing.
+ * @dependencies React, cn util
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Card - Rounded surface container for grouped content.
+ * @props {string} [className] - Extra classes
+ * @props {"default"|"sm"} [size] - Card density
+ * @returns JSX element
+ */
 function Card({
   className,
   size = "default",
@@ -20,6 +37,11 @@ function Card({
   )
 }
 
+/**
+ * CardHeader - Top region holding title, description, and actions.
+ * @props {string} [className] - Extra classes
+ * @returns JSX element
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -33,6 +55,11 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * CardTitle - Heading text for the card.
+ * @props {string} [className] - Extra classes
+ * @returns JSX element
+ */
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -46,6 +73,11 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * CardDescription - Muted supporting text under the title.
+ * @props {string} [className] - Extra classes
+ * @returns JSX element
+ */
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -56,6 +88,11 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * CardAction - Top-right action slot within the header.
+ * @props {string} [className] - Extra classes
+ * @returns JSX element
+ */
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -69,6 +106,11 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * CardContent - Main body region of the card.
+ * @props {string} [className] - Extra classes
+ * @returns JSX element
+ */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -79,6 +121,11 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * CardFooter - Bottom region for actions, separated by a top border.
+ * @props {string} [className] - Extra classes
+ * @returns JSX element
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

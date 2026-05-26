@@ -1,3 +1,15 @@
+/**
+ * @file page.tsx
+ * @description Per-tenant preview page rendered from a config slug.
+ * @responsibilities
+ *  - Build a static preview page for each tenant config.
+ *  - Render Hero, About, Services, and config-driven sections.
+ *  - Mark preview pages noindex so they stay out of search.
+ * @dependencies next/link, next/navigation, getConfigBySlug, listConfigs, buildMetadata, modules
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -13,11 +25,13 @@ type Params = { slug: string };
 
 export const dynamicParams = false;
 
+/** List preview slugs to pre-render. A TENANT-scoped build emits only that tenant. */
 export async function generateStaticParams(): Promise<Params[]> {
   const tenants = await listConfigs();
   return tenants.map((t) => ({ slug: t.slug }));
 }
 
+/** Build SEO metadata for a preview slug; preview pages are noindex. */
 export async function generateMetadata({
   params,
 }: {
@@ -30,6 +44,7 @@ export async function generateMetadata({
   return { ...meta, robots: { index: false, follow: false } };
 }
 
+/** Render the preview page for a single tenant config, or 404 if missing. */
 export default async function TenantPreviewPage({
   params,
 }: {

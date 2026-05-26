@@ -1,3 +1,15 @@
+/**
+ * @file StickyCta.tsx
+ * @description Scroll-aware sticky call-to-action bar linking to the app.
+ * @responsibilities
+ *  - Show the bar only in the mid-scroll range of the page.
+ *  - Render nothing when disabled or missing text/label.
+ *  - Link to a config CTA href (non-transactional).
+ * @dependencies React hooks, next/link, StickyCtaConfig type
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,6 +20,11 @@ type StickyCtaProps = {
   config?: StickyCtaConfig;
 };
 
+/**
+ * StickyCta - Floating CTA bar shown while scrolling the page body.
+ * @props {StickyCtaConfig} [config] - CTA text, label, and target href
+ * @returns JSX element or null
+ */
 export function StickyCta({ config }: StickyCtaProps) {
   const [show, setShow] = useState(false);
 

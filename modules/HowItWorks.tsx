@@ -1,4 +1,16 @@
 "use client";
+/**
+ * @file HowItWorks.tsx
+ * @description Shows ordered, numbered process steps with an optional CTA.
+ * @responsibilities
+ *  - Render an eyebrow, rich heading, and optional CTA link.
+ *  - List each step with its number, title, and description.
+ *  - Render nothing when no steps are provided.
+ * @dependencies next/link, useIsMobile, RichHeading, config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Link from "next/link";
 import type { HowItWorksSectionData } from "@/types/config.types";
 import { useIsMobile } from "@/lib/useIsMobile";
@@ -8,6 +20,11 @@ type HowItWorksProps = {
   data: HowItWorksSectionData;
 };
 
+/**
+ * HowItWorks - Renders a numbered list of process steps with optional heading and CTA.
+ * @props {HowItWorksSectionData} data - Eyebrow, heading, CTA, and steps
+ * @returns JSX element
+ */
 export function HowItWorks({ data }: HowItWorksProps) {
   const isMobile = useIsMobile();
   if (!data?.steps?.length) return null;

@@ -1,3 +1,15 @@
+/**
+ * @file page.tsx
+ * @description Home page that assembles hero, app strip, about, services, and more.
+ * @responsibilities
+ *  - Load tenant config content and branding.
+ *  - Render hero, optional app strip, about, and services sections.
+ *  - Dispatch remaining config sections via SectionRenderer.
+ * @dependencies getConfig, Hero, About, Services, AppStrip, SectionRenderer
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { getConfig } from "@/lib/getConfig";
 import { Hero } from "@/modules/Hero";
 import { About } from "@/modules/About";
@@ -8,6 +20,10 @@ import type { AppStripSectionData } from "@/types/config.types";
 
 export const revalidate = 3600;
 
+/**
+ * HomePage - Renders the full landing page from config sections.
+ * @returns JSX element
+ */
 export default async function HomePage() {
   const { app } = await getConfig();
   const { content, branding } = app;

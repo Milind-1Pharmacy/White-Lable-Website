@@ -1,3 +1,14 @@
+/**
+ * @file badge.tsx
+ * @description shadcn/base-ui Badge primitive with style variants.
+ * @responsibilities
+ *  - Provide badgeVariants (default, secondary, destructive, outline, ghost, link).
+ *  - Render via base-ui useRender so the tag can be overridden.
+ * @dependencies @base-ui/react, class-variance-authority, cn util
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -27,6 +38,13 @@ const badgeVariants = cva(
   }
 )
 
+/**
+ * Badge - Small label/pill rendered via base-ui useRender.
+ * @props {string} [className] - Extra classes
+ * @props {string} [variant] - Visual variant from badgeVariants
+ * @props {RenderProp} [render] - Override the rendered element/tag
+ * @returns JSX element
+ */
 function Badge({
   className,
   variant = "default",

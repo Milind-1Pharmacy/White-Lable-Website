@@ -1,3 +1,16 @@
+/**
+ * @file About.tsx
+ * @description Renders the About section with heading and pillar cards.
+ * @responsibilities
+ *  - Show optional eyebrow, title, and lede text.
+ *  - Render pillar cards in a grid on desktop.
+ *  - Show pillars as a swipeable carousel on mobile.
+ *  - Render nothing when no content is given.
+ * @dependencies RichHeading, MobileCarousel, config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import type { AboutContent } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
@@ -6,6 +19,11 @@ type AboutProps = {
   data?: AboutContent;
 };
 
+/**
+ * About - Shows business intro heading and pillar cards.
+ * @props {AboutContent} data - Section content from config.
+ * @returns JSX element
+ */
 export function About({ data }: AboutProps) {
   if (!data) return null;
 
@@ -15,6 +33,9 @@ export function About({ data }: AboutProps) {
 
   const title = renderRichHeading(data.title);
 
+  /**
+   * Renders one pillar card with badge, meta, title, and body.
+   */
   const renderPillar = (
     p: NonNullable<AboutContent["pillars"]>[number],
     idx: number,

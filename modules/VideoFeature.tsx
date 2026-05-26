@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * @file VideoFeature.tsx
+ * @description Poster-based video feature with overlay and scrolling marquee.
+ * @responsibilities
+ *  - Show a poster that swaps to video on play.
+ *  - Render heading, tag, and CTA over the poster.
+ *  - Render a looping marquee of words; skip when no data.
+ * @dependencies React useState, renderRichHeading, config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
+
 import { useState } from "react";
 import type { VideoFeatureSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
@@ -8,6 +21,11 @@ type VideoFeatureProps = {
   data: VideoFeatureSectionData;
 };
 
+/**
+ * VideoFeature - Poster, click-to-play video, overlay, and word marquee.
+ * @props {VideoFeatureSectionData} data - Poster, video, heading, tag, CTA, marquee.
+ * @returns JSX element
+ */
 export function VideoFeature({ data }: VideoFeatureProps) {
   const [playing, setPlaying] = useState(false);
   const words = data.marquee ?? [];
