@@ -1,9 +1,28 @@
+/**
+ * @file LegalArticle.tsx
+ * @description Renders config-driven legal page content (privacy, terms, disclaimer).
+ * @responsibilities
+ *  - Render intro, optional video, body blocks and titled sections.
+ *  - Support string, paragraph, and ordered/unordered list block types.
+ *  - Render nothing when no legal data is supplied.
+ * @dependencies LegalPage / LegalBlock config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import type { LegalBlock, LegalPage } from "@/types/config.types";
 
 type Props = {
   data?: LegalPage;
 };
 
+/**
+ * renderBlock - Renders one legal content block as paragraph or list.
+ * @param {string | LegalBlock} block - Text or structured block to render
+ * @param {number} key - React list key
+ * @param {boolean} [leading] - Emphasize as the leading paragraph
+ * @returns JSX element or null
+ */
 function renderBlock(block: string | LegalBlock, key: number, leading?: boolean) {
   if (typeof block === "string") {
     return (
@@ -40,6 +59,11 @@ function renderBlock(block: string | LegalBlock, key: number, leading?: boolean)
   return null;
 }
 
+/**
+ * LegalArticle - Shows a full legal page from config: intro, video, sections.
+ * @props {LegalPage} [data] - Legal page content slice from config
+ * @returns JSX element
+ */
 export function LegalArticle({ data }: Props) {
   if (!data) return null;
   const top = data.body ?? [];

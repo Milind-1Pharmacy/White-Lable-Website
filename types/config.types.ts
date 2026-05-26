@@ -1,13 +1,29 @@
+/**
+ * @file config.types.ts
+ * @description Master TypeScript shape for tenant and system config JSON.
+ * @responsibilities
+ *  - Define the AppConfig tree consumed by every module.
+ *  - Define section data shapes and the section allowlist union.
+ *  - Define the SystemConfig used for defaults and compliance.
+ * @dependencies none
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
+
+/** A non-transactional CTA. type "safe-action" keeps the site compliant. */
 export type SafeActionCta = {
   label: string;
   type: "safe-action";
 };
 
+/** Basic tenant identity. */
 export type Tenant = {
   name: string;
   category: string;
 };
 
+/** Brand palette mapped to CSS variables by the theme loader. */
 export type BrandingColors = {
   primary: string;
   secondary: string;
@@ -17,13 +33,15 @@ export type BrandingColors = {
   ink?: string;
 };
 
+/** Logos, optional stylesheet, and color palette for a tenant. */
 export type Branding = {
   logo?: string;
-  logoFull?: string;
+  logoFull?: string; // wide ~2:1 lockup; logo is the square mark
   stylesheet?: string;
   colors: BrandingColors;
 };
 
+/** SEO metadata fed into Next.js Metadata. */
 export type Seo = {
   title: string;
   description: string;
@@ -31,35 +49,42 @@ export type Seo = {
   ogImage?: string;
 };
 
+/** One styled fragment of a heading. */
 export type RichHeadingPart = {
   text: string;
-  emphasis?: "italic-accent" | "italic" | "accent";
-  br?: boolean;
+  emphasis?: "italic-accent" | "italic" | "accent"; // visual style for this fragment
+  br?: boolean; // force a line break after this part
 };
 
+/** A heading built from ordered, individually styled parts. */
 export type RichHeading = {
   parts: RichHeadingPart[];
 };
 
+/** A short trust/proof line in the hero. */
 export type HeroProofItem = string;
 
+/** Optional secondary hero CTA. */
 export type HeroSecondaryCta = {
   label: string;
   href?: string;
 };
 
+/** A single image slide in the hero carousel. */
 export type HeroSlide = {
   image: string;
   tag?: string;
   caption?: string;
 };
 
+/** A hero stat shown as value + suffix + label. */
 export type HeroMetaItem = {
   value: string;
   suffix?: string;
   label: string;
 };
 
+/** Live-status rail shown alongside the hero. */
 export type HeroRail = {
   liveLabel?: string;
   locationText?: string;
@@ -67,6 +92,7 @@ export type HeroRail = {
   badgeText?: string;
 };
 
+/** Full hero section content. */
 export type HeroContent = {
   headline: string;
   headlineRich?: RichHeading;
@@ -81,6 +107,7 @@ export type HeroContent = {
   rail?: HeroRail;
 };
 
+/** A numbered "pillar" card in the About section. */
 export type PillarItem = {
   n: string;
   title: string;
@@ -89,6 +116,7 @@ export type PillarItem = {
   meta: string;
 };
 
+/** About section content. */
 export type AboutContent = {
   description: string;
   image?: string;
@@ -98,12 +126,14 @@ export type AboutContent = {
   pillars?: PillarItem[];
 };
 
+/** A single service card. */
 export type ServiceItem = {
   title: string;
   description: string;
   image?: string;
 };
 
+/** Heading and CTA shown above the services grid. */
 export type ServicesMeta = {
   eyebrow?: string;
   heading?: RichHeading;
@@ -111,23 +141,27 @@ export type ServicesMeta = {
   ctaHref?: string;
 };
 
+/** A single feature item. */
 export type FeatureItem = {
   title: string;
   description: string;
 };
 
+/** Data for a "features" section. */
 export type FeaturesSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
   items: FeatureItem[];
 };
 
+/** One ordered step in a how-it-works flow. */
 export type HowItWorksStep = {
   step: number;
   title: string;
   description: string;
 };
 
+/** Data for a "howItWorks" section. */
 export type HowItWorksSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
@@ -136,18 +170,21 @@ export type HowItWorksSectionData = {
   steps: HowItWorksStep[];
 };
 
+/** A single gallery image. */
 export type GalleryImage = {
   src: string;
   alt?: string;
   caption?: string;
 };
 
+/** Data for a "gallery" section. */
 export type GallerySectionData = {
   heading?: RichHeading;
   eyebrow?: string;
   images: GalleryImage[];
 };
 
+/** A single stat with value, suffix, and label. */
 export type StatItem = {
   value: string;
   suffix?: string;
@@ -155,6 +192,7 @@ export type StatItem = {
   footnote?: string;
 };
 
+/** Data for a "stats" section. */
 export type StatsSectionData = {
   eyebrow?: string;
   headline?: string;
@@ -162,6 +200,7 @@ export type StatsSectionData = {
   items: StatItem[];
 };
 
+/** A media tile in the AI-store section. */
 export type AIStoreTile = {
   image: string;
   alt?: string;
@@ -172,6 +211,7 @@ export type AIStoreTile = {
   background?: string;
 };
 
+/** Data for an "aiStore" section. */
 export type AIStoreSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
@@ -179,6 +219,7 @@ export type AIStoreSectionData = {
   tiles?: AIStoreTile[];
 };
 
+/** A team department tile. */
 export type TeamDepartment = {
   code: string;
   count: number;
@@ -189,11 +230,13 @@ export type TeamDepartment = {
   detail: string;
 };
 
+/** A team credential or certification. */
 export type TeamCredential = {
   label: string;
   value: string;
 };
 
+/** Data for a "team" section. */
 export type TeamSectionData = {
   eyebrow?: string;
   quote?: RichHeading;
@@ -204,6 +247,7 @@ export type TeamSectionData = {
   credentials?: TeamCredential[];
 };
 
+/** A savings comparison row. */
 export type SavingsItem = {
   name: string;
   cat: string;
@@ -212,6 +256,7 @@ export type SavingsItem = {
   color?: string;
 };
 
+/** Summary ledger shown beside savings items. */
 export type SavingsLedger = {
   receiptLabel?: string;
   receiptValue?: string;
@@ -220,12 +265,14 @@ export type SavingsLedger = {
   footnote?: string;
 };
 
+/** Copy for the savings section video. */
 export type SavingsVideoCopy = {
   tag?: string;
   headline?: string;
   ctaLabel?: string;
 };
 
+/** Data for a "savings" section. */
 export type SavingsSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
@@ -237,15 +284,17 @@ export type SavingsSectionData = {
   videoCopy?: SavingsVideoCopy;
 };
 
+/** Data for a "videoFeature" section. */
 export type VideoFeatureSectionData = {
   tag?: string;
   heading?: RichHeading;
   ctaLabel?: string;
   poster?: string;
   videoUrl?: string;
-  marquee?: string[];
+  marquee?: string[]; // scrolling text strip
 };
 
+/** Data for an "appStrip" section (app-store download links). */
 export type AppStripSectionData = {
   heading?: RichHeading;
   descriptor?: string;
@@ -254,6 +303,7 @@ export type AppStripSectionData = {
   googlePlayUrl?: string;
 };
 
+/** A single FAQ entry. */
 export type FaqItem = {
   question: string;
   answer: string;
@@ -261,6 +311,7 @@ export type FaqItem = {
   learnMoreHref?: string;
 };
 
+/** Data for a "faq" section. */
 export type FaqSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
@@ -270,6 +321,7 @@ export type FaqSectionData = {
   items: FaqItem[];
 };
 
+/** Allowed section types; the compliance filter suppresses any others. */
 export type SectionType =
   | "features"
   | "howItWorks"
@@ -282,6 +334,7 @@ export type SectionType =
   | "aiStore"
   | "team";
 
+/** A discriminated union: type selects the matching data shape. */
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
   | { type: "howItWorks"; data: HowItWorksSectionData }
@@ -294,6 +347,7 @@ export type Section =
   | { type: "aiStore"; data: AIStoreSectionData }
   | { type: "team"; data: TeamSectionData };
 
+/** All page content: fixed hero/about/services plus ordered dynamic sections. */
 export type Content = {
   hero: HeroContent;
   about?: AboutContent;
@@ -302,12 +356,14 @@ export type Content = {
   sections: Section[];
 };
 
+/** Tenant contact details. */
 export type Contact = {
   email?: string;
   phone?: string;
   address?: string;
 };
 
+/** Feature flags. Payments and cart are force-disabled by compliance. */
 export type Features = {
   enableChat: boolean;
   enableForms: boolean;
@@ -315,16 +371,19 @@ export type Features = {
   enableCart: boolean;
 };
 
+/** Compliance mode and the disclaimer rendered in the footer. */
 export type Compliance = {
   mode: "business-profile-safe";
   disclaimer: string;
 };
 
+/** A nav or footer link. */
 export type NavLink = {
   label: string;
   href: string;
 };
 
+/** A nav CTA button. external opens in a new tab. */
 export type NavCta = {
   label: string;
   href: string;
@@ -332,11 +391,13 @@ export type NavCta = {
   external?: boolean;
 };
 
+/** Navigation links and CTAs. */
 export type NavConfig = {
   links?: NavLink[];
   ctas?: NavCta[];
 };
 
+/** Optional sticky bottom CTA bar. */
 export type StickyCtaConfig = {
   enabled?: boolean;
   text?: string;
@@ -344,15 +405,18 @@ export type StickyCtaConfig = {
   ctaHref?: string;
 };
 
+/** A footer link column. */
 export type FooterColumn = {
   heading: string;
   links: NavLink[];
 };
 
+/** Small tag shown in the footer bottom bar. */
 export type FooterBottomTag = {
   text: string;
 };
 
+/** Footer content: headline, CTA, description, and link columns. */
 export type FooterConfig = {
   headline?: RichHeading;
   ctaLabel?: string;
@@ -363,16 +427,19 @@ export type FooterConfig = {
   bottomTag?: string;
 };
 
+/** A block of legal copy: paragraph or list. */
 export type LegalBlock =
   | { type: "p"; text: string }
   | { type: "list"; ordered?: boolean; items: string[] };
 
+/** A titled section of a legal page. */
 export type LegalSection = {
   heading?: string;
   subheading?: string;
-  body: Array<string | LegalBlock>;
+  body: Array<string | LegalBlock>; // plain strings or structured blocks
 };
 
+/** A legal page (privacy, terms, disclaimer, etc.). */
 export type LegalPage = {
   eyebrow?: string;
   heading?: string;
@@ -386,12 +453,14 @@ export type LegalPage = {
   };
 };
 
+/** Contact page header copy. */
 export type ContactPageConfig = {
   eyebrow?: string;
   heading?: string;
   lede?: string;
 };
 
+/** Copy for the 404 not-found page. */
 export type NotFoundConfig = {
   code?: string;
   heading?: string;
@@ -400,6 +469,7 @@ export type NotFoundConfig = {
   ctaHref?: string;
 };
 
+/** Config for standalone pages (contact, legal, 404). */
 export type PagesConfig = {
   contact?: ContactPageConfig;
   disclaimer?: LegalPage;
@@ -409,6 +479,7 @@ export type PagesConfig = {
   notFound?: NotFoundConfig;
 };
 
+/** Site chrome: nav, footer, sticky CTA, and standalone pages. */
 export type Layout = {
   nav?: NavConfig;
   footer?: FooterConfig;
@@ -416,6 +487,7 @@ export type Layout = {
   pages?: PagesConfig;
 };
 
+/** The full tenant config tree loaded from configs/<tenant>.json. */
 export type AppConfig = {
   tenant: Tenant;
   branding: Branding;
@@ -427,6 +499,7 @@ export type AppConfig = {
   layout?: Layout;
 };
 
+/** Non-tenant defaults and the compliance ruleset (configs/system.json). */
 export type SystemConfig = {
   version: string;
   mode: string;
@@ -451,6 +524,7 @@ export type SystemConfig = {
   branding: { fallbackColors: BrandingColors };
 };
 
+/** App config merged with system config after validation and filtering. */
 export type ResolvedConfig = {
   app: AppConfig;
   system: SystemConfig;

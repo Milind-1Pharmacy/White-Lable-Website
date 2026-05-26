@@ -1,8 +1,25 @@
+/**
+ * @file input.tsx
+ * @description shadcn/base-ui text input primitive with shared styling.
+ * @responsibilities
+ *  - Wrap base-ui Input with standard focus, disabled, and invalid styles.
+ *  - Pass through native input props and type.
+ * @dependencies React, @base-ui/react/input, cn util
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Input - Styled single-line text input.
+ * @props {string} [className] - Extra classes
+ * @props {string} [type] - Native input type
+ * @returns JSX element
+ */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive

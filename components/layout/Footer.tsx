@@ -1,3 +1,15 @@
+/**
+ * @file Footer.tsx
+ * @description Site footer with branding, contact, link columns, and compliance disclaimer.
+ * @responsibilities
+ *  - Render tenant logo, description, and contact details from config.
+ *  - Show optional headline, CTA, and link columns.
+ *  - Always render the compliance disclaimer when present.
+ * @dependencies next/image, next/link, AppConfig, renderRichHeading
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Image from "next/image";
 import Link from "next/link";
 import type { AppConfig } from "@/types/config.types";
@@ -7,6 +19,9 @@ type FooterProps = {
   app: AppConfig;
 };
 
+/**
+ * Footer for every page. Renders config-driven content and the compliance disclaimer.
+ */
 export function Footer({ app }: FooterProps) {
   const year = new Date().getFullYear();
   const fullLogo = app.branding?.logoFull ?? app.branding?.logo;

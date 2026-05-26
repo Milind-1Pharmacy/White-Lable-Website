@@ -1,10 +1,24 @@
+/**
+ * @file ui.types.ts
+ * @description Shared prop types for reusable UI layout components.
+ * @responsibilities
+ *  - Define props for Container and SectionWrapper layout shells.
+ *  - Define navigation item shape.
+ *  - Define tunable props for the mobile carousel.
+ * @dependencies React ReactNode type.
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import type { ReactNode } from "react";
 
+/** Props for the max-width page container wrapper. */
 export type ContainerProps = {
   children: ReactNode;
   className?: string;
 };
 
+/** Props for a titled page section with optional eyebrow text. */
 export type SectionWrapperProps = {
   id?: string;
   heading?: string;
@@ -13,11 +27,13 @@ export type SectionWrapperProps = {
   className?: string;
 };
 
+/** A single navigation link with label and target href. */
 export type NavItem = {
   label: string;
   href: string;
 };
 
+/** Props controlling sizing, spacing, and behavior of the mobile carousel. */
 export type MobileCarouselProps = {
   children: ReactNode;
   className?: string;

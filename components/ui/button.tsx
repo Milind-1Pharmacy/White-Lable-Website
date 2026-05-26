@@ -1,3 +1,15 @@
+/**
+ * @file button.tsx
+ * @description shadcn/base-ui Button primitive with variant and size styles.
+ * @responsibilities
+ *  - Provide buttonVariants (variant + size) for buttons and links.
+ *  - Wrap the base-ui Button primitive with merged classes.
+ * @dependencies @base-ui/react/button, class-variance-authority, cn util
+ * @note base-ui Button has no asChild; style a Link via buttonVariants + cn.
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -40,6 +52,13 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * Button - Styled base-ui button supporting variant and size props.
+ * @props {string} [className] - Extra classes
+ * @props {string} [variant] - Visual variant from buttonVariants
+ * @props {string} [size] - Size token from buttonVariants
+ * @returns JSX element
+ */
 function Button({
   className,
   variant = "default",

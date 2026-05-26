@@ -1,3 +1,15 @@
+/**
+ * @file layout.tsx
+ * @description Shared layout for the public site: navbar, footer, and CTA.
+ * @responsibilities
+ *  - Load tenant config and build default metadata.
+ *  - Apply tenant theme colors via inline CSS variables.
+ *  - Wrap children with navbar, footer, sticky CTA, and structured data.
+ * @dependencies getConfig, themeStyle, buildMetadata, Navbar, Footer, StickyCta
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import type { Metadata } from "next";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -8,6 +20,10 @@ import { getConfig } from "@/lib/getConfig";
 import { themeStyle } from "@/lib/themeLoader";
 import { buildMetadata } from "@/lib/seoBuilder";
 
+/**
+ * generateMetadata - Builds default SEO metadata for the site.
+ * @returns Next.js Metadata for the public site
+ */
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
   return buildMetadata(config);
@@ -15,6 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const revalidate = 3600;
 
+/**
+ * SiteLayout - Frames page content with navbar, footer, and theme.
+ * @param {React.ReactNode} children - Page content to render
+ * @returns JSX element
+ */
 export default async function SiteLayout({
   children,
 }: Readonly<{

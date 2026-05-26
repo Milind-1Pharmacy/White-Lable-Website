@@ -1,8 +1,25 @@
 "use client";
 
+/**
+ * @file Stats.tsx
+ * @description Dark stats section with numbers that count up on scroll.
+ * @responsibilities
+ *  - Reveal each stat once it scrolls into view.
+ *  - Animate numbers counting up to their target value.
+ *  - Render nothing when no stat items exist.
+ * @dependencies React hooks, IntersectionObserver, requestAnimationFrame
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type { StatsSectionData } from "@/types/config.types";
 
+/**
+ * useReveal - Reports when its element first scrolls into view.
+ * @returns Tuple of element ref and a seen-once boolean
+ */
 function useReveal(): [React.RefObject<HTMLSpanElement | null>, boolean] {
   const ref = useRef<HTMLSpanElement>(null);
   const [seen, setSeen] = useState(false);
@@ -23,11 +40,22 @@ function useReveal(): [React.RefObject<HTMLSpanElement | null>, boolean] {
   return [ref, seen];
 }
 
+/**
+ * fmtK - Formats large numbers as a "k" shorthand.
+ * @param {number} n - The number to format.
+ * @returns String like "12.3k" or the plain number
+ */
 function fmtK(n: number): string {
   if (n >= 1000) return Math.round(n / 100) / 10 + "k";
   return n.toString();
 }
 
+/**
+ * AnimNum - Counts up to a value when scrolled into view, with suffix.
+ * @props {number} value - Target number to count to.
+ * @props {string} suffix - Optional accent suffix after the number.
+ * @returns JSX element
+ */
 function AnimNum({ value, suffix }: { value: number; suffix?: string }) {
   const [ref, seen] = useReveal();
   const [n, setN] = useState(0);
@@ -60,6 +88,11 @@ type StatsProps = {
   data: StatsSectionData;
 };
 
+/**
+ * Stats - Dark section header plus a grid of animated stat cells.
+ * @props {StatsSectionData} data - Eyebrow, headline, descriptor, and items.
+ * @returns JSX element
+ */
 export function Stats({ data }: StatsProps) {
   if (!data?.items?.length) return null;
 

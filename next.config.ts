@@ -1,3 +1,15 @@
+/**
+ * @file next.config.ts
+ * @description Next.js config for static export to S3/CloudFront.
+ * @responsibilities
+ *  - Enable static HTML export output.
+ *  - Disable image optimization for static hosting.
+ *  - Allow remote image patterns and trailing-slash URLs.
+ * @dependencies NextConfig type from next.
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {

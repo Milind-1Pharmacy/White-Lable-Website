@@ -1,3 +1,16 @@
+/**
+ * @file AppStrip.tsx
+ * @description Renders an app-promotion strip with store download badges.
+ * @responsibilities
+ *  - Show app logo, heading, and descriptor text.
+ *  - Render App Store and Google Play badge links.
+ *  - Fall back to branding logo when no strip logo is set.
+ *  - Render nothing when no content is given.
+ * @dependencies next/image, RichHeading, config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Image from "next/image";
 import type { AppStripSectionData, Branding } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
@@ -7,6 +20,12 @@ type AppStripProps = {
   branding?: Branding;
 };
 
+/**
+ * AppStrip - Promotes the mobile app with store download links.
+ * @props {AppStripSectionData} data - Strip content from config.
+ * @props {Branding} branding - Brand assets used as fallback.
+ * @returns JSX element
+ */
 export function AppStrip({ data, branding }: AppStripProps) {
   const logo = data.logo ?? branding?.logo;
   const heading = renderRichHeading(data.heading);

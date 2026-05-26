@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * @file Faq.tsx
+ * @description Renders an accordion of frequently asked questions.
+ * @responsibilities
+ *  - Show heading, lede, and an optional contact CTA.
+ *  - Expand and collapse one answer at a time.
+ *  - Render optional learn-more links inside answers.
+ *  - Render nothing when no questions are given.
+ * @dependencies react, next/link, useIsMobile, RichHeading, config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { useState } from "react";
 import Link from "next/link";
 import type { FaqSectionData } from "@/types/config.types";
@@ -10,6 +23,11 @@ type FaqProps = {
   data: FaqSectionData;
 };
 
+/**
+ * Faq - Shows an expandable list of questions and answers.
+ * @props {FaqSectionData} data - FAQ content from config.
+ * @returns JSX element
+ */
 export function Faq({ data }: FaqProps) {
   const [open, setOpen] = useState<number>(0);
   const isMobile = useIsMobile();
