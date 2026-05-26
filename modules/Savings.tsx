@@ -1,10 +1,27 @@
 "use client";
 
+/**
+ * @file Savings.tsx
+ * @description Savings section with percent cards, ledger, and video feature.
+ * @responsibilities
+ *  - Show savings cards in a grid and a mobile carousel.
+ *  - Reveal cards and animate numbers on scroll.
+ *  - Render optional ledger meta and click-to-play video.
+ * @dependencies React hooks, IntersectionObserver, renderRichHeading, MobileCarousel
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type { SavingsSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 
+/**
+ * useReveal - Reports when its element first scrolls into view.
+ * @returns Tuple of element ref and a seen-once boolean
+ */
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
@@ -25,6 +42,12 @@ function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   return [ref, seen];
 }
 
+/**
+ * SavingsCard - Card showing a product name and percent-lower badge.
+ * @props {object} row - Name, category, percent, and accent color.
+ * @props {number} index - Card position, used for stagger delay.
+ * @returns JSX element
+ */
 function SavingsCard({
   row,
   index,
@@ -65,6 +88,11 @@ type SavingsProps = {
   data: SavingsSectionData;
 };
 
+/**
+ * Savings - Header, savings cards, ledger meta, and an optional video.
+ * @props {SavingsSectionData} data - Eyebrow, heading, items, ledger, video.
+ * @returns JSX element
+ */
 export function Savings({ data }: SavingsProps) {
   const [playing, setPlaying] = useState(false);
   if (!data?.items?.length) return null;

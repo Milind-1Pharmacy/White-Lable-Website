@@ -1,3 +1,15 @@
+/**
+ * @file layout.tsx
+ * @description Root layout that sets up fonts, theme, and motion provider.
+ * @responsibilities
+ *  - Register Google fonts as CSS variables on the html element.
+ *  - Apply tenant theme and optional remote stylesheet.
+ *  - Wrap the app with the MotionProvider.
+ * @dependencies getConfig, themeStyle, buildMetadata, MotionProvider
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
@@ -32,6 +44,10 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+/**
+ * generateMetadata - Builds default SEO metadata for the whole app.
+ * @returns Next.js Metadata
+ */
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
   return buildMetadata(config);
@@ -39,6 +55,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const revalidate = 3600;
 
+/**
+ * RootLayout - Defines the html/body shell with fonts and theme.
+ * @param {React.ReactNode} children - App content to render
+ * @returns JSX element
+ */
 export default async function RootLayout({
   children,
 }: Readonly<{

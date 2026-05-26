@@ -1,4 +1,18 @@
 "use client";
+
+/**
+ * @file Services.tsx
+ * @description Renders service cards as a desktop grid and mobile carousel.
+ * @responsibilities
+ *  - Show an optional eyebrow, rich heading, and CTA link.
+ *  - Render each service as a numbered card.
+ *  - Render nothing when no services are provided.
+ * @dependencies RichHeading, MobileCarousel, useIsMobile, config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
+
 import type { ServiceItem, ServicesMeta } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
@@ -9,6 +23,12 @@ type ServicesProps = {
   meta?: ServicesMeta;
 };
 
+/**
+ * Services - Shows service cards in a desktop grid and a mobile carousel.
+ * @props {ServiceItem[]} data - List of services to render
+ * @props {ServicesMeta} [meta] - Eyebrow, heading, and CTA for the section
+ * @returns JSX element
+ */
 export function Services({ data, meta }: ServicesProps) {
   const isMobile = useIsMobile();
 

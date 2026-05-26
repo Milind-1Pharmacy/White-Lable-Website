@@ -1,4 +1,17 @@
 "use client";
+/**
+ * @file Gallery.tsx
+ * @description Renders a two-row image gallery with captions.
+ * @responsibilities
+ *  - Show optional eyebrow and heading.
+ *  - Split images into two rows of up to three.
+ *  - Render optional caption for each image.
+ *  - Render nothing when no images are given.
+ * @dependencies useIsMobile, RichHeading, config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { useIsMobile } from "@/lib/useIsMobile";
 import type { GallerySectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
@@ -7,6 +20,11 @@ type GalleryProps = {
   data: GallerySectionData;
 };
 
+/**
+ * Gallery - Shows business photos in two captioned rows.
+ * @props {GallerySectionData} data - Gallery content from config.
+ * @returns JSX element
+ */
 export function Gallery({ data }: GalleryProps) {
   const isMobile = useIsMobile();
   if (!data?.images?.length) return null;

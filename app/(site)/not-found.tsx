@@ -1,3 +1,15 @@
+/**
+ * @file not-found.tsx
+ * @description 404 page that shows a config-driven not-found message.
+ * @responsibilities
+ *  - Load tenant config for not-found page text.
+ *  - Render optional code, heading, body, and CTA link.
+ *  - Skip any field that is missing in config.
+ * @dependencies getConfig, buttonVariants, Container, cn
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -5,6 +17,10 @@ import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
 import { getConfig } from "@/lib/getConfig";
 
+/**
+ * NotFound - Shows the 404 page with config-driven text and CTA.
+ * @returns JSX element
+ */
 export default async function NotFound() {
   const { app } = await getConfig();
   const page = app.layout?.pages?.notFound;

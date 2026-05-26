@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * @file Hero.tsx
+ * @description Renders the hero section with auto-rotating image slides.
+ * @responsibilities
+ *  - Show headline, tagline, CTAs, and metric stats.
+ *  - Auto-advance slides and allow manual arrow/dot control.
+ *  - Render an optional info rail below the grid.
+ *  - Degrade gracefully when slides or fields are missing.
+ * @dependencies react, next/link, RichHeading, config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { HeroContent, HeroSlide } from "@/types/config.types";
@@ -9,6 +22,11 @@ type HeroProps = {
   data: HeroContent;
 };
 
+/**
+ * Hero - Top section with copy, CTAs, and a rotating image slider.
+ * @props {HeroContent} data - Hero content from config.
+ * @returns JSX element
+ */
 export function Hero({ data }: HeroProps) {
   const slides: HeroSlide[] =
     data.slides && data.slides.length > 0
@@ -32,6 +50,9 @@ export function Hero({ data }: HeroProps) {
     };
   }, [slides.length]);
 
+  /**
+   * Jumps to a slide index, wrapping around and stopping auto-rotation.
+   */
   const go = (n: number) => {
     if (timer.current) clearInterval(timer.current);
     if (slides.length === 0) return;

@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * @file Navbar.tsx
+ * @description Sticky top navigation with logo, links, CTAs, and mobile menu.
+ * @responsibilities
+ *  - Render config-driven nav links and CTA buttons.
+ *  - Toggle a mobile menu and lock body scroll when open.
+ *  - Add a scrolled state after the page scrolls past a threshold.
+ * @dependencies next/image, next/link, react, AppConfig, NavCta
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -9,6 +21,7 @@ type NavbarProps = {
   app: AppConfig;
 };
 
+/** Map a CTA variant to its button CSS class. */
 function ctaClass(variant: NavCta["variant"]) {
   switch (variant) {
     case "primary":
@@ -21,6 +34,9 @@ function ctaClass(variant: NavCta["variant"]) {
   }
 }
 
+/**
+ * Top navigation bar. Client component for scroll state and mobile menu toggling.
+ */
 export function Navbar({ app }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

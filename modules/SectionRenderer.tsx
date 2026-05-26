@@ -1,3 +1,15 @@
+/**
+ * @file SectionRenderer.tsx
+ * @description Dispatches config sections to their matching module by type.
+ * @responsibilities
+ *  - Map each section.type to its module component.
+ *  - Lazy-load below-the-fold client modules.
+ *  - Render nothing for unknown or missing section types.
+ * @dependencies next/dynamic, section modules, config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import dynamic from "next/dynamic";
 
 import { Features } from "@/modules/Features";
@@ -36,6 +48,26 @@ type SectionRendererProps = {
   branding?: Branding;
 };
 
+/**
+ * SectionRenderer - Renders config sections in order, one module per type.
+ *
+ * Type -> module mapping:
+ *   features     -> Features
+ *   howItWorks   -> HowItWorks
+ *   gallery      -> Gallery
+ *   stats        -> Stats
+ *   savings      -> Savings
+ *   videoFeature -> VideoFeature
+ *   appStrip     -> AppStrip
+ *   faq          -> Faq
+ *   aiStore      -> AIStore
+ *   team         -> Team
+ *   (unknown)    -> null
+ *
+ * @props {Section[]} sections - Config section list to render
+ * @props {Branding} [branding] - Brand data passed to brand-aware modules
+ * @returns JSX element
+ */
 export function SectionRenderer({ sections, branding }: SectionRendererProps) {
   if (!sections?.length) return null;
   return (

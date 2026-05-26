@@ -1,3 +1,15 @@
+/**
+ * @file layout.tsx
+ * @description Preview layout that frames a single tenant config by slug.
+ * @responsibilities
+ *  - Load tenant config from the slug; 404 when not found.
+ *  - Apply tenant theme and a decorative gradient background.
+ *  - Wrap preview content with navbar, footer, and structured data.
+ * @dependencies getConfigBySlug, themeStyle, Navbar, Footer, notFound
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { notFound } from "next/navigation";
 
 import { Navbar } from "@/components/layout/Navbar";
@@ -8,6 +20,12 @@ import { themeStyle } from "@/lib/themeLoader";
 
 type Params = { slug: string };
 
+/**
+ * PreviewSlugLayout - Frames a tenant preview with its own theme.
+ * @param {React.ReactNode} children - Preview page content
+ * @param {Promise<Params>} params - Route params holding the tenant slug
+ * @returns JSX element
+ */
 export default async function PreviewSlugLayout({
   children,
   params,

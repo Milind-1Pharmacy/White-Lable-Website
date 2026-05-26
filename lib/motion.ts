@@ -1,3 +1,15 @@
+/**
+ * @file motion.ts
+ * @description GSAP + ScrollTrigger animation primitives for client modules.
+ * @responsibilities
+ *  - Register ScrollTrigger at module load.
+ *  - Provide entry presets (fadeUp, staggerCards, imageReveal, parallax).
+ *  - Honor prefers-reduced-motion by bailing to natural state.
+ * @dependencies gsap, gsap/ScrollTrigger
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,6 +24,16 @@ export const REDUCED_MOTION =
 
 type Target = gsap.TweenTarget;
 
+// ==============================
+//  ENTRY ANIMATION PRESETS
+// ==============================
+
+/**
+ * fadeUp - Fades and slides a target up on scroll into view.
+ * @param {Target} target - Element(s) to animate.
+ * @param {object} opts - delay, y offset, duration, trigger element.
+ * @returns The GSAP tween, or null when reduced motion is on.
+ */
 export function fadeUp(
   target: Target,
   opts: { delay?: number; y?: number; duration?: number; trigger?: Element | null } = {},
@@ -38,6 +60,12 @@ export function fadeUp(
   });
 }
 
+/**
+ * staggerCards - Fades and slides a group of items up in sequence.
+ * @param {Target} targets - The elements to stagger.
+ * @param {object} opts - stagger gap, trigger element, y offset.
+ * @returns The GSAP tween, or null when reduced motion is on.
+ */
 export function staggerCards(
   targets: Target,
   opts: { stagger?: number; trigger?: Element | null; y?: number } = {},
@@ -64,6 +92,12 @@ export function staggerCards(
   });
 }
 
+/**
+ * parallaxImage - Scrubs a vertical parallax shift tied to scroll.
+ * @param {Target} target - The image element to translate.
+ * @param {object} opts - trigger element and travel distance.
+ * @returns The GSAP tween, or null when reduced motion is on.
+ */
 export function parallaxImage(
   target: Target,
   opts: { trigger?: Element | null; distance?: number } = {},
@@ -88,6 +122,12 @@ export function parallaxImage(
   );
 }
 
+/**
+ * imageReveal - Unmasks an image with a clip-path wipe on scroll.
+ * @param {Target} target - The element to reveal.
+ * @param {object} opts - trigger element.
+ * @returns The GSAP tween, or null when reduced motion is on.
+ */
 export function imageReveal(
   target: Target,
   opts: { trigger?: Element | null } = {},
@@ -112,6 +152,15 @@ export function imageReveal(
   });
 }
 
+// ==============================
+//  TEXT SPLIT HELPERS
+// ==============================
+
+/**
+ * splitLines - Wraps each word in masked spans for reveal animation.
+ * @param {HTMLElement} el - The text element to split in place.
+ * @returns The inner word spans to animate.
+ */
 export function splitLines(el: HTMLElement): HTMLElement[] {
   const text = el.textContent ?? "";
   const words = text.trim().split(/\s+/);
@@ -133,6 +182,12 @@ export function splitLines(el: HTMLElement): HTMLElement[] {
   return containers;
 }
 
+/**
+ * revealSplitWords - Splits text and slides each word up in a stagger.
+ * @param {HTMLElement} el - The text element to animate.
+ * @param {object} opts - delay and per-word stagger.
+ * @returns The GSAP tween, or null when reduced motion is on.
+ */
 export function revealSplitWords(
   el: HTMLElement,
   opts: { delay?: number; stagger?: number } = {},
@@ -153,6 +208,10 @@ export function revealSplitWords(
   });
 }
 
+/**
+ * registerGsap - Registers the ScrollTrigger plugin on the client.
+ * @returns Nothing.
+ */
 export function registerGsap() {
   if (typeof window === "undefined") return;
   gsap.registerPlugin(ScrollTrigger);
