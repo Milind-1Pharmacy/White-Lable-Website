@@ -1,4 +1,16 @@
 "use client";
+/**
+ * @file Team.tsx
+ * @description Renders team departments with animated counts, a quote, and credentials.
+ * @responsibilities
+ *  - Show an optional quote, signature, and brand mark.
+ *  - Render department cells with count-up numbers on scroll.
+ *  - List credentials and render nothing when all data is empty.
+ * @dependencies react, next/image, RichHeading, MobileCarousel, config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -10,6 +22,7 @@ import type {
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 
+/** Returns a ref and a flag that turns true once the element enters view. */
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
@@ -30,6 +43,7 @@ function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
   return [ref, seen];
 }
 
+/** Counts up from zero to the target value once it scrolls into view. */
 function AnimNum({ value }: { value: number }) {
   const [ref, seen] = useReveal();
   const [n, setN] = useState(0);
@@ -50,6 +64,7 @@ function AnimNum({ value }: { value: number }) {
   return <span ref={ref}>{n}</span>;
 }
 
+/** Renders one department cell with its code, role, animated count, and detail. */
 function renderCell(d: TeamDepartment, i: number, total: number) {
   return (
     <div
@@ -90,6 +105,12 @@ type TeamProps = {
   branding?: Branding;
 };
 
+/**
+ * Team - Shows a team quote, department cells with animated counts, and credentials.
+ * @props {TeamSectionData} data - Quote, signature, departments, and credentials
+ * @props {Branding} [branding] - Brand data used for the fallback logo mark
+ * @returns JSX element
+ */
 export function Team({ data, branding }: TeamProps) {
   const departments = data?.departments ?? [];
   const credentials = data?.credentials ?? [];

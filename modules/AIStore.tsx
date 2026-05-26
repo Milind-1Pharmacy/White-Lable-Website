@@ -1,5 +1,18 @@
 "use client";
 
+/**
+ * @file AIStore.tsx
+ * @description Split-grid section of image and video tiles with tags.
+ * @responsibilities
+ *  - Render heading, eyebrow, and lede from config.
+ *  - Show image tiles or click-to-play video tiles.
+ *  - Render nothing when no tiles are configured.
+ * @dependencies React useState, renderRichHeading, config types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
+
 import { useState } from "react";
 import type { AIStoreSectionData, AIStoreTile } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
@@ -8,6 +21,11 @@ type AIStoreProps = {
   data: AIStoreSectionData;
 };
 
+/**
+ * Tile - Shows one image tile, or a poster that swaps to video on play.
+ * @props {AIStoreTile} tile - Tile image, optional video, tag, and colors.
+ * @returns JSX element
+ */
 function Tile({ tile }: { tile: AIStoreTile }) {
   const [playing, setPlaying] = useState(false);
   const tagStyle: React.CSSProperties = {
@@ -60,6 +78,11 @@ function Tile({ tile }: { tile: AIStoreTile }) {
   );
 }
 
+/**
+ * AIStore - Section header plus a grid of image and video tiles.
+ * @props {AIStoreSectionData} data - Eyebrow, heading, lede, and tiles.
+ * @returns JSX element
+ */
 export function AIStore({ data }: AIStoreProps) {
   if (!data?.tiles || data.tiles.length === 0) return null;
 

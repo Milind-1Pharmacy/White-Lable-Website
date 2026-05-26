@@ -1,4 +1,16 @@
 "use client";
+/**
+ * @file Categories.tsx
+ * @description Interactive categories section with sticky desktop preview and mobile rail.
+ * @responsibilities
+ *  - Show a numbered, hoverable list of categories.
+ *  - Drive a sticky preview from the active row on desktop.
+ *  - Render a horizontal card rail on mobile.
+ * @dependencies react, config.types, RichHeading, useIsMobile
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { useState } from "react";
 import type { CategoriesSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
@@ -8,9 +20,15 @@ type CategoriesProps = {
   data: CategoriesSectionData;
 };
 
+/**
+ * Categories - Shows a category list driving a preview, plus a mobile rail.
+ * @props {CategoriesSectionData} data - Heading, eyebrow, tagline, and category items.
+ * @returns JSX element
+ */
 export function Categories({ data }: CategoriesProps) {
   // active row drives the right-hand sticky preview (desktop)
   const [active, setActive] = useState(0);
+  const isMobile = useIsMobile();
 
   if (!data?.items?.length) return null;
 
@@ -18,8 +36,6 @@ export function Categories({ data }: CategoriesProps) {
   const items = data.items;
   const total = String(items.length).padStart(2, "0");
   const current = items[active] ?? items[0];
-
-  const isMobile = useIsMobile();
 
   return (
     <section className="section section--cream" id="categories">

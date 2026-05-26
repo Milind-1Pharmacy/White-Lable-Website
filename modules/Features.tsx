@@ -1,4 +1,17 @@
 "use client";
+/**
+ * @file Features.tsx
+ * @description Renders a numbered grid of feature cards.
+ * @responsibilities
+ *  - Show optional eyebrow and heading.
+ *  - Render feature cards in a grid on desktop.
+ *  - Show features as a swipeable carousel on mobile.
+ *  - Render nothing when no features are given.
+ * @dependencies useIsMobile, RichHeading, MobileCarousel, config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-05-26
+ * @lastUpdated 2026-05-26
+ */
 import { useIsMobile } from "@/lib/useIsMobile";
 import type { FeatureItem, FeaturesSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
@@ -8,6 +21,9 @@ type FeaturesProps = {
   data: FeaturesSectionData;
 };
 
+/**
+ * Renders one numbered feature card with title and description.
+ */
 const renderCell = (w: FeatureItem, i: number) => (
   <div key={i} className="why-cell">
     <div className="num">{String(i + 1).padStart(2, "0")}</div>
@@ -16,6 +32,11 @@ const renderCell = (w: FeatureItem, i: number) => (
   </div>
 );
 
+/**
+ * Features - Shows key selling points as numbered cards.
+ * @props {FeaturesSectionData} data - Features content from config.
+ * @returns JSX element
+ */
 export function Features({ data }: FeaturesProps) {
   const isMobile = useIsMobile();
   if (!data?.items?.length) return null;
