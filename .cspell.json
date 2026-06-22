@@ -37,7 +37,9 @@
     "Contentful",
     "unbypassable",
     "urmedz",
-    "UrMedz"
+    "UrMedz",
+    "presign",
+    "presigned"
   ],
   "ignorePaths": [
     "node_modules/**",

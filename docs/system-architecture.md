@@ -39,8 +39,8 @@ scoped to that single tenant. (Multi-tenant-per-user is explicitly out of scope.
 │              │AppConfig│ images → S3  │          │ next build    │        │ (static) │
 └──────────────┘         └──────────────┘          └───────────────┘        └──────────┘
      ▲                          │                          │                      │
-  customer                  read API  ◀───── GET /configs/:slug ────────────┘      │
-  (your auth)               /configs/:slug                                    visitors
+  customer               read API  ◀──── GET /tenant_config/:slug ──────────┘      │
+  (your auth)            /tenant_config/:slug                                  visitors
 
   └──────────── one repo, shared types/config.types.ts ───────────┘
 ```
@@ -85,8 +85,8 @@ The backend exposes a **read API** the render-engine app calls at build time:
 
 | Route | Returns |
 |---|---|
-| `GET /configs/:slug` | that tenant's full `AppConfig` JSON, or `404` |
-| `GET /configs` *(optional)* | `[{ slug, name, category, colors, logo }]` — for the `/preview` index |
+| `GET /tenant_config/:slug` | that tenant's full `AppConfig` JSON, or `404` |
+| `GET /tenant_config/list` *(optional)* | `[{ slug, name, category, colors, logo }]` — for the `/preview` index |
 
 > **Compliance is NOT the backend's job.** The render engine re-applies `lib/complianceFilter.ts` after
 > fetching, so unsafe CTAs, payments/cart, and the disclaimer are enforced no matter what the backend returns.
@@ -104,7 +104,7 @@ process.env.TENANT  ─┐
 CONFIG_API_URL ──────┤
                      ▼
   lib/getConfig.ts → loadAppConfig(slug)
-        ├─ CONFIG_API_URL set? → lib/configSource.ts → GET /configs/:slug → AppConfig
+        ├─ CONFIG_API_URL set? → lib/configSource.ts → GET /tenant_config/:slug → AppConfig
         └─ else / on 404      → readJson("configs/<slug>.json")   (local dev + safety net)
                      │
                      ▼
@@ -170,7 +170,7 @@ CONFIG_API_URL ──────┤
 ## 8. What this repo changes (summary)
 
 1. New **form-builder app** in the repo — authoring UI; POSTs `AppConfig` to the backend on Submit.
-2. New `lib/configSource.ts` — `fetchAppConfig(slug)` → `GET ${CONFIG_API_URL}/configs/:slug`.
+2. New `lib/configSource.ts` — `fetchAppConfig(slug)` → `GET ${CONFIG_API_URL}/tenant_config/:slug`.
 3. `lib/getConfig.ts` — swap data source to backend-first, local-JSON fallback; keep all three function
    signatures and `applyCompliance` / `cache()` exactly as-is.
 4. `next.config` (render engine) — enable static export + image config for bucket hosting.
@@ -184,7 +184,7 @@ here as **contracts**, not built in this repo.
 
 1. **Local fallback:** `CONFIG_API_URL` unset → `npm run dev` / `TENANT=<slug> npm run build` read
    `configs/*.json` and render as today.
-2. **Backend parity:** stub `GET /configs/<slug>` with the current JSON → `TENANT=<slug> CONFIG_API_URL=<stub>
+2. **Backend parity:** stub `GET /tenant_config/<slug>` with the current JSON → `TENANT=<slug> CONFIG_API_URL=<stub>
    next build` → diff HTML of `/`, `/about`, `/services`, legal pages vs. the local-JSON build (must match).
 3. **Builder → renderer round-trip:** author a config in the form-builder, POST it to the stub backend, build
    from it, confirm the rendered site matches the authored content.
@@ -192,6 +192,92 @@ here as **contracts**, not built in this repo.
    backend output.
 5. **Graceful 404:** unknown slug → falls back to `app_master.json` / degrades without crashing.
 6. **Static export:** `out/` is produced; images load from the CDN host.
+
+---
+
+## Backend Requirements (what the backend team must implement)
+
+> Stack reference: see **[BEArch.md](./BEArch.md)** — Python 3.9 · AWS Lambda · DynamoDB (single-table) · S3 ·
+> session-token auth · REST+JSON envelope. Everything below is expressed against that stack. The backend is
+> the **only** component outside this repo; it is the **source of truth** for tenant configs.
+
+### 1. Data model (DynamoDB, single-table)
+
+One config record per tenant. Because it's 1 user : 1 tenant, the slug is derived from the user.
+
+| Attribute | Notes |
+|---|---|
+| `id` | `TENANT#<slug>` |
+| `table` | `TENANT_CONFIG` |
+|`cid`|`Company id`|
+|`data`|` {table}_{slug}`
+| `slug` | tenant slug (unique; also the build target `TENANT=<slug>`) |
+| `userId` | the single owning user (enforces 1:1 user→tenant) |
+| `tenantConfig` | the full `AppConfig` JSON (matches `types/config.types.ts`) |
+| `status` | `draft` \| `building` \| `live` \| `failed` |
+|`sortKey`|`{table}_{status}`
+| `siteUrl` | the deployed bucket/CDN URL (set after a successful build) |
+| `createdOn` | EPOCH|
+
+- **GSI** — keyed on `userId` (→ resolves `cid` / `slug`), so login can resolve "this user's one site" in a
+  single lookup. Enforces the 1:1 `user → tenant` mapping.
+- `id` = `TENANT#<slug>`, `data` = `{table}_{slug}`, `sortKey` = `{table}_{status}` — the access keys are
+  pre-shaped so the record is fetched by a single key lookup.
+- The **`tenantConfig`** attribute holds the full `AppConfig` JSON. It is stored pre-shaped (DynamoDB has no
+  joins); no per-field querying is needed — the render engine reads the whole `AppConfig` in one item read.
+
+### 2. Endpoints (REST + JSON envelope, `session-token` header)
+
+All responses use the universal envelope: `{ "statusCode": 200, "data": {...} }` /
+`{ "statusCode": 400, "error": { "userMessage": "..." } }`.
+
+| Method · Path | Auth | Purpose |
+|---|---|---|
+| `GET /tenant_config` | session-token | **Builder load** — return the authed user's `tenantConfig` draft (resolve `slug`/`cid` from token; create an empty default on first use). |
+| `PUT /tenant_config` | session-token | **Builder autosave / Submit body** — validate + upsert `tenantConfig` for the user's slug. |
+| `POST /tenant_config/publish` | session-token | **Submit** — persist, set `status=building`, and trigger the build job (async Lambda). Returns immediately. |
+| `GET /tenant_config/status` | session-token | Builder polls this for `status` + `siteUrl` (no WebSocket — use polling or FCM push). |
+| `POST /tenant_config/upload-url` | session-token | Return an **S3 presigned URL** so the builder uploads logo/hero/gallery images directly to S3; the returned **public CDN URL** is what goes into the `AppConfig`. |
+| `GET /tenant_config/:slug` | service token | **Build-time read** — the render engine fetches the full `AppConfig` by slug. Used by `lib/configSource.ts`. Not user-auth'd; gate with an internal/service token. |
+| `GET /tenant_config/list` *(optional)* | service token | Summaries `[{ slug, name, category, colors, logo }]` for the `/preview` index. |
+
+> The user-facing builder talks to the `/tenant_config` routes (the tenant is resolved from the session token,
+> so the slug never appears in the path). The render engine reads `/tenant_config/:slug` with a service token at
+> build time. Same stored record, two readers.
+
+### 3. Validation & compliance (backend's job vs. NOT its job)
+
+- **Backend MUST**: validate the incoming `AppConfig` (stored as `tenantConfig`) against
+  `types/config.types.ts` (reject malformed shapes with a `400` + `userMessage`), and enforce that
+  `slug` / `userId` / `cid` can't be spoofed (derive them from the session token, never trust the body).
+- **Backend does NOT** run business compliance. Unsafe-CTA rewriting, force-disabling cart/payments, and the
+  default disclaimer are applied **server-side in the render engine** (`lib/complianceFilter.ts`) at build time.
+  The backend stores whatever the builder sends; the engine sanitizes on the way out. (The builder UI *mirrors*
+  these rules for UX, but enforcement lives in the engine.)
+
+### 4. Build trigger & deploy (async Lambda, 15-min budget)
+
+`POST /config/publish` kicks an **async Lambda** (background job, ≤15 min) that:
+
+1. Sets `status=building`.
+2. Runs the render-engine build for that tenant: `TENANT=<slug> CONFIG_API_URL=<backend> next build`
+   (the build calls back to `GET /tenant_config/:slug`).
+3. Uploads the static `out/` to that tenant's **S3 bucket** (+ CloudFront).
+4. Writes back `status=live` (or `failed`) and `siteUrl`.
+5. Notifies the user via **FCM push** and/or the builder's `GET /tenant_config/status` polling.
+
+> Sync request timeout is 25s, so publish must be **fire-and-forget**: respond `202`-style immediately, do the
+> build in the async Lambda, report completion out-of-band. This matches BEArch's "async jobs → FCM/polling".
+
+### 5. Constraints carried over from BEArch
+
+- **No WebSocket** → builder polls `GET /tenant_config/status` (or receives FCM push) for build progress.
+- **S3 presigned uploads** → images never pass through Lambda bodies; the builder uploads directly, stores the
+  CDN URL in the config.
+- **Images JPEG/PNG, size-checked on FE** before requesting an upload URL.
+- **Session-token auth** on all `/tenant_config` routes; a separate **service token** on `/tenant_config/:slug`
+  for the engine.
+- **Single-table, pre-shaped** → the whole `AppConfig` is one item read; no joins, no field-level queries.
 
 ---
 
@@ -272,7 +358,7 @@ The order of cards = the render order on the live site.
 1. **Builder** POSTs the assembled `AppConfig` to the **backend** (Stage 2).
 2. **Backend** validates against `types/config.types.ts`, stores it under the user's `slug`, and **triggers a
    build**.
-3. **Render-engine app** fetches that `AppConfig` (`GET /configs/:slug`), applies compliance, exports static
+3. **Render-engine app** fetches that `AppConfig` (`GET /tenant_config/:slug`), applies compliance, exports static
    HTML (Stage 3).
 4. Output is uploaded to the **tenant's bucket** (Stage 4); the **status screen** flips to “Live” and shows the
    URL.
