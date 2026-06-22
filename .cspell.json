@@ -33,7 +33,11 @@
     "tabular",
     "yoyo",
     "yPercent",
-    "xPercent"
+    "xPercent",
+    "Contentful",
+    "unbypassable",
+    "urmedz",
+    "UrMedz"
   ],
   "ignorePaths": [
     "node_modules/**",
