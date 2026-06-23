@@ -1,0 +1,316 @@
+/**
+ * @file builderData.ts
+ * @description Static data + factories for the Website Builder authoring UI.
+ * @responsibilities
+ *  - Define the wizard STEPS and section TYPES metadata (the types our live sites use).
+ *  - Provide DEFAULTS(type) returning valid section `data`, seeded with pharmacy copy.
+ *  - Provide INITIAL() returning a complete, valid AppConfig draft to seed the builder.
+ * @dependencies @/types/config.types
+ * @author WhiteLabel Platform Team
+ * @created 2026-06-22
+ * @lastUpdated 2026-06-23
+ */
+import type { AppConfig, Section, SectionType } from "@/types/config.types";
+
+/** A wizard step in the left-nav stepper. */
+export type Step = {
+  id: StepId;
+  label: string;
+  hint: string;
+  icon: string;
+};
+
+/** The six top-level wizard steps. `sections` is the page-builder canvas. */
+export type StepId =
+  | "identity"
+  | "branding"
+  | "seo"
+  | "sections"
+  | "contact"
+  | "legal";
+
+/** Display + theming metadata for a section/core block in the UI. */
+export type TypeMeta = {
+  label: string;
+  icon: string;
+  blurb: string;
+  dot: string;
+  tint: string;
+  core?: boolean;
+};
+
+/**
+ * A "categories" tile section. This type ships on the live aarav site but is not
+ * yet in this repo's `SectionType` union (it lives in the aarav worktree). The
+ * builder is preview-only, so we model the shape locally to offer it in the picker.
+ */
+export type CategoryTile = { title: string; description?: string; icon?: string };
+export type CategoriesSectionData = {
+  eyebrow?: string;
+  heading?: { parts: Array<{ text: string; emphasis?: string; br?: boolean }> };
+  tagline?: string;
+  items: CategoryTile[];
+};
+
+/** Section types the builder can author — the real union plus `categories`. */
+export type BuilderSectionType = SectionType | "categories";
+
+/** A draft section: real {type,data} (plus the local categories variant) + a client id. */
+export type DraftSection =
+  | (Section & { id: string })
+  | { id: string; type: "categories"; data: CategoriesSectionData };
+
+/** The wizard steps, in order. */
+export const STEPS: Step[] = [
+  { id: "identity", label: "Identity", hint: "Name & category", icon: "identity" },
+  { id: "branding", label: "Branding", hint: "Logo & colours", icon: "palette" },
+  { id: "seo", label: "SEO", hint: "Title & keywords", icon: "search" },
+  { id: "sections", label: "Sections", hint: "Hero, blocks & more", icon: "grid" },
+  { id: "contact", label: "Contact", hint: "Get in touch", icon: "mail" },
+  { id: "legal", label: "Legal", hint: "Disclaimers", icon: "shield" },
+];
+
+/** Steps considered "done" for the progress meter. */
+export const DONE: Record<string, number> = {
+  identity: 1,
+  branding: 1,
+  seo: 1,
+  sections: 1,
+};
+
+/** Fixed content blocks edited in the Sections step but NOT part of sections[]. */
+export const CORE = ["hero", "about", "services"] as const;
+
+/** Metadata for every block type the builder can show: core + the live section set. */
+export const TYPES: Record<string, TypeMeta> = {
+  // Core (fixed content; not appended to sections[])
+  hero: { label: "Hero", icon: "sparkles", blurb: "Headline, tagline & CTAs", dot: "#2E6ACF", tint: "#E9F0FB", core: true },
+  about: { label: "About", icon: "fileText", blurb: "Your story", dot: "#0891B2", tint: "#E2F5F9", core: true },
+  services: { label: "Services", icon: "briefcase", blurb: "What you offer", dot: "#16A34A", tint: "#E7F7EE", core: true },
+  // Dynamic section types used across the live sites (urmedz + aarav)
+  appStrip: { label: "App strip", icon: "smartphone", blurb: "App-store download links", dot: "#4F46E5", tint: "#ECEBFD" },
+  stats: { label: "Stats", icon: "bar", blurb: "Big numbers & metrics", dot: "#16A34A", tint: "#E7F7EE" },
+  savings: { label: "Savings", icon: "percent", blurb: "Price-savings comparison", dot: "#0891B2", tint: "#E2F5F9" },
+  videoFeature: { label: "Video", icon: "play", blurb: "Video poster + marquee", dot: "#DC2626", tint: "#FCEAEA" },
+  team: { label: "Team", icon: "users", blurb: "Team quote + departments", dot: "#7C3AED", tint: "#F1EAFE" },
+  features: { label: "Features", icon: "grid", blurb: "A grid of feature cards", dot: "#2E6ACF", tint: "#E9F0FB" },
+  categories: { label: "Categories", icon: "shapes", blurb: "Category tiles with icons", dot: "#CA8A04", tint: "#FAF4DC" },
+  howItWorks: { label: "How it works", icon: "list", blurb: "Numbered process steps", dot: "#DB2777", tint: "#FCE9F2" },
+  faq: { label: "FAQ", icon: "help", blurb: "Expandable Q&A list", dot: "#D97706", tint: "#FCF1E0" },
+};
+
+/**
+ * Order the dynamic types appear in the "Add a section" picker — mirrors the
+ * richer urmedz page order, with categories (aarav) slotted after features.
+ */
+export const PICKER_ORDER: BuilderSectionType[] = [
+  "appStrip",
+  "stats",
+  "savings",
+  "videoFeature",
+  "team",
+  "features",
+  "categories",
+  "howItWorks",
+  "faq",
+];
+
+/**
+ * DEFAULTS - Produce a valid `data` object for a freshly added section type,
+ * seeded with realistic pharmacy copy mirroring our live urmedz/aarav sites.
+ * @param {BuilderSectionType} t - The section type to seed.
+ * @returns A deep-cloned default data object for that type.
+ */
+export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
+  // Only the live section set is seeded here; gallery/aiStore exist in the union
+  // but aren't offered by the picker, so the map is partial.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const d: Partial<Record<BuilderSectionType, any>> = {
+    appStrip: {
+      logo: "",
+      heading: { parts: [{ text: "Download the " }, { text: "pharmacy", emphasis: "italic-accent" }, { text: " app" }] },
+      descriptor: "Authentic medicines · licensed pharmacists · doorstep delivery",
+      appStoreUrl: "",
+      googlePlayUrl: "",
+    },
+    stats: {
+      eyebrow: "By the numbers",
+      headline: "A network sized for the country.",
+      descriptor: "A pharmacy-and-platform footprint built quietly in the background.",
+      items: [
+        { value: "25", suffix: "+", label: "Retail stores", footnote: "South India" },
+        { value: "10000", suffix: "+", label: "Orders fulfilled daily", footnote: "Retail + quick commerce" },
+        { value: "80000", suffix: "", label: "SKUs catalogued", footnote: "Medicines, OTC, wellness" },
+        { value: "2", suffix: "", label: "Fulfilment centres", footnote: "Bengaluru & Hyderabad" },
+      ],
+    },
+    savings: {
+      eyebrow: "Customer savings",
+      heading: { parts: [{ text: "Unraveling the magic of " }, { text: "brand options", emphasis: "italic-accent" }, { text: " in medicines." }] },
+      lede: "Prices vary dramatically from brand to brand, yet the composition stays identical. The engine surfaces the optimal pick for every prescription.",
+      items: [
+        { name: "Diabetes Tablets", cat: "Cat. 01 · Metformin 500mg", pct: 46, color: "#F5A623" },
+        { name: "Blood Sugar Tablets", cat: "Cat. 02 · Glimepiride 2mg", pct: 56, color: "#1FAFA6" },
+        { name: "Blood Pressure Tablets", cat: "Cat. 03 · Amlodipine 5mg", pct: 80, color: "#6B3FA0" },
+        { name: "Gastric Relief Tablets", cat: "Cat. 04 · Pantoprazole 40mg", pct: 55, color: "#E5326C" },
+      ],
+    },
+    videoFeature: {
+      tag: "Behind the scenes",
+      heading: { parts: [{ text: "A look at our " }, { text: "hi-tech", emphasis: "italic-accent" }, { text: " fulfilment centres." }] },
+      ctaLabel: "Watch Now",
+      poster: "",
+      videoUrl: "",
+      marquee: ["Authentic", "Traceable", "Compliant", "Fast", "Scalable", "Trusted", "Licensed", "Pharmacist-reviewed"],
+    },
+    team: {
+      eyebrow: "Our team of specialists",
+      logoMark: "",
+      quote: { parts: [{ text: "United by a single purpose — to make healthcare " }, { text: "accessible, affordable", emphasis: "italic-accent" }, { text: " and", br: true }, { text: "trustworthy", emphasis: "italic-accent" }, { text: " for everyone." }] },
+      signatureLabel: "Signed,",
+      signature: "the team",
+      departments: [
+        { code: "01", count: 75, label: "Pharmacists", role: "Licensed dispensing", bg: "#F5A623", fg: "#1B2A5B", detail: "Every order reviewed by a registered pharmacist." },
+        { code: "02", count: 25, label: "Doctors", role: "Consulting clinicians", bg: "#1FAFA6", fg: "#FFFFFF", detail: "On-call for prescription validation and refills." },
+        { code: "03", count: 60, label: "Supply chain", role: "Sourcing & logistics", bg: "#6B3FA0", fg: "#FFFFFF", detail: "Batch-traceable from manufacturer to last-mile." },
+        { code: "04", count: 40, label: "Health guardians", role: "Customer support", bg: "#E5326C", fg: "#FFFFFF", detail: "Reachable in four languages, fast first reply." },
+      ],
+      credentials: [{ label: "Care SLA", value: "Avg. reply < 1 hr · 3 languages" }],
+    },
+    features: {
+      eyebrow: "Why choose us",
+      heading: { parts: [{ text: "Pharmacy infrastructure, " }, { text: "quietly", emphasis: "italic-accent" }, { text: " done right." }] },
+      items: [
+        { title: "Authenticity at the source", description: "Every medicine is sourced from licensed distributors and traceable to its manufacturer — no grey-market shortcuts." },
+        { title: "Scale where it matters", description: "A retail-plus-fulfilment footprint means the medicine you need is rarely more than a few kilometres away." },
+        { title: "Infrastructure built for compliance", description: "Cold-chain handling, batch traceability and audit-ready dispatch — built into every store and centre." },
+        { title: "An AI-assisted platform", description: "Our platform helps partner pharmacies forecast demand, manage inventory and stay compliant — quietly, in the background." },
+      ],
+    },
+    categories: {
+      eyebrow: "Featured categories",
+      heading: { parts: [{ text: "Everything your family needs, under " }, { text: "one trusted roof.", emphasis: "italic-accent" }] },
+      tagline: "From everyday medicines to baby care, wellness and health devices — explore the complete range we keep in stock for you.",
+      items: [
+        { title: "Medicines", icon: "", description: "Genuine prescription and over-the-counter medicines, dispensed accurately by our pharmacy team." },
+        { title: "Baby Care", icon: "", description: "Baby food, diapers, gentle skincare and daily essentials for your little one." },
+        { title: "Personal Care", icon: "", description: "Skincare, haircare and everyday hygiene products from trusted brands." },
+        { title: "Diabetic Care", icon: "", description: "Glucometers, test strips, lancets and specialised supplies to manage diabetes with confidence." },
+        { title: "Ayurvedic Products", icon: "", description: "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing." },
+        { title: "Surgical Items", icon: "", description: "Masks, gloves, dressings and surgical accessories for care and recovery at home." },
+      ],
+    },
+    howItWorks: {
+      eyebrow: "How it works",
+      heading: { parts: [{ text: "Prescription to " }, { text: "pocket", emphasis: "italic-accent" }, { text: " — in three steps." }] },
+      steps: [
+        { step: 1, title: "Browse or upload your prescription", description: "Search our catalogue or upload a doctor's prescription — we'll match it to authentic, in-stock medicines." },
+        { step: 2, title: "A licensed pharmacist reviews your order", description: "Every prescription order is reviewed by a qualified pharmacist before it's dispensed — no exceptions." },
+        { step: 3, title: "Delivered or ready for pickup", description: "Collect from your nearest store or receive doorstep delivery — often same-day." },
+      ],
+    },
+    faq: {
+      eyebrow: "Frequently asked",
+      heading: { parts: [{ text: "Questions,", br: true }, { text: "answered.", emphasis: "italic-accent" }] },
+      lede: "Anything we missed? Reach out — our team replies within a working day.",
+      ctaLabel: "Contact support",
+      ctaHref: "/contact",
+      items: [
+        { question: "Where do you source your medicines from?", answer: "All medicines are sourced exclusively from CDSCO-licensed manufacturers and distributors. Every batch is traceable from manufacturer to shelf — no grey-market stock." },
+        { question: "How do you handle prescriptions?", answer: "Prescription medicines are dispensed only against a valid prescription, reviewed by an in-house licensed pharmacist. Upload a digital copy or present the original in store." },
+        { question: "Which areas do you deliver to?", answer: "We deliver same-day and next-day across the city through our quick-commerce network, with select pin codes covered more widely. Check the app for live coverage." },
+        { question: "What is your return policy?", answer: "Prescription medicines cannot be returned once dispensed. Sealed, undamaged OTC products may be returned within 7 days of purchase." },
+      ],
+    },
+  };
+  return JSON.parse(JSON.stringify(d[t] || {}));
+}
+
+/**
+ * INITIAL - Produce a complete, valid AppConfig draft to seed the builder,
+ * themed as a pharmacy (mirrors the real urmedz/aarav content shapes).
+ * @returns A fresh AppConfig (deep-cloned defaults) plus draft sections.
+ */
+export function INITIAL(): {
+  config: AppConfig;
+  sections: DraftSection[];
+} {
+  const config: AppConfig = {
+    tenant: { name: "UrMedz", category: "Pharmacy & Fulfilment" },
+    branding: {
+      logo: "/urmedz/logo.png",
+      logoFull: "/urmedz/logo-full.png",
+      // The tenant stylesheet that styles the real modules in the preview.
+      stylesheet: "/urmedz.css",
+      colors: {
+        primary: "#0A174C",
+        secondary: "#F4EFE6",
+        background: "#F4EFE6",
+        text: "#0A174C",
+        accent: "#1FAFA6",
+        ink: "#0A174C",
+      },
+    },
+    seo: {
+      title: "UrMedz — Authentic medicines, fingertip-fast",
+      description:
+        "A network of retail stores and India's largest pharma fulfilment centres — delivering trusted, licensed medicines to your door.",
+      keywords: ["online pharmacy", "authentic medicines", "quick commerce", "licensed pharmacists", "medicine delivery"],
+    },
+    content: {
+      hero: {
+        eyebrow: "Pharmacy & Health-Tech · Est. 2024",
+        headline: "Authentic medicines, fingertip-fast.",
+        headlineRich: {
+          parts: [
+            { text: "Authentic", br: true },
+            { text: "medicines, " },
+            { text: "fingertip-", emphasis: "italic" },
+            { text: "fast." },
+          ],
+        },
+        tagline:
+          "A network of 25 retail stores and India's largest pharma fulfilment centres — delivering trusted medicines to you.",
+        image: "/urmedz/hero.png",
+        cta: { label: "Learn More", type: "safe-action" },
+        secondaryCta: { label: "How It Works", href: "/#services" },
+        proof: ["25+ retail stores", "10,000+ orders daily", "80,000 SKUs catalogued"],
+        slides: [
+          { image: "/urmedz/gallery/img-1.png", tag: "Quick commerce", caption: "Same-day delivery, neighbourhood-fast" },
+          { image: "/urmedz/gallery/img-3.png", tag: "Hi-tech fulfilment", caption: "India's most advanced pharma centres" },
+          { image: "/urmedz/gallery/img-2.png", tag: "Retail stores", caption: "Safe, private, staffed by licensed pharmacists" },
+        ],
+        meta: [
+          { value: "25", suffix: "+", label: "Retail stores across South India" },
+          { value: "10k", suffix: " / day", label: "Orders dispensed by licensed pharmacists" },
+          { value: "80k", label: "SKUs — medicines, OTC & wellness" },
+        ],
+      },
+      about: {
+        eyebrow: "About us · Est. 2024 · Bengaluru",
+        title: { parts: [{ text: "Medicines are " }, { text: "indispensable.", emphasis: "italic", br: true }, { text: "Access", emphasis: "italic-accent" }, { text: " and " }, { text: "affordability", emphasis: "italic-accent" }, { text: " change lives." }] },
+        description:
+          "We're building India's most trusted pharmaceutical infrastructure — connecting patients with authentic, affordable medicines through licensed retail stores, hi-tech fulfilment centres, and trained pharmacists.",
+      },
+      services: [
+        { title: "Retail Stores", description: "A network of neighbourhood pharmacies stocked with authentic, licensed medicines — and growing." },
+        { title: "Quick Commerce", description: "A network of pharma dark stores enabling same-day, on-demand medicine delivery to your door." },
+        { title: "Fulfilment Centres", description: "Hi-tech, compliant centres handling cold-chain storage and batch-traceable dispatch at scale." },
+      ],
+      sections: [],
+    },
+    contact: {
+      email: "hello@urmedz.in",
+      phone: "+91 80 4718 0000",
+      address: "Koramangala, Bengaluru, Karnataka 560034",
+    },
+    features: { enableChat: true, enableForms: true, enablePayments: false, enableCart: false },
+    compliance: { mode: "business-profile-safe", disclaimer: "" },
+  };
+
+  // Default canvas mirrors the urmedz section order.
+  const order: BuilderSectionType[] = ["appStrip", "stats", "savings", "team", "features", "howItWorks", "faq"];
+  const sections: DraftSection[] = order.map((t, i) => ({ id: "s" + (i + 1), type: t, data: DEFAULTS(t) } as DraftSection));
+
+  return { config, sections };
+}
