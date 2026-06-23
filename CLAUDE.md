@@ -8,6 +8,8 @@ A **config-driven Next.js (App Router) platform** that generates compliant, SEO-
 
 Stack: Next.js (App Router) · TypeScript · TailwindCSS · shadcn/ui · npm.
 
+This repo is also intended to host a second **form-builder app** (the authoring UI that emits an `AppConfig` JSON) alongside the render engine — see `docs/system-architecture.md`. A client-side builder now lives at `app/(builder)/builder/` (route group `(builder)` keeps it out of the public `(site)` chrome). It edits an in-memory `AppConfig` draft and ships its own self-contained preview renderers — it does NOT reuse `modules/*.tsx`.
+
 ## Common commands
 
 ```bash
@@ -75,6 +77,7 @@ When adding a new section type: define its shape in `types/config.types.ts`, add
 
 - After editing config JSON / the stylesheet, validate: `node -e "JSON.parse(require('fs').readFileSync('configs/<f>.json','utf8'))"` and check CSS braces balance. `Edit` matches break often because a linter reformats the JSON (multi-line ↔ single-line) — re-Read before editing.
 - `useIsMobile()` (and all hooks) must be called BEFORE any early `return null` — eslint `rules-of-hooks` errors otherwise. `npm run build` does not fail on lint; run `npm run lint` separately.
+- `npm run lint` enforces `react-hooks/refs` as an **error**: building event-handler descriptors during render (handlers that transitively read a ref) trips a false "ref accessed during render". Scope a `/* eslint-disable react-hooks/refs */` to that file with a justification — the handlers only fire in events, never during render.
 - Section headings use rich `parts[]` with `br`/`emphasis` (`italic`, `italic-accent`); keep tenant `ariaLabel`s on `MobileCarousel` generic, never hardcode a tenant name in a shared module.
 - Logo is a wide ~2:1 lockup (no square mark): set `next/image` width/height to that ratio + size via CSS height/`width:auto`, or it stretches.
 - Compliance: the website is **non-transactional** (links to the app/WhatsApp to order); WhatsApp is **support/enquiry only — never "order on WhatsApp"** (Meta policy).
@@ -95,6 +98,7 @@ Compliance always wins. If config and compliance disagree, compliance is what re
 
 - **Server components by default.** Add `"use client"` only when a component genuinely needs state, effects, or browser APIs (e.g. a chat widget).
 - **Static + ISR for pages.** All pages export `revalidate = 3600` for hourly ISR. Legal pages (`privacy-policy`, `terms-and-conditions`, `disclaimer`) must always exist regardless of tenant config.
+- **Route groups to escape chrome:** the public Navbar/Footer/StickyCta live in `app/(site)/layout.tsx`. A page that must NOT inherit them goes in its own group (e.g. `app/(builder)/…`) with its own `layout.tsx`; it still inherits the root `app/layout.tsx` (fonts, `MotionProvider`, tenant `--brand-*` vars on `<body>`).
 - **Image optimization** via `next/image` — pull URLs from config, never inline.
 - **404 fallback** lives in `app/not-found.tsx`.
 - Lazy-load non-critical modules (`next/dynamic`) when they aren't above the fold.
