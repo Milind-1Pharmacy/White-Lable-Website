@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { HeroContent, HeroSlide } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
 
 type HeroProps = {
   data: HeroContent;
@@ -87,7 +88,7 @@ export function Hero({ data }: HeroProps) {
             {data.secondaryCta && (
               <Link
                 className="btn btn-ghost"
-                href={data.secondaryCta.href ?? "/services"}
+                href={safeHref(data.secondaryCta.href, "/services")}
               >
                 {data.secondaryCta.label}
               </Link>
@@ -128,7 +129,7 @@ export function Hero({ data }: HeroProps) {
                 className={"slide" + (idx === i ? " is-active" : "")}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.image} alt={s.caption ?? ""} />
+                <img src={safeSrc(s.image)} alt={s.caption ?? ""} />
                 <div className="overlay" />
               </div>
             ))}

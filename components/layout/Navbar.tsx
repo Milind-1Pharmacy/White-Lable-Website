@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { AppConfig, NavCta } from "@/types/config.types";
+import { safeHref } from "@/lib/safeUrl";
 
 type NavbarProps = {
   app: AppConfig;
@@ -94,8 +95,8 @@ export function Navbar({ app }: NavbarProps) {
 
         {links.length > 0 && (
           <nav className="nav__links">
-            {links.map((l) => (
-              <Link key={l.label} href={l.href}>
+            {links.map((l, i) => (
+              <Link key={i} href={safeHref(l.href)}>
                 {l.label}
               </Link>
             ))}
@@ -107,7 +108,7 @@ export function Navbar({ app }: NavbarProps) {
             {ctas.map((c, i) => (
               <Link
                 key={i}
-                href={c.href}
+                href={safeHref(c.href)}
                 className={ctaClass(c.variant)}
                 style={{
                   padding: c.variant === "primary" ? "10px 18px" : "10px 16px",
@@ -140,8 +141,8 @@ export function Navbar({ app }: NavbarProps) {
         className={"nav__mobile-menu" + (menuOpen ? " is-open" : "")}
         aria-hidden={!menuOpen}
       >
-        {links.map((l) => (
-          <Link key={l.label} href={l.href} onClick={closeMenu}>
+        {links.map((l, i) => (
+          <Link key={i} href={safeHref(l.href)} onClick={closeMenu}>
             {l.label}
           </Link>
         ))}
@@ -150,7 +151,7 @@ export function Navbar({ app }: NavbarProps) {
             {ctas.map((c, i) => (
               <Link
                 key={i}
-                href={c.href}
+                href={safeHref(c.href)}
                 className={ctaClass(c.variant)}
                 onClick={closeMenu}
                 {...(c.external

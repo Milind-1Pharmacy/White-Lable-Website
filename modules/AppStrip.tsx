@@ -14,6 +14,7 @@
 import Image from "next/image";
 import type { AppStripSectionData, Branding } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeHref } from "@/lib/safeUrl";
 
 type AppStripProps = {
   data: AppStripSectionData;
@@ -70,7 +71,7 @@ export function AppStrip({ data, branding }: AppStripProps) {
           {data.appStoreUrl && (
             <a
               className="store-badge store-badge--apple"
-              href={data.appStoreUrl}
+              href={safeHref(data.appStoreUrl)}
               target="_blank"
               rel="noreferrer"
             >
@@ -94,7 +95,7 @@ export function AppStrip({ data, branding }: AppStripProps) {
           {data.googlePlayUrl && (
             <a
               className="store-badge store-badge--google"
-              href={data.googlePlayUrl}
+              href={safeHref(data.googlePlayUrl)}
               target="_blank"
               rel="noreferrer"
             >

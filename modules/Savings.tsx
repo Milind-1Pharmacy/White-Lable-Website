@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SavingsSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeSrc } from "@/lib/safeUrl";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 /**
@@ -102,7 +103,7 @@ export function Savings({ data }: SavingsProps) {
   const video = data.videoCopy;
 
   return (
-    <section className="section section--cream">
+    <section className="section section--cream" id="savings">
       <div className="wrap">
         {(data.eyebrow || heading || data.lede) && (
           <div
@@ -201,7 +202,7 @@ export function Savings({ data }: SavingsProps) {
               <>
                 {data.videoPoster && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={data.videoPoster} alt={video?.headline ?? ""} />
+                  <img src={safeSrc(data.videoPoster)} alt={video?.headline ?? ""} />
                 )}
                 <div className="sv__video-overlay">
                   {video?.tag && (
@@ -249,7 +250,7 @@ export function Savings({ data }: SavingsProps) {
               <video
                 controls
                 autoPlay
-                src={data.videoUrl}
+                src={safeSrc(data.videoUrl)}
                 poster={data.videoPoster}
               />
             )}

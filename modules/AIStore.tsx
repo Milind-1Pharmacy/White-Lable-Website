@@ -16,6 +16,7 @@
 import { useState } from "react";
 import type { AIStoreSectionData, AIStoreTile } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeSrc } from "@/lib/safeUrl";
 
 type AIStoreProps = {
   data: AIStoreSectionData;
@@ -43,7 +44,7 @@ function Tile({ tile }: { tile: AIStoreTile }) {
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={tile.image}
+              src={safeSrc(tile.image)}
               alt={tile.alt ?? ""}
               style={{ opacity: 0.55 }}
             />
@@ -59,7 +60,7 @@ function Tile({ tile }: { tile: AIStoreTile }) {
             )}
           </>
         ) : (
-          <video autoPlay controls src={tile.videoUrl} />
+          <video autoPlay controls src={safeSrc(tile.videoUrl)} />
         )}
       </div>
     );
@@ -68,7 +69,7 @@ function Tile({ tile }: { tile: AIStoreTile }) {
   return (
     <div className="split__tile" style={wrapperStyle}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={tile.image} alt={tile.alt ?? ""} />
+      <img src={safeSrc(tile.image)} alt={tile.alt ?? ""} />
       {tile.tag && (
         <span className="imgbox__tag" style={tagStyle}>
           {tile.tag}
@@ -89,7 +90,7 @@ export function AIStore({ data }: AIStoreProps) {
   const heading = renderRichHeading(data.heading);
 
   return (
-    <section className="section">
+    <section className="section" id="ai-store">
       <div className="wrap">
         {(data.eyebrow || heading || data.lede) && (
           <div className="split__head">

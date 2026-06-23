@@ -14,6 +14,7 @@
 import { useState } from "react";
 import type { CategoriesSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeSrc } from "@/lib/safeUrl";
 import { useIsMobile } from "@/lib/useIsMobile";
 
 type CategoriesProps = {
@@ -75,7 +76,7 @@ export function Categories({ data }: CategoriesProps) {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         key={i}
-                        src={c.icon}
+                        src={safeSrc(c.icon)}
                         alt=""
                         className={
                           "cat-preview__icon" + (i === active ? " is-on" : "")
@@ -126,7 +127,7 @@ export function Categories({ data }: CategoriesProps) {
               {c.icon && (
                 <span className="cat-tile__icon">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={c.icon} alt="" aria-hidden="true" />
+                  <img src={safeSrc(c.icon)} alt="" aria-hidden="true" />
                 </span>
               )}
               <span className="cat-tile__title">{c.title}</span>

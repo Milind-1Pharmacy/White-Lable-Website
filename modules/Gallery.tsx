@@ -15,6 +15,7 @@
 import { useIsMobile } from "@/lib/useIsMobile";
 import type { GallerySectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeSrc } from "@/lib/safeUrl";
 
 type GalleryProps = {
   data: GallerySectionData;
@@ -34,7 +35,7 @@ export function Gallery({ data }: GalleryProps) {
   const row2 = data.images.slice(3, 6);
 
   return (
-    <section className="section">
+    <section className="section" id="gallery">
       <div className="wrap">
         {(data.eyebrow || heading) && (
           <div style={{ marginBottom: 40 }}>
@@ -64,7 +65,7 @@ export function Gallery({ data }: GalleryProps) {
               <div key={i} className="gallery__cell">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={it.src}
+                  src={safeSrc(it.src)}
                   alt={it.alt ?? it.caption ?? ""}
                   style={{ objectFit: "cover" }}
                 />
@@ -80,7 +81,7 @@ export function Gallery({ data }: GalleryProps) {
             {row2.map((it, i) => (
               <div key={i} className="gallery__cell">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={it.src} alt={it.alt ?? it.caption ?? ""} />
+                <img src={safeSrc(it.src)} alt={it.alt ?? it.caption ?? ""} />
                 {it.caption && (
                   <span className="gallery__cap">{it.caption}</span>
                 )}

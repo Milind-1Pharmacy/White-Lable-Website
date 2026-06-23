@@ -13,6 +13,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { AppConfig } from "@/types/config.types";
+import { safeHref } from "@/lib/safeUrl";
 import { renderRichHeading } from "@/modules/RichHeading";
 
 type FooterProps = {
@@ -49,7 +50,7 @@ export function Footer({ app }: FooterProps) {
             )}
             {footer?.ctaLabel && (
               <Link
-                href={footer.ctaHref ?? "/contact"}
+                href={safeHref(footer.ctaHref, "/contact")}
                 className="btn btn-accent"
                 style={{ padding: "18px 28px" }}
               >
@@ -128,9 +129,9 @@ export function Footer({ app }: FooterProps) {
             <div key={i} className="footer__col">
               <h5>{col.heading}</h5>
               <ul>
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <Link href={l.href}>{l.label}</Link>
+                {col.links.map((l, li) => (
+                  <li key={li}>
+                    <Link href={safeHref(l.href)}>{l.label}</Link>
                   </li>
                 ))}
               </ul>

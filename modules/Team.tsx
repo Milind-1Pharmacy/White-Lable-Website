@@ -38,7 +38,14 @@ function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
       { threshold: 0.25 },
     );
     io.observe(ref.current);
-    return () => io.disconnect();
+    // Fallback: if the observer never reports intersection (e.g. inside the
+    // builder's static preview iframe, or content that never scrolls), reveal
+    // anyway so the count lands on its final value instead of sticking at 0.
+    const t = setTimeout(() => setSeen(true), 1200);
+    return () => {
+      io.disconnect();
+      clearTimeout(t);
+    };
   }, []);
   return [ref, seen];
 }

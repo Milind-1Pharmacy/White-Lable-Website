@@ -16,6 +16,7 @@
 import type { ServiceItem, ServicesMeta } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
 import { useIsMobile } from "@/lib/useIsMobile";
 
 type ServicesProps = {
@@ -48,7 +49,7 @@ export function Services({ data, meta }: ServicesProps) {
         <div className="service__icon">
           <span className="service__icon-plate">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.icon} alt="" aria-hidden="true" />
+            <img src={safeSrc(s.icon)} alt="" aria-hidden="true" />
           </span>
         </div>
       )}
@@ -86,7 +87,7 @@ export function Services({ data, meta }: ServicesProps) {
           {meta?.ctaLabel && (
             <a
               className="btn btn-ghost mobile-btn"
-              href={meta.ctaHref ?? "/services"}
+              href={safeHref(meta.ctaHref, "/services")}
               style={{ background: "transparent", marginTop: 16 }}
             >
               {meta.ctaLabel}
