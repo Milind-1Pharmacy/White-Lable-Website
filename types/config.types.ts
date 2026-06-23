@@ -131,6 +131,7 @@ export type ServiceItem = {
   title: string;
   description: string;
   image?: string;
+  icon?: string;
 };
 
 /** Heading and CTA shown above the services grid. */
@@ -152,6 +153,21 @@ export type FeaturesSectionData = {
   eyebrow?: string;
   heading?: RichHeading;
   items: FeatureItem[];
+};
+
+/** A single category tile (name, optional icon and blurb). */
+export type CategoryItem = {
+  title: string;
+  icon?: string;
+  description?: string;
+};
+
+/** Data for a "categories" section. */
+export type CategoriesSectionData = {
+  eyebrow?: string;
+  heading?: RichHeading;
+  tagline?: string;
+  items: CategoryItem[];
 };
 
 /** One ordered step in a how-it-works flow. */
@@ -324,6 +340,7 @@ export type FaqSectionData = {
 /** Allowed section types; the compliance filter suppresses any others. */
 export type SectionType =
   | "features"
+  | "categories"
   | "howItWorks"
   | "gallery"
   | "stats"
@@ -337,6 +354,7 @@ export type SectionType =
 /** A discriminated union: type selects the matching data shape. */
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
+  | { type: "categories"; data: CategoriesSectionData }
   | { type: "howItWorks"; data: HowItWorksSectionData }
   | { type: "gallery"; data: GallerySectionData }
   | { type: "stats"; data: StatsSectionData }
@@ -381,6 +399,7 @@ export type Compliance = {
 export type NavLink = {
   label: string;
   href: string;
+  external?: boolean;
 };
 
 /** A nav CTA button. external opens in a new tab. */
