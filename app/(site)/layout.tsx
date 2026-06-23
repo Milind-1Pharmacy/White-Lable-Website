@@ -43,12 +43,16 @@ export default async function SiteLayout({
 }>) {
   const config = await getConfig();
   const tenant = process.env.TENANT ?? "app_master";
+  const stylesheet = config.app.branding?.stylesheet;
 
   return (
     <>
+      {/* Tenant stylesheet — injected here (not in the root layout) so it loads
+          for the render engine but never for the builder app at "/". */}
+      {stylesheet && <link rel="stylesheet" href={stylesheet} />}
       <div
         data-tenant={tenant}
-        className="flex min-h-screen flex-col"
+        className="flex min-h-screen flex-col text-[var(--brand-text)]"
         style={themeStyle(config)}
       >
         <StructuredData config={config} />
