@@ -245,6 +245,46 @@ All responses use the universal envelope: `{ "statusCode": 200, "data": {...} }`
 > so the slug never appears in the path). The render engine reads `/tenant_config/:slug` with a service token at
 > build time. Same stored record, two readers.
 
+#### 2a. What the front-end already sends (implemented — handover contract)
+
+The builder's **Publish** button is fully wired on the FE side. The browser does **not** build — it
+serializes the draft into a publishable **flavor** and POSTs it; the backend runs the per-tenant build/deploy.
+Client code: **`lib/api/publish.ts`** (+ endpoint keys in `lib/api/endpoints.ts`), called from
+`app/(builder)/builder/useBuilderState.tsx` → `doPublish()`.
+
+**`POST tenant_config/publish`** — body the builder sends (header: `session-token`):
+
+```jsonc
+{
+  "slug": "urmedz",              // derived from tenant.name; the build target TENANT=<slug> + bucket name
+  "theme": "urmedz",             // chosen in the Branding step → which CSS flavor ships (urmedz | aarav_pharmacy)
+  "appConfig": { /* full AppConfig */ }
+}
+```
+
+The `appConfig` is **render-ready** — the FE already:
+- inlines the draft's sections into `content.sections` (the builder's client-only `id`s are stripped);
+- bakes the unified block order into `content.order` (`["hero","about","services","section:<i>",…]`);
+- pins `branding.stylesheet` to the chosen theme (`/<theme>.css`) — **never** the builder-only `preview.css`.
+
+So the backend can store `appConfig` verbatim as `tenantConfig` (after validation §3). Expected response
+(universal envelope): `{ "statusCode": 200, "data": { "status": "building" } }` — fire-and-forget.
+
+**`GET tenant_config/status?slug=<slug>`** — the builder polls every ~2s (no WebSocket). Expected
+`data` shape:
+
+```jsonc
+{ "status": "queued|building|live|failed", "siteUrl": "https://urmedz.1pharmacy.site", "message": "…" }
+```
+
+The builder's publish overlay reacts to this: spinner while `queued|building`, success card + `siteUrl`
+on `live`, an error card on `failed`. If the endpoint is unreachable (backend not built yet) the FE shows a
+clear "Couldn't publish" message and the builder keeps working — nothing is faked.
+
+> CSS note: the published site ships the **per-flavor** stylesheet (`/urmedz.css`, `/aarav_pharmacy.css`) — a
+> minified copy is a backend build-step concern. `public/preview.css` is **builder-only** and must never be
+> deployed.
+
 ### 3. Validation & compliance (backend's job vs. NOT its job)
 
 - **Backend MUST**: validate the incoming `AppConfig` (stored as `tenantConfig`) against
