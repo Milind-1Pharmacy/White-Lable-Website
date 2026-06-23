@@ -65,11 +65,15 @@ export function useBuilderState() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+  // Current deploy stage shown while publishing (demo sequence or real status).
+  const [publishStage, setPublishStage] = useState<"building" | "bucket" | "deploying" | "live">("building");
   // Set from the publish response once the site goes live; "" until then.
   const [siteUrl, setSiteUrl] = useState("");
   // Non-null when a publish attempt failed (e.g. backend not wired yet).
   const [publishError, setPublishError] = useState<string | null>(null);
   const [previewSheetOpen, setPreviewSheetOpen] = useState(false);
+  // The full-page "live site" view shown after a successful publish (demo).
+  const [publishedSiteOpen, setPublishedSiteOpen] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<string>("hero");
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [win, setWin] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 1440);
@@ -423,43 +427,59 @@ export function useBuilderState() {
   }
 
   /**
-   * Publish: hand the flavor to the backend (which runs the per-tenant build and
-   * deploy), then poll for status. The browser never builds. Falls back to a
-   * clear error if the publish API isn't reachable yet — the builder keeps working.
+   * Publish. Two modes:
+   *  - DEMO (default): a front-end-only mock — run a staged sequence (building →
+   *    bucket → deploying → live) then reveal the full-page generated site. No
+   *    backend; nothing is actually deployed, but the flavor is built for real so
+   *    the "live" view renders the true draft.
+   *  - REAL (when `NEXT_PUBLIC_PUBLISH_API` is set): POST the flavor and poll the
+   *    backend status. The browser never builds either way.
    */
   async function doPublish() {
     if (publishing) return;
     setPublishError(null);
     setSiteUrl("");
     setPublished(false);
+    setPublishStage("building");
     setPublishing(true);
+
+    const flavor = buildFlavor();
+    const liveUrl = `${slug}.${PUBLISH_DOMAIN}`;
+
+    // DEMO mode — staged mock, no network. The flavor is still built for real so
+    // the revealed "live site" shows exactly what the user created. Stages are
+    // chained through one `pubT` handle so unmount cleanup cancels the sequence.
+    if (!process.env.NEXT_PUBLIC_PUBLISH_API) {
+      const steps: Array<"bucket" | "deploying" | "live"> = ["bucket", "deploying", "live"];
+      let i = 0;
+      const next = () => {
+        const stage = steps[i++];
+        if (stage === "live") {
+          setSiteUrl(liveUrl);
+          setPublishStage("live");
+          setPublished(true);
+          return;
+        }
+        setPublishStage(stage);
+        pubT.current = setTimeout(next, 800);
+      };
+      pubT.current = setTimeout(next, 800);
+      return;
+    }
+
+    // REAL mode — backend build + deploy, polled for status.
     try {
-      const flavor = buildFlavor();
       const res = await publishTenant(flavor);
-      if (res.status === "live") {
-        setSiteUrl(res.siteUrl || `${slug}.${PUBLISH_DOMAIN}`);
-        setPublished(true);
-        return;
-      }
-      // Poll status (no WebSocket) until live/failed or a sane cap.
+      if (res.status === "live") { setSiteUrl(res.siteUrl || liveUrl); setPublished(true); return; }
       let tries = 0;
       const poll = async () => {
         tries += 1;
         try {
           const s = await getPublishStatus(flavor.slug);
-          if (s.status === "live") {
-            setSiteUrl(s.siteUrl || `${slug}.${PUBLISH_DOMAIN}`);
-            setPublished(true);
-            return;
-          }
-          if (s.status === "failed") {
-            setPublishError(s.message || "Build failed.");
-            setPublishing(false);
-            return;
-          }
-        } catch {
-          /* transient — keep polling */
-        }
+          if (s.status === "live") { setSiteUrl(s.siteUrl || liveUrl); setPublished(true); return; }
+          if (s.status === "failed") { setPublishError(s.message || "Build failed."); setPublishing(false); return; }
+          setPublishStage(s.status === "queued" ? "building" : "deploying");
+        } catch { /* transient — keep polling */ }
         if (tries < 60) pubT.current = setTimeout(poll, 2000);
         else { setPublishError("Build is taking longer than expected."); setPublishing(false); }
       };
@@ -645,6 +665,7 @@ export function useBuilderState() {
     selectedSectionId, setSelectedSectionId,
     pickerOpen, setPickerOpen,
     publishing, setPublishing, published, setPublished, doPublish, siteUrl, publishError, setPublishError,
+    publishStage, publishedSiteOpen, setPublishedSiteOpen,
     previewSheetOpen, setPreviewSheetOpen,
     saved,
     // sections canvas / drag

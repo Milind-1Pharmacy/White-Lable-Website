@@ -27,10 +27,18 @@ export function Overlays({ api }: { api: BuilderApi }) {
   const {
     pickerOpen, setPickerOpen, addSection,
     publishing, published, setPublishing, setPublished, slug, siteUrl, publishError, setPublishError,
+    publishStage, publishedSiteOpen, setPublishedSiteOpen,
     previewSheetOpen, setPreviewSheetOpen, previewConfig, sections, step, selectedSectionId, sheetScale,
   } = api;
   // Shown live URL: the backend's siteUrl once live, else the placeholder slug domain.
   const liveUrl = siteUrl || slug + "." + PUBLISH_DOMAIN;
+  // Human label for the current deploy stage shown while publishing.
+  const stageLabel = {
+    building: "Building your site…",
+    bucket: "Creating storage bucket…",
+    deploying: "Deploying to the edge…",
+    live: "Live!",
+  }[publishStage];
   return (
     <>
       {/* Section picker */}
@@ -69,8 +77,8 @@ export function Overlays({ api }: { api: BuilderApi }) {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18, textAlign: "center" }}>
               <span style={SPINNER_LG} />
               <div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Publishing your site…</div>
-                <div style={{ fontSize: 13.5, color: "rgba(255,255,255,.7)", marginTop: 4 }}>Building your tenant &amp; deploying to its bucket.</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{stageLabel}</div>
+                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12.5, color: "rgba(255,255,255,.6)", marginTop: 6, letterSpacing: ".04em" }}>{slug + "." + PUBLISH_DOMAIN}</div>
               </div>
             </div>
           )}
@@ -105,7 +113,7 @@ export function Overlays({ api }: { api: BuilderApi }) {
                 </div>
                 <div style={{ display: "flex", gap: 10 }}>
                   <Hoverable as="button" onClick={() => { setPublishing(false); setPublished(false); }} style={PUBLISH_BTN_GHOST} hover={{ background: "#FAFAFB" }}>Back to editor</Hoverable>
-                  <Hoverable as="button" style={PUBLISH_BTN_PRIMARY} hover={{ background: "#2457B0" }}>Visit site {icon("arrowRight", 15)}</Hoverable>
+                  <Hoverable as="button" onClick={() => { setPublishedSiteOpen(true); setPublishing(false); setPublished(false); }} style={PUBLISH_BTN_PRIMARY} hover={{ background: "#2457B0" }}>Visit site {icon("arrowRight", 15)}</Hoverable>
                 </div>
               </div>
             </div>
@@ -124,6 +132,31 @@ export function Overlays({ api }: { api: BuilderApi }) {
             <div style={{ width: "max-content", margin: "0 auto", background: "#fff", border: "1px solid #E2E2E8", borderRadius: 14, boxShadow: "0 18px 50px rgba(16,16,20,.14)", overflow: "hidden" }}>
               <BuilderPreview config={previewConfig} sections={sections} full step={step} selectedSectionId={selectedSectionId} slug={slug} device="desktop" scale={sheetScale} />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Published "live site" view — the generated site rendered with the real
+          modules + chosen theme, dressed as a browser window at the mock URL.
+          Demo-only: nothing is actually deployed, this just shows what shipped. */}
+      {publishedSiteOpen && (
+        <div style={PREVIEW_SHEET}>
+          {/* Mock browser chrome — sells the "this is your live site" framing. */}
+          <div style={{ height: 48, flex: "none", display: "flex", alignItems: "center", gap: 12, padding: "0 16px", background: "#fff", borderBottom: "1px solid #E0E0E6" }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              <span style={{ width: 11, height: 11, borderRadius: "50%", background: "#FF5F57" }} />
+              <span style={{ width: 11, height: 11, borderRadius: "50%", background: "#FEBC2E" }} />
+              <span style={{ width: 11, height: 11, borderRadius: "50%", background: "#28C840" }} />
+            </div>
+            <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, height: 30, padding: "0 12px", background: "#F4F4F6", borderRadius: 8, color: "#52525B" }}>
+              <span style={{ display: "flex", color: "#16A34A" }}>{icon("lock", 13)}</span>
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12.5 }}>{liveUrl}</span>
+            </div>
+            <Hoverable as="button" onClick={() => setPublishedSiteOpen(false)} style={BTN_OUTLINE} hover={{ background: "#FAFAFB" }}>{icon("x", 17)}Close</Hoverable>
+          </div>
+          <div style={{ flex: 1, overflow: "auto", background: "#fff", display: "flex", justifyContent: "center" }}>
+            {/* Full-width desktop canvas at scale 1 so it reads as a real page. */}
+            <BuilderPreview config={previewConfig} sections={sections} full step={step} selectedSectionId={selectedSectionId} slug={slug} device="desktop" scale={1} />
           </div>
         </div>
       )}
