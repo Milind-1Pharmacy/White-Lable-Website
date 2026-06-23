@@ -35,8 +35,33 @@ type PreviewFrameProps = {
 const FONT_LINK =
   "https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap";
 
+/**
+ * Validate a colour string before it's interpolated into the injected <style>.
+ * Only hex (#rgb/#rrggbb/#rrggbbaa) and rgb()/rgba()/hsl()/hsla() with safe chars
+ * are allowed; anything else (e.g. a CSS-injection breakout like `red}body{…`)
+ * falls back to a neutral default, so config/localStorage can't break out of the
+ * rule. Defends against CSS injection / exfiltration in the preview iframe.
+ */
+const HEX_RE = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+const FUNC_RE = /^(?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s/]+\)$/i;
+function safeColor(v: string | undefined, fallback = "#000000"): string {
+  if (!v || typeof v !== "string") return fallback;
+  const s = v.trim();
+  return HEX_RE.test(s) || FUNC_RE.test(s) ? s : fallback;
+}
+
 /** Build the colour-override <style> so the draft's colours win over the sheet's :root. */
-function overrideCss(c: BrandingColors): string {
+function overrideCss(raw: BrandingColors): string {
+  // Sanitize EVERY colour up-front — none of these strings may reach the <style>
+  // text unchecked (the colour fields accept free text + restore from localStorage).
+  const c: BrandingColors = {
+    primary: safeColor(raw.primary),
+    secondary: safeColor(raw.secondary),
+    background: safeColor(raw.background, "#ffffff"),
+    text: safeColor(raw.text),
+    accent: safeColor(raw.accent),
+    ink: safeColor(raw.ink),
+  };
   const accent = c.accent || c.primary;
   const ink = c.ink || c.text;
   // Map the builder's six brand tokens onto BOTH the module vars (--accent, --ink,
@@ -117,12 +142,16 @@ export function PreviewFrame({
     else doc.documentElement.removeAttribute("data-tenant");
   }, [tenant, headReady]);
 
-  // (Re)inject the tenant stylesheet, webfonts, and colour overrides into the head.
+  // Inject the webfonts + tenant stylesheet <link>s ONCE per stylesheet. These
+  // must NOT be re-created on every render — re-adding the tenant <link> re-fetches
+  // and re-applies ~3.6k lines of CSS, flashing the whole frame unstyled (the
+  // "everything changes when I edit" symptom). Only the colour override <style>
+  // (separate effect below) updates as the picker changes.
   useEffect(() => {
     const doc = iframeRef.current?.contentDocument;
     if (!doc || !headReady) return;
     const head = doc.head;
-    head.querySelectorAll("[data-wb-inject]").forEach((n) => n.remove());
+    head.querySelectorAll("[data-wb-inject='fonts'],[data-wb-inject='tenant']").forEach((n) => n.remove());
 
     const fonts = doc.createElement("link");
     fonts.rel = "stylesheet";
@@ -137,45 +166,107 @@ export function PreviewFrame({
       link.setAttribute("data-wb-inject", "tenant");
       head.appendChild(link);
     }
+  }, [stylesheet, headReady]);
 
-    const override = doc.createElement("style");
-    override.setAttribute("data-wb-inject", "override");
+  // Update only the colour-override <style> when the picker changes. Keyed on the
+  // serialized colour VALUES (not the object identity) so an immutable config
+  // clone with unchanged colours doesn't rewrite the head on every keystroke.
+  const colorKey = JSON.stringify(colors);
+  useEffect(() => {
+    const doc = iframeRef.current?.contentDocument;
+    if (!doc || !headReady) return;
+    const head = doc.head;
+    let override = head.querySelector<HTMLStyleElement>("[data-wb-inject='override']");
+    if (!override) {
+      override = doc.createElement("style");
+      override.setAttribute("data-wb-inject", "override");
+      head.appendChild(override);
+    }
     override.textContent = overrideCss(colors);
-    head.appendChild(override);
-  }, [stylesheet, colors, headReady]);
+    // colors is referenced via colorKey to satisfy exhaustive-deps without
+    // re-running on a new-but-equal object.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [colorKey, headReady]);
 
-  // Measure the rendered content height and report it (for the parent's fit logic).
-  // The tenant stylesheet + webfonts load async and change the layout height, so we
-  // re-measure on body resize, on font readiness, and via a few timed retries.
+  // Keep the latest onMeasure in a ref so the measure effect below can stay
+  // mounted-once. Re-creating it every render (a new closure each time) would
+  // otherwise tear down + rebuild the ResizeObserver and re-fit on every
+  // keystroke — the "whole preview changes when I edit" churn.
+  const onMeasureRef = useRef(onMeasure);
+  useEffect(() => {
+    onMeasureRef.current = onMeasure;
+  }, [onMeasure]);
+  // Last reported height — guards against redundant setState/onMeasure calls
+  // (the RO can fire with an unchanged height; reporting it would still bubble
+  // a new scale up the tree and re-fit the frames for nothing).
+  const lastH = useRef(0);
+
+  // Measure the rendered content height and report it (for the parent's fit
+  // logic). Set up ONCE (deps: [body]) — the ResizeObserver on the body catches
+  // every content/colour/stylesheet-driven layout change, so we never re-arm it
+  // per render. The tenant stylesheet + webfonts load async, and on a FAST RELOAD
+  // (warm cache) the body can be measured mid-load — laying out narrow/short before
+  // the tenant CSS applies. A single measurement then locks the frame at that wrong
+  // size. So we re-measure on RO, on font readiness, on stylesheet load, AND poll
+  // until the height STABILISES (two consecutive equal reads), which self-corrects
+  // regardless of CSS/font timing.
   useEffect(() => {
     const win = iframeRef.current?.contentWindow;
     const doc = iframeRef.current?.contentDocument;
-    if (!win || !doc || !body || !onMeasure) return;
-    const measure = () => {
-      // Measure the content's natural height: the body is set to inline-size so
-      // its scrollHeight reflects the laid-out modules, not the iframe's 150px box.
-      const h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
-      if (h > 0) {
+    if (!win || !doc || !body) return;
+
+    // Measure the content's natural height from the BODY only. documentElement's
+    // scrollHeight is contaminated by the iframe element height we set below, so
+    // using it can feed our own writes back in and lock a stale value.
+    const read = () => doc.body.scrollHeight;
+    const report = (h: number) => {
+      if (h > 0 && Math.abs(h - lastH.current) > 0.5) {
+        lastH.current = h;
         setFrameHeight(h);
-        onMeasure(h);
+        onMeasureRef.current?.(h);
       }
     };
-    measure();
+
     let ro: ResizeObserver | undefined;
     if (typeof ResizeObserver !== "undefined") {
       // Observe the body (content) only — observing documentElement would react to
       // our own iframe-height writes and feedback-loop.
-      ro = new ResizeObserver(measure);
+      ro = new ResizeObserver(() => report(read()));
       ro.observe(doc.body);
     }
-    // Webfonts settling shifts heights; re-measure when they're ready.
-    doc.fonts?.ready?.then(measure).catch(() => {});
-    const timers = [80, 200, 500, 1000].map((ms) => win.setTimeout(measure, ms));
+
+    // Stabilisation poll: re-measure until two consecutive reads match (layout has
+    // settled), capped so we never poll forever. Survives warm-cache fast reloads
+    // where the RO + timed retries alone can miss the late reflow.
+    let prev = -1;
+    let stable = 0;
+    let ticks = 0;
+    const poll = () => {
+      const h = read();
+      report(h);
+      if (h > 0 && Math.abs(h - prev) < 0.5) stable += 1;
+      else stable = 0;
+      prev = h;
+      ticks += 1;
+      // Stop once settled (3 equal reads) or after ~3s of polling.
+      if (stable < 3 && ticks < 60) pollT = win.setTimeout(poll, 50);
+    };
+    let pollT = win.setTimeout(poll, 0);
+
+    // Webfonts settling shifts heights; re-measure (and restart the poll) when ready.
+    doc.fonts?.ready?.then(() => { stable = 0; ticks = 0; report(read()); }).catch(() => {});
+    // When the injected tenant stylesheet finishes loading, its rules change the
+    // layout height — restart the poll so the new height is captured.
+    const link = doc.head.querySelector<HTMLLinkElement>("[data-wb-inject='tenant']");
+    const onLink = () => { stable = 0; ticks = 0; prev = -1; report(read()); };
+    link?.addEventListener("load", onLink);
+
     return () => {
       ro?.disconnect();
-      timers.forEach((t) => win.clearTimeout(t));
+      win.clearTimeout(pollT);
+      link?.removeEventListener("load", onLink);
     };
-  }, [body, onMeasure, children, colors, stylesheet]);
+  }, [body, stylesheet, colorKey]);
 
   return (
     <iframe

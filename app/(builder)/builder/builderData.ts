@@ -26,6 +26,7 @@ export type StepId =
   | "branding"
   | "seo"
   | "sections"
+  | "navigation"
   | "contact"
   | "legal";
 
@@ -65,6 +66,7 @@ export const STEPS: Step[] = [
   { id: "identity", label: "Identity", hint: "Name & category", icon: "identity" },
   { id: "branding", label: "Branding", hint: "Logo & colours", icon: "palette" },
   { id: "seo", label: "SEO", hint: "Title & keywords", icon: "search" },
+  { id: "navigation", label: "Navigation", hint: "Nav, footer & CTA", icon: "list" },
   { id: "sections", label: "Sections", hint: "Hero, blocks & more", icon: "grid" },
   { id: "contact", label: "Contact", hint: "Get in touch", icon: "mail" },
   { id: "legal", label: "Legal", hint: "Disclaimers", icon: "shield" },
@@ -76,10 +78,37 @@ export const DONE: Record<string, number> = {
   branding: 1,
   seo: 1,
   sections: 1,
+  navigation: 1,
 };
 
 /** Fixed content blocks edited in the Sections step but NOT part of sections[]. */
 export const CORE = ["hero", "about", "services"] as const;
+
+/**
+ * Scroll-anchor map: block/section type → the DOM id its module renders, the
+ * label shown in the section dropdown, and a friendly default nav-link label.
+ * Every section type the builder offers is a scroll target (its module emits an
+ * `id`); a nav link points at `#<id>` to scroll the page (no route change),
+ * exactly like the live UrMedz/Aarav nav.
+ *  - `label`   — name shown in the editor's section dropdown.
+ *  - `navLabel`— the friendly label prefilled into the link's text field.
+ */
+export const SECTION_ANCHORS: Record<string, { id: string; label: string; navLabel: string }> = {
+  hero: { id: "top", label: "Hero", navLabel: "Home" },
+  about: { id: "about", label: "About", navLabel: "About us" },
+  services: { id: "services", label: "Services", navLabel: "Services" },
+  appStrip: { id: "app", label: "App strip", navLabel: "Get the app" },
+  stats: { id: "stats", label: "Stats", navLabel: "By the numbers" },
+  savings: { id: "savings", label: "Savings", navLabel: "Savings" },
+  videoFeature: { id: "fulfilment", label: "Video / Fulfilment", navLabel: "Fulfilment" },
+  team: { id: "team", label: "Team", navLabel: "Our team" },
+  features: { id: "features", label: "Features", navLabel: "Why us" },
+  categories: { id: "categories", label: "Categories", navLabel: "Categories" },
+  howItWorks: { id: "how-it-works", label: "How it works", navLabel: "How it works" },
+  faq: { id: "faq", label: "FAQ", navLabel: "FAQ" },
+  gallery: { id: "gallery", label: "Gallery", navLabel: "Gallery" },
+  aiStore: { id: "ai-store", label: "AI store", navLabel: "AI store" },
+};
 
 /** Metadata for every block type the builder can show: core + the live section set. */
 export const TYPES: Record<string, TypeMeta> = {
@@ -97,6 +126,8 @@ export const TYPES: Record<string, TypeMeta> = {
   categories: { label: "Categories", icon: "shapes", blurb: "Category tiles with icons", dot: "#CA8A04", tint: "#FAF4DC" },
   howItWorks: { label: "How it works", icon: "list", blurb: "Numbered process steps", dot: "#DB2777", tint: "#FCE9F2" },
   faq: { label: "FAQ", icon: "help", blurb: "Expandable Q&A list", dot: "#D97706", tint: "#FCF1E0" },
+  aiStore: { label: "AI store", icon: "sparkles", blurb: "Image/video tile grid", dot: "#7C3AED", tint: "#F1EAFE" },
+  gallery: { label: "Gallery", icon: "image", blurb: "Image gallery rows", dot: "#0891B2", tint: "#E2F5F9" },
 };
 
 /**
@@ -113,6 +144,8 @@ export const PICKER_ORDER: BuilderSectionType[] = [
   "categories",
   "howItWorks",
   "faq",
+  "aiStore",
+  "gallery",
 ];
 
 /**
@@ -222,6 +255,25 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
         { question: "What is your return policy?", answer: "Prescription medicines cannot be returned once dispensed. Sealed, undamaged OTC products may be returned within 7 days of purchase." },
       ],
     },
+    aiStore: {
+      eyebrow: "Inside the platform",
+      heading: { parts: [{ text: "An AI-assisted " }, { text: "pharmacy", emphasis: "italic-accent" }, { text: " platform." }] },
+      lede: "Forecasting, inventory and compliance — handled quietly in the background for every partner pharmacy.",
+      tiles: [
+        { image: "/urmedz/gallery/img-1.png", alt: "Fulfilment centre", tag: "Fulfilment", tagBg: "#FFFFFF", tagColor: "#0A174C", background: "#F4EFE6" },
+        { image: "/urmedz/gallery/img-2.png", alt: "Retail store", tag: "Retail", tagBg: "#1FAFA6", tagColor: "#FFFFFF", background: "#F4EFE6" },
+        { image: "/urmedz/gallery/img-3.png", alt: "Quick commerce", tag: "Quick commerce", tagBg: "#0A174C", tagColor: "#FFFFFF", background: "#F4EFE6" },
+      ],
+    },
+    gallery: {
+      eyebrow: "Gallery",
+      heading: { parts: [{ text: "A look " }, { text: "inside.", emphasis: "italic-accent" }] },
+      images: [
+        { src: "/urmedz/gallery/img-1.png", alt: "Quick commerce", caption: "Same-day delivery" },
+        { src: "/urmedz/gallery/img-2.png", alt: "Retail stores", caption: "Neighbourhood pharmacies" },
+        { src: "/urmedz/gallery/img-3.png", alt: "Fulfilment", caption: "Hi-tech centres" },
+      ],
+    },
   };
   return JSON.parse(JSON.stringify(d[t] || {}));
 }
@@ -234,6 +286,7 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
 export function INITIAL(): {
   config: AppConfig;
   sections: DraftSection[];
+  blockOrder: string[];
 } {
   const config: AppConfig = {
     tenant: { name: "UrMedz", category: "Pharmacy & Fulfilment" },
@@ -306,11 +359,47 @@ export function INITIAL(): {
     },
     features: { enableChat: true, enableForms: true, enablePayments: false, enableCart: false },
     compliance: { mode: "business-profile-safe", disclaimer: "" },
+    // Site chrome — drives the Navbar, Footer and sticky CTA in the preview.
+    layout: {
+      nav: {
+        links: [
+          { label: "About", href: "/#about" },
+          { label: "Services", href: "/#services" },
+          { label: "Team", href: "/#team" },
+          { label: "FAQ", href: "/#faq" },
+        ],
+        ctas: [
+          { label: "Login", href: "https://ros.urmedz.in/login", variant: "primary", external: true },
+          { label: "Get the app", href: "/contact", variant: "ghost" },
+        ],
+      },
+      footer: {
+        headline: { parts: [{ text: "Authentic medicines,", br: true }, { text: "delivered with", emphasis: "italic-accent" }, { text: " care." }] },
+        description: "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
+        addressLabel: "Head office",
+        columns: [
+          { heading: "Company", links: [{ label: "About", href: "/#about" }, { label: "Team", href: "/#team" }, { label: "Careers", href: "/contact" }] },
+          { heading: "Services", links: [{ label: "Retail stores", href: "/#services" }, { label: "Fulfilment", href: "/#fulfilment" }, { label: "Get the app", href: "/#app" }] },
+          { heading: "Resources", links: [{ label: "FAQ", href: "/#faq" }, { label: "Privacy", href: "/privacy-policy" }, { label: "Terms", href: "/terms-conditions" }] },
+        ],
+      },
+      stickyCta: { enabled: true, text: "The UrMedz app is here.", ctaLabel: "Download App Now", ctaHref: "#app" },
+    },
   };
 
   // Default canvas mirrors the urmedz section order.
   const order: BuilderSectionType[] = ["appStrip", "stats", "savings", "team", "features", "howItWorks", "faq"];
   const sections: DraftSection[] = order.map((t, i) => ({ id: "s" + (i + 1), type: t, data: DEFAULTS(t) } as DraftSection));
 
-  return { config, sections };
+  // Unified block order (stable card ids), mirroring the live page layout:
+  // hero → appStrip → about → services → remaining sections.
+  const blockOrder: string[] = [
+    "hero",
+    "s1", // appStrip
+    "about",
+    "services",
+    ...sections.slice(1).map((s) => s.id),
+  ];
+
+  return { config, sections, blockOrder };
 }

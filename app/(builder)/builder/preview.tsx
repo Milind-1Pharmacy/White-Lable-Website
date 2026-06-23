@@ -13,12 +13,16 @@
  */
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import type { AppConfig, Branding, Section } from "@/types/config.types";
 import { Hero } from "@/modules/Hero";
 import { About } from "@/modules/About";
 import { Services } from "@/modules/Services";
 import { SectionRenderer } from "@/modules/SectionRenderer";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { StickyCta } from "@/components/layout/StickyCta";
+import { resolveRenderOrder } from "@/lib/renderOrder";
 import { PreviewFrame } from "./PreviewFrame";
 import type { DraftSection, StepId } from "./builderData";
 
@@ -51,16 +55,26 @@ function PreviewContent({
   const content = config.content;
   const branding: Branding = config.branding;
 
-  // Whole assembled site (Preview sheet / full view): mirror app/(site)/page.tsx order.
+  // Whole assembled site (Preview sheet / full view): render the SAME chrome +
+  // body the live page uses — Navbar on top, the ordered blocks, then Footer and
+  // the sticky CTA — so the preview is a true full-page ditto of the live site.
   if (full) {
+    const resolved = resolveRenderOrder({ ...content, sections: sections.map(toSection) });
     return (
       <>
-        <Hero data={content.hero} />
-        {content.about && <About data={content.about} />}
-        {content.services && content.services.length > 0 && (
-          <Services data={content.services} meta={content.servicesMeta} />
-        )}
-        <SectionRenderer sections={sections.map(toSection)} branding={branding} />
+        <Navbar app={config} />
+        {resolved.map((b) => {
+          if (b.kind === "hero") return <Hero key="hero" data={content.hero} />;
+          if (b.kind === "about")
+            return content.about ? <About key="about" data={content.about} /> : null;
+          if (b.kind === "services")
+            return content.services && content.services.length > 0 ? (
+              <Services key="services" data={content.services} meta={content.servicesMeta} />
+            ) : null;
+          return <SectionRenderer key={`section-${b.index}`} sections={[b.section]} branding={branding} />;
+        })}
+        <Footer app={config} />
+        <StickyCta config={config.layout?.stickyCta} />
       </>
     );
   }
@@ -76,6 +90,19 @@ function PreviewContent({
       ) : null;
     const sel = sections.find((s) => s.id === selectedSectionId) || sections[0];
     return sel ? <SectionRenderer sections={[toSection(sel)]} branding={branding} /> : null;
+  }
+
+  // Navigation step: show the chrome being edited (navbar + footer + sticky CTA)
+  // around the hero so changes to nav links / footer / sticky reflect live.
+  if (step === "navigation") {
+    return (
+      <>
+        <Navbar app={config} />
+        <Hero data={content.hero} />
+        <Footer app={config} />
+        <StickyCta config={config.layout?.stickyCta} />
+      </>
+    );
   }
 
   // Wizard steps that map to a fixed block.
@@ -108,8 +135,10 @@ export type PreviewProps = {
 
 /**
  * BuilderPreview - Renders the real modules for the draft inside a scaled iframe.
+ * Memoized: the parent WebsiteBuilder re-renders on every keystroke, but this
+ * only re-renders when an input that affects the frame actually changes.
  */
-export function BuilderPreview({
+function BuilderPreviewImpl({
   config,
   sections,
   full,
@@ -123,10 +152,32 @@ export function BuilderPreview({
   const width = device === "mobile" ? PREVIEW_MOBILE_WIDTH : PREVIEW_BASE_WIDTH;
   const [height, setHeight] = useState(0);
 
-  const report = (h: number) => {
-    setHeight(h);
-    onMeasure?.(h);
-  };
+  // Stable callback so PreviewFrame's measure effect (mounted once) never sees a
+  // changing onMeasure identity — keeps the iframe from re-fitting per keystroke.
+  const report = useCallback(
+    (h: number) => {
+      setHeight(h);
+      onMeasure?.(h);
+    },
+    [onMeasure]
+  );
+
+  // Only rebuild the previewed module tree when an input that actually affects
+  // THIS frame changes. A keystroke in an unrelated field still produces a new
+  // `config` object (immutable update), but the rendered modules are identical,
+  // so memoizing here avoids reconciling the whole iframe subtree every time.
+  const content = useMemo(
+    () => (
+      <PreviewContent
+        config={config}
+        sections={sections}
+        full={full}
+        step={step}
+        selectedSectionId={selectedSectionId}
+      />
+    ),
+    [config, sections, full, step, selectedSectionId]
+  );
 
   // The outer box occupies the SCALED footprint so the scroll/flex parent lays it
   // out correctly; the iframe is scaled from its top-left inside it.
@@ -141,20 +192,25 @@ export function BuilderPreview({
       <div style={{ width, height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
         <PreviewFrame
           width={width}
-          stylesheet={config.branding.stylesheet}
+          /* Always load the combined PREVIEW-ONLY stylesheet (public/preview.css)
+             rather than the draft's live tenant sheet. It's a superset of urmedz.css
+             with the Categories block + preview-only Team-quote fixes, so the live
+             tenant stylesheets stay untouched. */
+          stylesheet="/preview.css"
           colors={config.branding.colors}
           onMeasure={report}
           bodyClassName={frameClass}
         >
-          <PreviewContent
-            config={config}
-            sections={sections}
-            full={full}
-            step={step}
-            selectedSectionId={selectedSectionId}
-          />
+          {content}
         </PreviewFrame>
       </div>
     </div>
   );
 }
+
+/**
+ * Memoized BuilderPreview. Shallow-compares props, so an edit to a field that
+ * doesn't change `config`/`sections`/`scale` (e.g. focus, an unrelated step's
+ * transient UI) won't re-render either preview frame.
+ */
+export const BuilderPreview = React.memo(BuilderPreviewImpl);
