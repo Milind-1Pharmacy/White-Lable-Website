@@ -49,7 +49,6 @@ export function Gallery({ data }: GalleryProps) {
                 className="h-display h-2"
                 style={{
                   marginTop: 14,
-                  maxWidth: 720,
                   minHeight: isMobile ? 64 : 108,
                   lineHeight: 1.1,
                 }}

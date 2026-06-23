@@ -54,8 +54,8 @@ export function AppStrip({ data, branding }: AppStripProps) {
             <Image
               src={logo}
               alt=""
-              width={56}
-              height={56}
+              width={120}
+              height={120}
               className="appstrip__icon"
             />
           )}

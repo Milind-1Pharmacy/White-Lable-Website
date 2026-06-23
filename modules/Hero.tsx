@@ -117,6 +117,7 @@ export function Hero({ data }: HeroProps) {
               ))}
             </div>
           )}
+
         </div>
 
         {slides.length > 0 && (

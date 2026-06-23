@@ -50,8 +50,7 @@ export function HowItWorks({ data }: HowItWorksProps) {
                   className="h-display h-2"
                   style={{
                     marginTop: 14,
-                    maxWidth: 720,
-                    minHeight: isMobile ? 64 : 108,
+                    minHeight: isMobile ? 64 : 48,
                     lineHeight: 1.1,
                   }}
                 >
