@@ -372,6 +372,14 @@ export type Content = {
   services?: ServiceItem[];
   servicesMeta?: ServicesMeta;
   sections: Section[];
+  /**
+   * Optional explicit render order for the home page blocks. Tokens:
+   *  - "hero" | "about" | "services" — the fixed core blocks
+   *  - "section:<i>" — content.sections[<i>] (its index in the array)
+   * Hero always renders first regardless. When omitted, the legacy fixed order
+   * (hero → appStrip → about → services → remaining sections) is used.
+   */
+  order?: string[];
 };
 
 /** Tenant contact details. */
