@@ -8,7 +8,7 @@ A **config-driven Next.js (App Router) platform** that generates compliant, SEO-
 
 Stack: Next.js (App Router) · TypeScript · TailwindCSS · shadcn/ui · npm.
 
-This repo is also intended to host a second **form-builder app** (the authoring UI that emits an `AppConfig` JSON) alongside the render engine — see `docs/system-architecture.md`. A client-side builder now lives at `app/(builder)/builder/` (route group `(builder)` keeps it out of the public `(site)` chrome). It edits an in-memory `AppConfig` draft and ships its own self-contained preview renderers — it does NOT reuse `modules/*.tsx`.
+This repo is also intended to host a second **form-builder app** (the authoring UI that emits an `AppConfig` JSON) alongside the render engine — see `docs/system-architecture.md`. A client-side builder now lives at `app/(builder)/builder/` (route group `(builder)` keeps it out of the public `(site)` chrome). It edits an in-memory `AppConfig` draft and previews it by rendering the **real `modules/*.tsx`** inside an isolated `<iframe>` (`PreviewFrame.tsx`), styled by `public/preview.css` (builder-only — never shipped). The builder is modular: `WebsiteBuilder.tsx` is a ~36-line composition root; state lives in `useBuilderState.tsx`, field descriptors in `fieldBuilders.tsx`, with `builderStyles/Helpers/Types.ts`, `components/*` and `sections/*`. Debug the relevant file, not one monolith.
 
 ## Common commands
 
@@ -131,6 +131,21 @@ Standard slots: `logo.png`, `hero.png`, `about.png`, `og-image.png`, `services/<
 - `Container` is `max-w-7xl` (1280px) with `lg:px-12 xl:px-16` padding. Don't downsize to `max-w-6xl` — gutters become too wide on 1440px+ screens.
 - The Hero `<section>` has `overflow-hidden` for the floating decorative blobs. Anything with negative absolute insets (e.g. floating badge tags) outside a child gets clipped — put overlays *inside* the inner rounded card.
 - Brand palette has six CSS vars: `--brand-primary`, `--brand-secondary`, `--brand-background`, `--brand-text`, `--brand-accent` (deeper accent for CTAs/hover), `--brand-ink` (highest contrast). All defined in `lib/themeLoader.ts` and `configs/system.json` fallbacks.
+
+## Website builder gotchas (`app/(builder)/builder/`)
+
+- **`public/preview.css` is builder-preview ONLY** — a superset (urmedz base + Categories + Team-quote fixes) loaded into the preview iframe. Published sites ship the per-tenant theme CSS (`urmedz.css`/`aarav_pharmacy.css`). Never deploy `preview.css`; never edit a live tenant `.css` for a preview-only tweak — put it in `preview.css`.
+- **GSAP/measure effects in `useBuilderState.tsx` query DOM ids** rendered in `sections/*` (`#wb-editor-body`, `#wb-sec-list`, `#wb-preview-scroll`, `#wb-picker-pop`, `#wb-publish-card`, `#wb-check-path`, `[data-confetti]`, `.wb-sec-card`). Renaming one silently breaks animations — keep them byte-identical.
+- **localStorage hydration is post-mount, not in `useState`** (`loadDraft` in an effect, gated by a `hydrated` ref). Reading localStorage in the lazy initializer causes a server/client hydration mismatch.
+- **Lint enforces `react-hooks/refs` + `react-hooks/set-state-in-effect` as errors.** Scope a justified `/* eslint-disable */` rather than restructuring. Building `Field` descriptors that read refs only trips `react-hooks/refs` inside a component render — it's fine in the `fieldBuilders.tsx` factory.
+- **Preview iframe perf:** inject the tenant `<link>` ONCE (re-adding it per render re-fetches ~3.6k lines of CSS and flashes the frame); keep `onMeasure` in a ref so the measure effect stays mounted-once.
+- **Drag-reorder uses a stable `blockOrder` (card ids)** → derived `content.order` (`section:<index>` tokens). Hero is pinned first. `minmax(0,1fr)` / flex `min-width:0` is the fix for grid columns that collapse to one-word-per-line wrapping.
+
+## Security boundaries (use these for any config-driven sink)
+
+- **Config URLs** (href/src from tenant config) → wrap with `safeHref`/`safeSrc` from `lib/safeUrl.ts` before rendering into `<a>`/`<Link>`/`<img>`/`<video>`. They reject `javascript:`/`data:`/`vbscript:`/`//host`. `complianceFilter.ts` only sanitizes CTA *labels*, not hrefs.
+- **Brand colours** reach an injected iframe `<style>` (`PreviewFrame.overrideCss`) — sanitize to hex/rgb/hsl before interpolation; `loadDraft` also scrubs them (localStorage is tamperable).
+- **Image upload** (`lib/api/upload.ts`) needs a `session-token`; validates type/size, sanitizes the filename, allowlists the S3 host. **Publish never builds in the browser** — `doPublish` POSTs a flavor `{slug,theme,appConfig}` and polls; the backend runs `TENANT=<slug> next build`. CSP ships Report-Only in `proxy.ts`.
 
 ## Adding a new module
 
