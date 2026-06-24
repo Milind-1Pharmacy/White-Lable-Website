@@ -14,7 +14,7 @@
  */
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AppConfig, NavCta } from "@/types/config.types";
 import { safeHref } from "@/lib/safeUrl";
 
@@ -41,12 +41,25 @@ function ctaClass(variant: NavCta["variant"]) {
 export function Navbar({ app }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
+  // Detect scroll from the navbar's OWN document/window. In the builder preview the
+  // navbar is portaled into an <iframe>, so the JS global `window` is the parent
+  // frame and never receives the iframe's scroll — leaving the nav stuck in its
+  // un-scrolled (tall, full-logo) state. Resolving the scroller via ownerDocument
+  // makes the scrolled/compact state work identically in preview and on the live site.
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 60);
+    const node = headerRef.current;
+    const doc = node?.ownerDocument ?? document;
+    const win = doc.defaultView ?? window;
+    const scroller: HTMLElement | null = doc.scrollingElement as HTMLElement | null;
+    const on = () => {
+      const y = win.scrollY || scroller?.scrollTop || 0;
+      setScrolled(y > 60);
+    };
     on();
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    win.addEventListener("scroll", on, { passive: true });
+    return () => win.removeEventListener("scroll", on);
   }, []);
 
   useEffect(() => {
@@ -65,7 +78,7 @@ export function Navbar({ app }: NavbarProps) {
 
   return (
     <>
-      <header className={"nav" + (scrolled ? " is-scrolled" : "")}>
+      <header ref={headerRef} className={"nav" + (scrolled ? " is-scrolled" : "")}>
         <Link href="/" className="nav__brand" onClick={closeMenu}>
           {fullLogo && (
             <Image
