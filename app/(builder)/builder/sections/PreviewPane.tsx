@@ -21,6 +21,7 @@ export function PreviewPane({ api }: { api: BuilderApi }) {
   const {
     previewView, setPreviewView, zoomFactor, setZoomFactor, zoomBy, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
     previewConfig, sections, step, selectedSectionId, slug, previewScale, setDeskH, setMobH,
+    legalSection,
   } = api;
   return (
     <aside style={ASIDE}>
@@ -49,13 +50,14 @@ export function PreviewPane({ api }: { api: BuilderApi }) {
           </div>
         </div>
       </div>
+
       <div id="wb-preview-scroll" style={{ flex: 1, minHeight: 0, overflow: "auto", padding: "20px", display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "center", gap: 22 }}>
         {/* Desktop frame — real modules in an isolated iframe; shown in "all"/"desktop". */}
         {previewView !== "mobile" && (
           <div style={{ flex: "none" }}>
             <div style={DEVICE_LABEL}>{icon("monitor", 13)}DESKTOP</div>
             <div style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 6px 22px rgba(16,16,20,.07)" }}>
-              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} device="desktop" scale={previewScale} onMeasure={setDeskH} />
+              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} device="desktop" scale={previewScale} onMeasure={setDeskH} />
             </div>
           </div>
         )}
@@ -65,7 +67,7 @@ export function PreviewPane({ api }: { api: BuilderApi }) {
           <div style={{ flex: "none" }}>
             <div style={DEVICE_LABEL}>{icon("smartphone", 13)}MOBILE · 375</div>
             <div style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 6px 22px rgba(16,16,20,.07)" }}>
-              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} device="mobile" scale={previewScale} onMeasure={setMobH} />
+              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} device="mobile" scale={previewScale} onMeasure={setMobH} />
             </div>
           </div>
         )}

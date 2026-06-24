@@ -217,6 +217,21 @@ export function FieldRow({ f }: { f: Field }) {
         </div>
       )}
 
+      {f.kind === "action" && (
+        <button
+          onClick={f.onClick}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 7,
+            padding: "9px 14px", borderRadius: 10, cursor: "pointer",
+            border: "1px solid #DBE5F5", background: "#F1F6FD", color: "#2457B0",
+            fontSize: 12.5, fontWeight: 600, fontFamily: "inherit",
+          }}
+        >
+          {icon(f.icon || "sparkles", 14)}
+          {f.label}
+        </button>
+      )}
+
       {f.kind === "text" && (
         <>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>

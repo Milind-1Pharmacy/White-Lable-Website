@@ -349,7 +349,7 @@ export function validateDraft(config: AppConfig, sections: DraftLike[]): Validat
   const contact = (config.contact as Record<string, unknown>) ?? {};
   const formsOn = !!(config.features as Record<string, unknown> | undefined)?.enableForms;
   if (!nonEmpty(contact.email) && !nonEmpty(contact.phone) && !formsOn)
-    out.push({ group: "Contact", step: "contact", severity: "error", message: "Add at least one support method — email, phone, or enable the enquiry form." });
+    out.push({ group: "Contact", step: "legal", severity: "error", message: "Add at least one support method — email, phone, or enable the enquiry form." });
 
   // Dynamic sections.
   for (const sec of sections) {

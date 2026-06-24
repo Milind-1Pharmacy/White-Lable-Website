@@ -34,7 +34,8 @@ export type Field = {
     | "select"
     | "themeselect"
     | "group"
-    | "note";
+    | "note"
+    | "action";
 };
 
 /** One sub-field within a repeatable item card (used by the `items` field kind).

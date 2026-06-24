@@ -18,12 +18,20 @@
 
 import React from "react";
 import type { AppConfig } from "@/types/config.types";
-import { SECTION_ANCHORS, type DraftSection, type StepId } from "./builderData";
+import { SECTION_ANCHORS, type DraftSection, type StepId, type LegalSectionId } from "./builderData";
 import { clone } from "./builderHelpers";
 import { brStyle, switchStyles } from "./builderStyles";
 import type { AreaEvt, Field, InputEvt, ItemCol, KeyEvt, SelectEvt } from "./builderTypes";
 import { THEME_PRESETS, DEFAULT_THEME, presetByName } from "./themePresets";
 import { SECTION_RULES, MAX_NAV_LINKS, limit, type TextLimitId, type CharLimit } from "./validationSchema";
+import {
+  legalInfoFromConfig,
+  privacyPolicyTemplate,
+  termsTemplate,
+  disclaimerTemplate,
+  dataDeletionTemplate,
+} from "./legalTemplates";
+import type { LegalPage } from "@/types/config.types";
 
 /** Spreadable {max,min} char-limit props for a Field/column from a TEXT_LIMITS id. */
 function limProps(id?: TextLimitId): { max?: number; min?: number } {
@@ -59,7 +67,78 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     itemsNote,
   } = ctx;
 
-  function buildFields(s: StepId): Field[] {
+  // ---------- Legal pages (Privacy / Terms / Disclaimer / Data-deletion) ----------
+
+  /** Ensure `layout.pages` exists, then return it for mutation. */
+  function ensurePages(c: AppConfig): NonNullable<NonNullable<AppConfig["layout"]>["pages"]> {
+    if (!c.layout) c.layout = {} as NonNullable<AppConfig["layout"]>;
+    if (!c.layout.pages) c.layout.pages = {};
+    return c.layout.pages;
+  }
+
+  /** Flatten a legal section's body (strings + list items) into one editable text. */
+  function bodyToText(body: Array<unknown>): string {
+    return body
+      .map((b) => {
+        if (typeof b === "string") return b;
+        const blk = b as { type: string; text?: string; items?: string[] };
+        if (blk.type === "p") return blk.text ?? "";
+        if (blk.type === "list") return (blk.items ?? []).join("\n");
+        return "";
+      })
+      .filter(Boolean)
+      .join("\n\n");
+  }
+
+  /**
+   * Build the editor fields for ONE legal page: a group header with a
+   * "Reset to recommended" action, an Intro textarea, then one textarea per
+   * titled section (section heading = field label). Editing a textarea rewrites
+   * that slice's body to a single paragraph; reset re-seeds the whole page from
+   * the template. `pageKey` is the key under `layout.pages`.
+   */
+  function legalPageFields(
+    pageKey: "privacyPolicy" | "termsAndConditions" | "disclaimer" | "deactivateAccount",
+    groupLabel: string,
+    groupSub: string,
+    makeTemplate: () => LegalPage,
+  ): Field[] {
+    const page: LegalPage = (config.layout?.pages?.[pageKey] as LegalPage | undefined) ?? {};
+    const secs = page.sections ?? [];
+    const fields: Field[] = [
+      { kind: "group", label: groupLabel, sub: groupSub },
+      {
+        kind: "action",
+        label: "Reset to recommended",
+        icon: "sparkles",
+        onClick: () => setCfg((c) => { ensurePages(c)[pageKey] = makeTemplate(); }),
+      },
+      {
+        kind: "area",
+        label: "Intro",
+        value: page.intro || "",
+        placeholder: "A short opening line for this page.",
+        onChange: (e: AreaEvt) => setCfg((c) => { (ensurePages(c)[pageKey] as LegalPage).intro = e.target.value; }),
+      },
+    ];
+    secs.forEach((sec, i) => {
+      fields.push({
+        kind: "area",
+        label: sec.heading || `Section ${i + 1}`,
+        value: bodyToText(sec.body),
+        onChange: (e: AreaEvt) => setCfg((c) => {
+          const p = ensurePages(c)[pageKey] as LegalPage;
+          if (!p.sections) p.sections = [];
+          if (!p.sections[i]) p.sections[i] = { body: [] };
+          // One textarea → one paragraph block. Lists flatten to text by design (v1).
+          p.sections[i].body = [{ type: "p", text: e.target.value }];
+        }),
+      });
+    });
+    return fields;
+  }
+
+  function buildFields(s: StepId, legalSection: LegalSectionId = "contact"): Field[] {
     const C = config;
     let out: Field[] = [];
     if (s === "identity")
@@ -104,10 +183,24 @@ export function makeFieldBuilders(ctx: FieldCtx) {
       );
       out.push({ kind: "group", label: "Logo", sub: "Upload a mark, or use your name as a wordmark." });
       out.push({ kind: "upload", label: "Logo mark", hint: "PNG or SVG · square, transparent", value: C.branding.logo || "", onChange: (url: string) => setCfg((c) => (c.branding.logo = url)) });
-    } else if (s === "seo")
+    } else if (s === "seo") {
+      // Live length guidance — the search-snippet "sweet spots" that score best.
+      const tLen = C.seo.title.length;
+      const titleHelp =
+        tLen === 0 ? "Appears in search results and the browser tab. Aim for 50–60 characters."
+        : tLen < 30 ? `A bit short (${tLen}). Aim for 50–60 characters for the best search snippet.`
+        : tLen <= 60 ? `Good length (${tLen}/60). This is the ideal range.`
+        : `A little long (${tLen}). Search engines may truncate past ~60 characters.`;
+      const dLen = C.seo.description.length;
+      const descHelp =
+        dLen === 0 ? "A one–two sentence summary shown by search engines. Aim for 150–160 characters."
+        : dLen < 70 ? `A bit short (${dLen}). Aim for 150–160 characters to fill the snippet.`
+        : dLen <= 160 ? `Good length (${dLen}/160). This is the ideal range.`
+        : `A little long (${dLen}). Search engines may truncate past ~160 characters.`;
+      const socials = C.seo.socialProfiles ?? [];
       out = [
-        { kind: "text", label: "Page title", value: C.seo.title, help: "Appears in search results and the browser tab. Aim for ~60 characters.", ...limProps("seoTitle"), count: C.seo.title.length, onChange: (e: InputEvt) => setCfg((c) => (c.seo.title = e.target.value)) },
-        { kind: "area", label: "Meta description", value: C.seo.description, help: "A one–two sentence summary shown by search engines.", ...limProps("seoDescription"), count: C.seo.description.length, onChange: (e: AreaEvt) => setCfg((c) => (c.seo.description = e.target.value)) },
+        { kind: "text", label: "Page title", value: C.seo.title, help: titleHelp, ...limProps("seoTitle"), count: tLen, onChange: (e: InputEvt) => setCfg((c) => (c.seo.title = e.target.value)) },
+        { kind: "area", label: "Meta description", value: C.seo.description, help: descHelp, ...limProps("seoDescription"), count: dLen, onChange: (e: AreaEvt) => setCfg((c) => (c.seo.description = e.target.value)) },
         {
           kind: "tags",
           label: "Keywords",
@@ -121,8 +214,26 @@ export function makeFieldBuilders(ctx: FieldCtx) {
             }
           },
         },
+        { kind: "group", label: "Discoverability", sub: "Helps search engines index and rank your site correctly." },
+        { kind: "text", label: "Site address (URL)", value: C.seo.siteUrl || "", placeholder: "https://yourbusiness.com", help: "Your live domain. Sets the canonical URL, sitemap and structured data — important for ranking.", onChange: (e: InputEvt) => setCfg((c) => (c.seo.siteUrl = e.target.value)) },
+        {
+          kind: "tags",
+          label: "Social profiles",
+          placeholder: "Paste a full URL (https://…), press Enter",
+          help: "Your Facebook, Instagram, LinkedIn, etc. Links your brand identity for richer search results.",
+          items: socials.map((u, i) => ({ text: u, onRemove: () => setCfg((c) => { (c.seo.socialProfiles ?? []).splice(i, 1); }) })),
+          onAdd: (e: KeyEvt) => {
+            if (e.key === "Enter" && e.currentTarget.value.trim()) {
+              const v = e.currentTarget.value.trim();
+              e.currentTarget.value = "";
+              setCfg((c) => { if (!c.seo.socialProfiles) c.seo.socialProfiles = []; c.seo.socialProfiles.push(v); });
+            }
+          },
+        },
         { kind: "upload", label: "Social share image", hint: "1200×630 · shown when the link is shared", value: C.seo.ogImage || "", onChange: (url: string) => setCfg((c) => (c.seo.ogImage = url)) },
+        ...(!C.seo.ogImage ? [{ kind: "note", label: "Add a share image", text: "Without a 1200×630 image, links shared on social media show no preview thumbnail — which hurts click-through. Upload one above." } as Field] : []),
       ];
+    }
     else if (s === "navigation") {
       const nav = C.layout?.nav;
       const footer = C.layout?.footer;
@@ -232,28 +343,53 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         { kind: "text", label: "Button label", value: sticky?.ctaLabel || "", placeholder: "Download App Now", onChange: (e: InputEvt) => setCfg((c) => (ensureSticky(c).ctaLabel = e.target.value)) },
         { kind: "text", label: "Button link", value: sticky?.ctaHref || "", placeholder: "#app", onChange: (e: InputEvt) => setCfg((c) => (ensureSticky(c).ctaHref = e.target.value)) },
       ];
-    } else if (s === "contact")
-      out = [
+    } else if (s === "legal") {
+      // The Legal step edits ONE sub-section at a time (like the Sections step):
+      // the EditorBody renders a section picker; `legalSection` says which to show.
+      out = buildLegalSectionFields(legalSection);
+    }
+    return out;
+  }
+
+  /** Fields for ONE legal sub-section (contact / terms / privacy / disclaimer / data deletion). */
+  function buildLegalSectionFields(which: LegalSectionId): Field[] {
+    const C = config;
+    const info = legalInfoFromConfig(C);
+
+    if (which === "contact")
+      return [
+        // Contact us — powers the footer/contact page AND the address used across
+        // the legal pages. Lives under Legal so all customer-facing info is together.
+        { kind: "group", label: "Contact us", sub: "How customers reach you. Used on your contact page and across your legal pages." },
         { kind: "text", label: "Email", value: C.contact.email, ...limProps("email"), count: (C.contact.email ?? "").length, onChange: (e: InputEvt) => setCfg((c) => (c.contact.email = e.target.value)) },
         { kind: "text", label: "Phone", value: C.contact.phone, ...limProps("phone"), count: (C.contact.phone ?? "").length, onChange: (e: InputEvt) => setCfg((c) => (c.contact.phone = e.target.value)) },
         { kind: "area", label: "Address", value: C.contact.address, ...limProps("address"), count: (C.contact.address ?? "").length, onChange: (e: AreaEvt) => setCfg((c) => (c.contact.address = e.target.value)) },
         { kind: "note", label: "Support only", text: "Contact details power an enquiry form — never a checkout. Orders and payments stay off by design." },
       ];
-    else if (s === "legal") {
-      const s1 = switchStyles(C.features.enableChat, false);
-      const s2 = switchStyles(C.features.enableForms, false);
-      const s3 = switchStyles(false, true);
-      const s4 = switchStyles(false, true);
-      out = [
-        { kind: "area", label: "Footer disclaimer", value: C.compliance.disclaimer, placeholder: "Leave blank to use the platform default…", help: "A compliant disclaimer always renders. Override it here if you like.", onChange: (e: AreaEvt) => setCfg((c) => (c.compliance.disclaimer = e.target.value)) },
-        { kind: "group", label: "Capabilities", sub: "Toggle what your site can do." },
-        { kind: "toggle", label: "Support chat", trackStyle: s1.track, knobStyle: s1.knob, onToggle: () => setCfg((c) => (c.features.enableChat = !c.features.enableChat)) },
-        { kind: "toggle", label: "Enquiry forms", trackStyle: s2.track, knobStyle: s2.knob, onToggle: () => setCfg((c) => (c.features.enableForms = !c.features.enableForms)) },
-        { kind: "toggle", label: "Payments", lockNote: "Disabled for business-profile sites", trackStyle: s3.track, knobStyle: s3.knob, onToggle: () => {} },
-        { kind: "toggle", label: "Shopping cart", lockNote: "Disabled for business-profile sites", trackStyle: s4.track, knobStyle: s4.knob, onToggle: () => {} },
-      ];
-    }
-    return out;
+
+    if (which === "terms")
+      return legalPageFields("termsAndConditions", "Terms & Conditions", "Ready-to-use terms. Edit any paragraph, or reset to the recommended wording.", () => termsTemplate(info));
+
+    if (which === "privacy")
+      return legalPageFields("privacyPolicy", "Privacy Policy", "How you handle visitor data. Pre-written to meet app-store and privacy-law expectations.", () => privacyPolicyTemplate(info));
+
+    if (which === "dataDeletion")
+      return legalPageFields("deactivateAccount", "Data deletion", "How customers can ask you to delete their data — required by Meta, Google Play and Apple.", () => dataDeletionTemplate(info));
+
+    // disclaimer — the page editor PLUS the footer-disclaimer line + capability toggles.
+    const s1 = switchStyles(C.features.enableChat, false);
+    const s2 = switchStyles(C.features.enableForms, false);
+    const s3 = switchStyles(false, true);
+    const s4 = switchStyles(false, true);
+    return [
+      ...legalPageFields("disclaimer", "Disclaimer", "A short legal disclaimer for your site.", () => disclaimerTemplate(info, C.compliance.disclaimer)),
+      { kind: "group", label: "Footer & capabilities", sub: "The disclaimer shown in your footer, and what the site can do." },
+      { kind: "area", label: "Footer disclaimer", value: C.compliance.disclaimer, placeholder: "Leave blank to use the platform default…", help: "A compliant disclaimer always renders. Override it here if you like.", onChange: (e: AreaEvt) => setCfg((c) => (c.compliance.disclaimer = e.target.value)) },
+      { kind: "toggle", label: "Support chat", trackStyle: s1.track, knobStyle: s1.knob, onToggle: () => setCfg((c) => (c.features.enableChat = !c.features.enableChat)) },
+      { kind: "toggle", label: "Enquiry forms", trackStyle: s2.track, knobStyle: s2.knob, onToggle: () => setCfg((c) => (c.features.enableForms = !c.features.enableForms)) },
+      { kind: "toggle", label: "Payments", lockNote: "Disabled for business-profile sites", trackStyle: s3.track, knobStyle: s3.knob, onToggle: () => {} },
+      { kind: "toggle", label: "Shopping cart", lockNote: "Disabled for business-profile sites", trackStyle: s4.track, knobStyle: s4.knob, onToggle: () => {} },
+    ];
   }
 
   /** Fields for the three fixed core blocks (hero/about/services), edited inline. */
