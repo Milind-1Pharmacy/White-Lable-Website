@@ -11,6 +11,13 @@
  * @lastUpdated 2026-06-23
  */
 import type { AppConfig, Section, SectionType } from "@/types/config.types";
+import {
+  legalInfoFromConfig,
+  privacyPolicyTemplate,
+  termsTemplate,
+  disclaimerTemplate,
+  dataDeletionTemplate,
+} from "./legalTemplates";
 
 /** A wizard step in the left-nav stepper. */
 export type Step = {
@@ -27,7 +34,6 @@ export type StepId =
   | "seo"
   | "sections"
   | "navigation"
-  | "contact"
   | "legal";
 
 /** Display + theming metadata for a section/core block in the UI. */
@@ -68,8 +74,19 @@ export const STEPS: Step[] = [
   { id: "seo", label: "SEO", hint: "Title & keywords", icon: "search" },
   { id: "sections", label: "Sections", hint: "Hero, blocks & more", icon: "grid" },
   { id: "navigation", label: "Navigation", hint: "Nav, footer & CTA", icon: "list" },
-  { id: "contact", label: "Contact", hint: "Get in touch", icon: "mail" },
-  { id: "legal", label: "Legal", hint: "Disclaimers", icon: "shield" },
+  { id: "legal", label: "Legal", hint: "Contact, terms & privacy", icon: "shield" },
+];
+
+/** The legal sub-sections, edited one-at-a-time on the Legal step (like Sections). */
+export type LegalSectionId = "contact" | "terms" | "privacy" | "disclaimer" | "dataDeletion";
+
+/** Card metadata for each legal sub-section: label, blurb, and an icon. */
+export const LEGAL_SECTIONS: Array<{ id: LegalSectionId; label: string; blurb: string; icon: string }> = [
+  { id: "contact", label: "Contact us", blurb: "Email, phone & address", icon: "mail" },
+  { id: "terms", label: "Terms & Conditions", blurb: "Your terms of use", icon: "fileText" },
+  { id: "privacy", label: "Privacy Policy", blurb: "How you handle data", icon: "shield" },
+  { id: "disclaimer", label: "Disclaimer", blurb: "Footer + legal disclaimer", icon: "help" },
+  { id: "dataDeletion", label: "Data deletion", blurb: "Account/data removal", icon: "trash" },
 ];
 
 /** Steps considered "done" for the progress meter. */
@@ -313,6 +330,12 @@ export function INITIAL(): {
       description:
         "A network of retail stores and India's largest pharma fulfilment centres — delivering trusted, licensed medicines to your door.",
       keywords: ["online pharmacy", "authentic medicines", "quick commerce", "licensed pharmacists", "medicine delivery"],
+      siteUrl: "https://urmedz.in",
+      socialProfiles: [
+        "https://www.instagram.com/urmedz",
+        "https://www.facebook.com/urmedz",
+        "https://www.linkedin.com/company/urmedz",
+      ],
     },
     content: {
       hero: {
@@ -374,7 +397,11 @@ export function INITIAL(): {
       address: "Koramangala, Bengaluru, Karnataka 560034",
     },
     features: { enableChat: true, enableForms: true, enablePayments: false, enableCart: false },
-    compliance: { mode: "business-profile-safe", disclaimer: "" },
+    compliance: {
+      mode: "business-profile-safe",
+      disclaimer:
+        "This is a business-profile website. It provides information and a way to get in touch — no orders or payments are processed here.",
+    },
     // Site chrome — drives the Navbar, Footer and sticky CTA in the preview.
     layout: {
       nav: {
@@ -396,11 +423,22 @@ export function INITIAL(): {
         columns: [
           { heading: "Company", links: [{ label: "About", href: "/#about" }, { label: "Team", href: "/#team" }, { label: "Careers", href: "/contact" }] },
           { heading: "Services", links: [{ label: "Retail stores", href: "/#services" }, { label: "Fulfilment", href: "/#fulfilment" }, { label: "Get the app", href: "/#app" }] },
-          { heading: "Resources", links: [{ label: "FAQ", href: "/#faq" }, { label: "Privacy", href: "/privacy-policy" }, { label: "Terms", href: "/terms-conditions" }] },
+          { heading: "Legal", links: [{ label: "Privacy", href: "/privacy-policy" }, { label: "Terms", href: "/terms-conditions" }, { label: "Disclaimer", href: "/disclaimer" }, { label: "Data deletion", href: "/deactivate-account" }] },
         ],
       },
       stickyCta: { enabled: true, text: "The UrMedz app is here.", ctaLabel: "Download App Now", ctaHref: "#app" },
     },
+  };
+
+  // Seed the legal pages from the templates so a fresh builder opens with complete,
+  // editable Privacy / Terms / Disclaimer / Data-deletion pages (built from the
+  // tenant's name + contact above). The owner can edit or reset each in the Legal step.
+  const legalInfo = legalInfoFromConfig(config);
+  config.layout!.pages = {
+    privacyPolicy: privacyPolicyTemplate(legalInfo),
+    termsAndConditions: termsTemplate(legalInfo),
+    disclaimer: disclaimerTemplate(legalInfo, config.compliance.disclaimer),
+    deactivateAccount: dataDeletionTemplate(legalInfo),
   };
 
   // Default canvas seeds EVERY section type (each pre-filled by DEFAULTS) so the

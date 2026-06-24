@@ -25,7 +25,7 @@ export const revalidate = 3600;
  */
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
-  return buildMetadata(config, "Services");
+  return buildMetadata(config, "Services", "/services");
 }
 
 /**

@@ -25,7 +25,7 @@ export const revalidate = 3600;
  */
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
-  return buildMetadata(config, "Deactivate Account");
+  return buildMetadata(config, "Deactivate Account", "/deactivate-account");
 }
 
 /**

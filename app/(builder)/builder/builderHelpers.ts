@@ -61,9 +61,8 @@ export function sameOrder(a: string[], b: string[]): boolean {
 }
 
 /** localStorage key for the persisted draft (versioned so a shape change can reset).
- *  Bumped to v6: AI-store revamped to capability cards (tile title + description)
- *  so the seed draft carries the new shape. */
-export const DRAFT_KEY = "wb:appConfig:v6";
+ *  Bumped to v9: SEO gains siteUrl + socialProfiles (canonical/sitemap/JSON-LD). */
+export const DRAFT_KEY = "wb:appConfig:v9";
 
 /** A CSS colour value is safe only if it's a hex or rgb/hsl function literal. */
 const SAFE_COLOR_RE = /^(?:#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|(?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s/]+\))$/;
@@ -135,7 +134,7 @@ export const PUBLISH_DOMAIN = "1pharmacy.site";
 
 /** The editor body title for a wizard step. */
 export function stepTitle(id: StepId): string {
-  return ({ identity: "Business identity", branding: "Branding & colours", seo: "Search & metadata", sections: "Build your page", contact: "Contact details", legal: "Legal & capabilities" } as Record<StepId, string>)[id];
+  return ({ identity: "Business identity", branding: "Branding & colours", seo: "Search & metadata", sections: "Build your page", navigation: "Navigation & footer", legal: "Contact & legal" } as Record<StepId, string>)[id];
 }
 /** The editor body subtitle for a wizard step. */
 export function stepSub(id: StepId): string {
@@ -144,7 +143,7 @@ export function stepSub(id: StepId): string {
     branding: "Set the six colour tokens and logo that theme your whole site.",
     seo: "How your site appears in search and when shared.",
     sections: "Add, reorder and edit the blocks that make up your page. Drag to rearrange.",
-    contact: "Support-only details — no checkout, by design.",
-    legal: "Your disclaimer and the capabilities your site exposes.",
+    navigation: "Your nav links, footer and sticky call-to-action.",
+    legal: "Contact details, terms, privacy and your disclaimer.",
   } as Record<StepId, string>)[id];
 }

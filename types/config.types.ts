@@ -55,6 +55,10 @@ export type Seo = {
   description: string;
   keywords: string[];
   ogImage?: string;
+  /** Canonical absolute site URL (e.g. https://acme.com). Drives canonical + JSON-LD + sitemap. */
+  siteUrl?: string;
+  /** Public social-profile URLs (schema.org sameAs) — strengthens entity SEO + rich results. */
+  socialProfiles?: string[];
 };
 
 /** One styled fragment of a heading. */
