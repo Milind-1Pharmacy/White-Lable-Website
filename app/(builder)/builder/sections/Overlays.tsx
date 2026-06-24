@@ -11,9 +11,10 @@
  */
 "use client";
 
-import React, { useState } from "react";
-import { PICKER_ORDER, TYPES } from "../builderData";
+import React, { useState, useEffect } from "react";
+import { PICKER_ORDER, TYPES, LEGAL_SECTIONS, type LegalSectionId } from "../builderData";
 import { PUBLISH_DOMAIN } from "../builderHelpers";
+import { isLegalNavMessage } from "@/lib/legalRoutes";
 import {
   BTN_OUTLINE, CHECK_RING, CONFETTI, PICKER_BACK, PICKER_CLOSE, PICKER_POP, PICK_ITEM,
   PREVIEW_SHEET, PUBLISH_BTN_GHOST, PUBLISH_BTN_PRIMARY, PUBLISH_CARD, PUBLISH_OVERLAY, SPINNER_LG,
@@ -30,9 +31,35 @@ export function Overlays({ api }: { api: BuilderApi }) {
     publishStage,
     publishIssues, setPublishIssues, jumpToIssue,
     previewSheetOpen, setPreviewSheetOpen, previewConfig, sections, step, selectedSectionId,
+    legalSection,
   } = api;
   // Device for the full "Preview live site" sheet (desktop full-width / phone frame).
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
+  // When the user clicks a legal link inside the full preview sheet, show that page
+  // here (null = the homepage). Driven by the iframe's postMessage bridge.
+  const [sheetLegalPage, setSheetLegalPage] = useState<LegalSectionId | null>(null);
+  // Listen for legal-nav messages WHILE the sheet is open. (Reset to home happens in
+  // the sheet's close handler, not here, to avoid a synchronous setState-in-effect.)
+  useEffect(() => {
+    if (!previewSheetOpen) return;
+    const onMsg = (e: MessageEvent) => {
+      if (!isLegalNavMessage(e.data)) return;
+      setSheetLegalPage(e.data.section as LegalSectionId);
+      // Land at the TOP of the freshly-shown page, not wherever the footer was.
+      // Desktop: the iframe scrolls itself; mobile: the outer sheet container does.
+      requestAnimationFrame(() => {
+        document.querySelectorAll<HTMLIFrameElement>("#wb-preview-sheet-scroll iframe").forEach((f) => {
+          f.contentWindow?.scrollTo(0, 0);
+        });
+        document.getElementById("wb-preview-sheet-scroll")?.scrollTo(0, 0);
+      });
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, [previewSheetOpen]);
+  const sheetLegalLabel = LEGAL_SECTIONS.find((l) => l.id === sheetLegalPage)?.label;
+  /** Close the full preview sheet and reset its legal sub-view. */
+  const closeSheet = () => { setSheetLegalPage(null); setPreviewSheetOpen(false); };
   // Blocking validation errors gate publishing; warnings are advisory only.
   const blockingCount = publishIssues.filter((x) => x.severity === "error").length;
   // Group issues by their section/step label for the summary panel.
@@ -194,8 +221,19 @@ export function Overlays({ api }: { api: BuilderApi }) {
         <div style={PREVIEW_SHEET}>
           <div style={{ height: 54, flex: "none", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 18px", background: "#fff", borderBottom: "1px solid #E0E0E6" }}>
             <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "#71717A", flex: 1, minWidth: 0 }}>
-              <span style={{ display: "flex", color: "#16A34A" }}>{icon("eye", 14)}</span>
-              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>How your site will look deployed · <b style={{ color: "#3F3F46", fontWeight: 600, fontFamily: "'JetBrains Mono',monospace" }}>{slug + "." + PUBLISH_DOMAIN}</b></span>
+              {sheetLegalPage ? (
+                <>
+                  <Hoverable as="button" onClick={() => setSheetLegalPage(null)} style={{ ...BTN_OUTLINE, padding: "6px 12px" }} hover={{ background: "#FAFAFB" }}>
+                    {icon("arrowLeft", 14)}Back to home
+                  </Hoverable>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Viewing · <b style={{ color: "#3F3F46", fontWeight: 600 }}>{sheetLegalLabel}</b></span>
+                </>
+              ) : (
+                <>
+                  <span style={{ display: "flex", color: "#16A34A" }}>{icon("eye", 14)}</span>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>How your site will look deployed · <b style={{ color: "#3F3F46", fontWeight: 600, fontFamily: "'JetBrains Mono',monospace" }}>{slug + "." + PUBLISH_DOMAIN}</b></span>
+                </>
+              )}
             </span>
             {/* Desktop / Mobile segmented toggle */}
             <div style={{ display: "flex", flex: "none", gap: 2, padding: 3, borderRadius: 9, background: "#F1F1F4", margin: "0 12px" }}>
@@ -206,12 +244,12 @@ export function Overlays({ api }: { api: BuilderApi }) {
                 </button>
               ))}
             </div>
-            <Hoverable as="button" onClick={() => setPreviewSheetOpen(false)} style={BTN_OUTLINE} hover={{ background: "#FAFAFB" }}>{icon("x", 17)}Close</Hoverable>
+            <Hoverable as="button" onClick={closeSheet} style={BTN_OUTLINE} hover={{ background: "#FAFAFB" }}>{icon("x", 17)}Close</Hoverable>
           </div>
           <div id="wb-preview-sheet-scroll" style={{ flex: 1, overflow: previewDevice === "mobile" ? "auto" : "hidden", background: previewDevice === "mobile" ? "#F4F4F6" : "#fff" }}>
             {/* Published render at the chosen device. Mobile wraps the 375px site in a
                 phone-frame mockup; desktop is the full-bleed true-ditto render. */}
-            <BuilderPreview config={previewConfig} sections={sections} full published step={step} selectedSectionId={selectedSectionId} slug={slug} device={previewDevice} />
+            <BuilderPreview config={previewConfig} sections={sections} full published step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} fullLegalSection={sheetLegalPage} device={previewDevice} />
           </div>
         </div>
       )}

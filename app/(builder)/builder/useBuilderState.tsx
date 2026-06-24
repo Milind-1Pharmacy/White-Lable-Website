@@ -31,7 +31,7 @@ import { gsap } from "gsap";
 import type { AppConfig } from "@/types/config.types";
 import {
   CORE, DEFAULTS, DONE, INITIAL, SECTION_ANCHORS, STEPS, TYPES,
-  type BuilderSectionType, type DraftSection, type StepId,
+  type BuilderSectionType, type DraftSection, type StepId, type LegalSectionId,
 } from "./builderData";
 import {
   clone, genId, headingText, loadDraft, prefersReducedMotion, PUBLISH_DOMAIN, sameOrder, saveDraft,
@@ -39,6 +39,7 @@ import {
 import type { Field } from "./builderTypes";
 import { PREVIEW_BASE_WIDTH, PREVIEW_MOBILE_WIDTH } from "./preview";
 import { publishTenant, getPublishStatus, type PublishPayload } from "@/lib/api/publish";
+import { isLegalNavMessage } from "@/lib/legalRoutes";
 import { makeFieldBuilders } from "./fieldBuilders";
 import { DEFAULT_THEME } from "./themePresets";
 import { validateDraft, blockingIssues, type ValidationIssue } from "./validationSchema";
@@ -88,6 +89,9 @@ export function useBuilderState() {
   const [win, setWin] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 1440);
   // Which device frame(s) the preview shows.
   const [previewView, setPreviewView] = useState<"all" | "desktop" | "mobile">("all");
+  // On the Legal step, which legal sub-section is open in the editor (and shown in
+  // the preview). Works like the Sections step: pick a section, edit its fields.
+  const [legalSection, setLegalSection] = useState<LegalSectionId>("contact");
   // Preview zoom: a user multiplier on top of the fit-to-pane base (1 = fit),
   // driven by +/- buttons and clamped to [ZOOM_MIN, ZOOM_MAX].
   const [zoomFactor, setZoomFactor] = useState(1);
@@ -159,6 +163,28 @@ export function useBuilderState() {
     const t = setTimeout(() => saveDraft(config, sections, blockOrder), 250);
     return () => clearTimeout(t);
   }, [config, sections, blockOrder]);
+
+  // A footer/nav link to a legal page, clicked INSIDE the preview iframe, posts a
+  // message up here (instead of navigating to the live `(site)` route, which
+  // renders a different config). Switch to the Legal step + that page so the user
+  // sees the authored page they clicked.
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (!isLegalNavMessage(e.data)) return;
+      setStep("legal");
+      setLegalSection(e.data.section);
+      // Land at the TOP of the freshly-shown page (the inline preview frames + the
+      // pane that holds them), not wherever the footer link was clicked.
+      requestAnimationFrame(() => {
+        document.querySelectorAll<HTMLIFrameElement>("#wb-preview-scroll iframe").forEach((f) => {
+          f.contentWindow?.scrollTo(0, 0);
+        });
+        document.getElementById("wb-preview-scroll")?.scrollTo(0, 0);
+      });
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
 
 
   // Derive content.order (section:<index> tokens) from the stable blockOrder.
@@ -713,7 +739,7 @@ export function useBuilderState() {
       }
     }
   }
-  const fields = editing ? detailFields : buildFields(step);
+  const fields = editing ? detailFields : buildFields(step, legalSection);
 
   const doneCount = Object.keys(DONE).length;
   const pct = Math.round((doneCount / STEPS.length) * 100);
@@ -740,6 +766,7 @@ export function useBuilderState() {
     fields, detailLabel,
     // preview
     previewConfig, previewView, setPreviewView,
+    legalSection, setLegalSection,
     previewScale, sheetScale,
     zoomFactor, setZoomFactor, zoomBy, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
     setDeskH, setMobH,

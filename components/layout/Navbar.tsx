@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { AppConfig, NavCta } from "@/types/config.types";
 import { safeHref } from "@/lib/safeUrl";
+import { WB_LEGAL_NAV_MSG, legalSectionForHref } from "@/lib/legalRoutes";
 
 type NavbarProps = {
   app: AppConfig;
@@ -84,6 +85,19 @@ export function Navbar({ app }: NavbarProps) {
    * fall through to normal navigation.
    */
   const onNavClick = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const win = e.currentTarget.ownerDocument.defaultView;
+    const inPreview = !!win && win.parent !== win;
+
+    // A legal-page link clicked inside the preview iframe: tell the builder to show
+    // that authored page instead of navigating to the live `(site)` route.
+    const section = legalSectionForHref(href);
+    if (section && inPreview) {
+      e.preventDefault();
+      win.parent.postMessage({ type: WB_LEGAL_NAV_MSG, section }, "*");
+      closeMenu();
+      return;
+    }
+
     const hash = href.includes("#") ? href.slice(href.indexOf("#") + 1) : "";
     if (!hash) return; // not an in-page anchor — let it navigate normally
     const doc = e.currentTarget.ownerDocument;

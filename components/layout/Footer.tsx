@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @file Footer.tsx
  * @description Site footer with branding, contact, link columns, and compliance disclaimer.
@@ -5,20 +7,56 @@
  *  - Render tenant logo, description, and contact details from config.
  *  - Show optional headline, CTA, and link columns.
  *  - Always render the compliance disclaimer when present.
+ *  - Smooth-scroll in-page anchors within the link's OWN document (works on the
+ *    live site AND inside the builder preview iframe).
  * @dependencies next/image, next/link, AppConfig, renderRichHeading
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
- * @lastUpdated 2026-05-26
+ * @lastUpdated 2026-06-24
  */
 import Image from "next/image";
 import Link from "next/link";
 import type { AppConfig } from "@/types/config.types";
 import { safeHref } from "@/lib/safeUrl";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { WB_LEGAL_NAV_MSG, legalSectionForHref } from "@/lib/legalRoutes";
 
 type FooterProps = {
   app: AppConfig;
 };
+
+/**
+ * Footer link click handler. Two preview-aware behaviours; on the live site both
+ * fall through to normal navigation:
+ *  1) In-page anchors (`/#id`) smooth-scroll within THIS link's own document
+ *     (so they work inside the builder preview iframe too).
+ *  2) Legal-page routes (`/privacy-policy`, …) clicked INSIDE the preview iframe
+ *     post a message to the builder to show that authored page, instead of
+ *     navigating to the live `(site)` route (which renders a different config).
+ */
+function onFooterNavClick(href: string) {
+  return (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const win = e.currentTarget.ownerDocument.defaultView;
+    const inPreview = !!win && win.parent !== win;
+
+    // (2) Legal route inside the preview → tell the builder to switch pages.
+    const section = legalSectionForHref(href);
+    if (section && inPreview) {
+      e.preventDefault();
+      win.parent.postMessage({ type: WB_LEGAL_NAV_MSG, section }, "*");
+      return;
+    }
+
+    // (1) In-page anchor → smooth-scroll within this document.
+    const hash = href.includes("#") ? href.slice(href.indexOf("#") + 1) : "";
+    if (!hash) return; // a real page route on the live site — navigate normally
+    const doc = e.currentTarget.ownerDocument;
+    const target = doc.getElementById(hash);
+    if (!target) return; // anchor not on this page — let it navigate normally
+    e.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+}
 
 /**
  * Footer for every page. Renders config-driven content and the compliance disclaimer.
@@ -51,6 +89,7 @@ export function Footer({ app }: FooterProps) {
             {footer?.ctaLabel && (
               <Link
                 href={safeHref(footer.ctaHref, "/contact")}
+                onClick={onFooterNavClick(safeHref(footer.ctaHref, "/contact"))}
                 className="btn btn-accent"
                 style={{ padding: "18px 28px" }}
               >
@@ -131,7 +170,9 @@ export function Footer({ app }: FooterProps) {
               <ul>
                 {col.links.map((l, li) => (
                   <li key={li}>
-                    <Link href={safeHref(l.href)}>{l.label}</Link>
+                    <Link href={safeHref(l.href)} onClick={onFooterNavClick(safeHref(l.href))}>
+                      {l.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

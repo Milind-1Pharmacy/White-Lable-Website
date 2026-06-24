@@ -24,8 +24,9 @@ import { Footer } from "@/components/layout/Footer";
 import { StickyCta } from "@/components/layout/StickyCta";
 import { resolveRenderOrder } from "@/lib/renderOrder";
 import { PreviewFrame } from "./PreviewFrame";
-import type { DraftSection, StepId } from "./builderData";
+import type { DraftSection, StepId, LegalSectionId } from "./builderData";
 import { DEFAULT_THEME } from "./themePresets";
+import { LegalArticlePreview, ContactPreview } from "./LegalPreview";
 
 /** Resolve the colour-theme name: branding.theme, else a legacy stylesheet path, else default. */
 function resolveTheme(branding: Branding): string {
@@ -55,12 +56,17 @@ function PreviewContent({
   full,
   step,
   selectedSectionId,
+  legalSection,
+  fullLegalSection,
 }: {
   config: AppConfig;
   sections: DraftSection[];
   full: boolean;
   step: StepId;
   selectedSectionId: string;
+  legalSection: LegalSectionId;
+  /** In `full` mode, render this legal page instead of the homepage (null = home). */
+  fullLegalSection?: LegalSectionId | null;
 }) {
   const content = config.content;
   const branding: Branding = config.branding;
@@ -69,6 +75,24 @@ function PreviewContent({
   // body the live page uses — Navbar on top, the ordered blocks, then Footer and
   // the sticky CTA — so the preview is a true full-page ditto of the live site.
   if (full) {
+    // If a legal link was clicked in the sheet, show that authored page full-page
+    // (with a back-to-home bar) instead of the homepage.
+    if (fullLegalSection) {
+      const pages = config.layout?.pages;
+      let page: React.ReactNode;
+      if (fullLegalSection === "terms") page = <LegalArticlePreview data={pages?.termsAndConditions} />;
+      else if (fullLegalSection === "privacy") page = <LegalArticlePreview data={pages?.privacyPolicy} />;
+      else if (fullLegalSection === "disclaimer") page = <LegalArticlePreview data={pages?.disclaimer} />;
+      else if (fullLegalSection === "dataDeletion") page = <LegalArticlePreview data={pages?.deactivateAccount} />;
+      else page = <ContactPreview contact={config.contact} tenantName={config.tenant.name} />;
+      return (
+        <>
+          <Navbar app={config} />
+          {page}
+          <Footer app={config} />
+        </>
+      );
+    }
     const resolved = resolveRenderOrder({ ...content, sections: sections.map(toSection) });
     return (
       <>
@@ -115,8 +139,27 @@ function PreviewContent({
     );
   }
 
+  // Legal step: render the actual page being authored (Contact / Terms / Privacy /
+  // Disclaimer / Data-deletion), wrapped in live chrome so it reads as a real page.
+  if (step === "legal") {
+    const pages = config.layout?.pages;
+    let page: React.ReactNode;
+    if (legalSection === "terms") page = <LegalArticlePreview data={pages?.termsAndConditions} />;
+    else if (legalSection === "privacy") page = <LegalArticlePreview data={pages?.privacyPolicy} />;
+    else if (legalSection === "disclaimer") page = <LegalArticlePreview data={pages?.disclaimer} />;
+    else if (legalSection === "dataDeletion") page = <LegalArticlePreview data={pages?.deactivateAccount} />;
+    else page = <ContactPreview contact={config.contact} tenantName={config.tenant.name} />;
+    return (
+      <>
+        <Navbar app={config} />
+        {page}
+        <Footer app={config} />
+      </>
+    );
+  }
+
   // Wizard steps that map to a fixed block.
-  if (step === "contact" || step === "legal" || step === "identity" || step === "branding" || step === "seo") {
+  if (step === "identity" || step === "branding" || step === "seo") {
     // These steps don't have a dedicated live section; show the hero as context
     // so the frame still reflects the brand/colours the user is editing.
     return <Hero data={content.hero} />;
@@ -133,6 +176,10 @@ export type PreviewProps = {
   step: StepId;
   selectedSectionId: string;
   slug: string;
+  /** On the Legal step, which legal page the preview renders. Default "contact". */
+  legalSection?: LegalSectionId;
+  /** In published/full mode, show this legal page instead of the homepage. */
+  fullLegalSection?: LegalSectionId | null;
   /** Which device frame to render. */
   device?: "desktop" | "mobile";
   /** Transform scale applied to the iframe so it fits the pane. */
@@ -162,6 +209,8 @@ function BuilderPreviewImpl({
   full,
   step,
   selectedSectionId,
+  legalSection = "contact",
+  fullLegalSection = null,
   device = "desktop",
   scale = 1,
   frameClass,
@@ -193,9 +242,11 @@ function BuilderPreviewImpl({
         full={full}
         step={step}
         selectedSectionId={selectedSectionId}
+        legalSection={legalSection}
+        fullLegalSection={fullLegalSection}
       />
     ),
-    [config, sections, full, step, selectedSectionId]
+    [config, sections, full, step, selectedSectionId, legalSection, fullLegalSection]
   );
 
   // The shared site stylesheets the deployed site loads: the blocks bundle + the
