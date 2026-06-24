@@ -43,6 +43,9 @@ export function Overlays({ api }: { api: BuilderApi }) {
   useEffect(() => {
     if (!previewSheetOpen) return;
     const onMsg = (e: MessageEvent) => {
+      // Only trust messages from our own origin (the same-origin preview iframe);
+      // "null" covers the opaque-origin case for a frame we created.
+      if (e.origin !== window.location.origin && e.origin !== "null") return;
       if (!isLegalNavMessage(e.data)) return;
       setSheetLegalPage(e.data.section as LegalSectionId);
       // Land at the TOP of the freshly-shown page, not wherever the footer was.

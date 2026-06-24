@@ -170,6 +170,11 @@ export function useBuilderState() {
   // sees the authored page they clicked.
   useEffect(() => {
     const onMsg = (e: MessageEvent) => {
+      // Only trust messages from our own origin (the same-origin preview iframe).
+      // "null" covers the opaque-origin case some browsers report for a srcdoc/
+      // about:blank frame we created; a real cross-site attacker has a concrete
+      // foreign origin and is rejected.
+      if (e.origin !== window.location.origin && e.origin !== "null") return;
       if (!isLegalNavMessage(e.data)) return;
       setStep("legal");
       setLegalSection(e.data.section);

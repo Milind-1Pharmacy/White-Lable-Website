@@ -38,6 +38,22 @@ export function isLegalNavMessage(data: unknown): data is LegalNavMessage {
 }
 
 /**
+ * Post a legal-nav message from the preview iframe up to the builder, targeting a
+ * CONCRETE parent origin (never "*"). The preview iframe is same-origin, so it can
+ * read the parent's origin; we fall back to the frame's own origin, and only as a
+ * last resort to "*" if neither is readable (should never happen same-origin).
+ */
+export function postLegalNav(win: Window, section: LegalSectionKey): void {
+  let target = "*";
+  try {
+    target = win.parent.location.origin || win.location.origin || "*";
+  } catch {
+    // Cross-origin parent (shouldn't happen for our same-origin preview) — leave "*".
+  }
+  win.parent.postMessage({ type: WB_LEGAL_NAV_MSG, section }, target);
+}
+
+/**
  * Resolve a human href to a legal section, if it points at a known legal route.
  * Strips trailing slashes and any query/hash. Returns null for non-legal hrefs.
  */

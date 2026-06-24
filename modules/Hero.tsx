@@ -82,9 +82,11 @@ export function Hero({ data }: HeroProps) {
           </p>
 
           <div className="row" style={{ gap: 12 }}>
-            <Link className="btn btn-primary" href="/contact">
-              {data.cta.label} <span style={{ marginLeft: 4 }}>→</span>
-            </Link>
+            {data.cta?.label && (
+              <Link className="btn btn-primary" href="/contact">
+                {data.cta.label} <span style={{ marginLeft: 4 }}>→</span>
+              </Link>
+            )}
             {data.secondaryCta && (
               <Link
                 className="btn btn-ghost"

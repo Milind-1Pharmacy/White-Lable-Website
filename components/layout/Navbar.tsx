@@ -16,8 +16,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { AppConfig, NavCta } from "@/types/config.types";
-import { safeHref } from "@/lib/safeUrl";
-import { WB_LEGAL_NAV_MSG, legalSectionForHref } from "@/lib/legalRoutes";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
+import { postLegalNav, legalSectionForHref } from "@/lib/legalRoutes";
 
 type NavbarProps = {
   app: AppConfig;
@@ -70,8 +70,10 @@ export function Navbar({ app }: NavbarProps) {
     };
   }, [menuOpen]);
 
-  const iconLogo = app.branding?.logo;
-  const fullLogo = app.branding?.logoFull ?? iconLogo;
+  // safeSrc rejects javascript:/data:text/html/protocol-relative logo URLs from a
+  // tampered config (returns "" → the truthiness guards below skip the <Image>).
+  const iconLogo = safeSrc(app.branding?.logo);
+  const fullLogo = safeSrc(app.branding?.logoFull) || iconLogo;
   const links = app.layout?.nav?.links ?? [];
   const ctas = app.layout?.nav?.ctas ?? [];
 
@@ -93,7 +95,7 @@ export function Navbar({ app }: NavbarProps) {
     const section = legalSectionForHref(href);
     if (section && inPreview) {
       e.preventDefault();
-      win.parent.postMessage({ type: WB_LEGAL_NAV_MSG, section }, "*");
+      postLegalNav(win, section);
       closeMenu();
       return;
     }

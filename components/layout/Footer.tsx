@@ -17,9 +17,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { AppConfig } from "@/types/config.types";
-import { safeHref } from "@/lib/safeUrl";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
 import { renderRichHeading } from "@/modules/RichHeading";
-import { WB_LEGAL_NAV_MSG, legalSectionForHref } from "@/lib/legalRoutes";
+import { postLegalNav, legalSectionForHref } from "@/lib/legalRoutes";
 
 type FooterProps = {
   app: AppConfig;
@@ -43,7 +43,7 @@ function onFooterNavClick(href: string) {
     const section = legalSectionForHref(href);
     if (section && inPreview) {
       e.preventDefault();
-      win.parent.postMessage({ type: WB_LEGAL_NAV_MSG, section }, "*");
+      postLegalNav(win, section);
       return;
     }
 
@@ -63,7 +63,8 @@ function onFooterNavClick(href: string) {
  */
 export function Footer({ app }: FooterProps) {
   const year = new Date().getFullYear();
-  const fullLogo = app.branding?.logoFull ?? app.branding?.logo;
+  // safeSrc rejects unsafe logo URLs (javascript:/data:text/html/…) from config.
+  const fullLogo = safeSrc(app.branding?.logoFull) || safeSrc(app.branding?.logo);
   const footer = app.layout?.footer;
   const headline = renderRichHeading(footer?.headline);
   const columns = footer?.columns ?? [];
@@ -152,12 +153,12 @@ export function Footer({ app }: FooterProps) {
                     {footer.addressLabel}
                   </span>
                 )}
-                {app.contact.address && <span>{app.contact.address}</span>}
-                {(app.contact.email || app.contact.phone) && (
+                {app.contact?.address && <span>{app.contact.address}</span>}
+                {(app.contact?.email || app.contact?.phone) && (
                   <span style={{ marginTop: 8 }}>
-                    {app.contact.email}
-                    {app.contact.email && app.contact.phone ? " · " : ""}
-                    {app.contact.phone}
+                    {app.contact?.email}
+                    {app.contact?.email && app.contact?.phone ? " · " : ""}
+                    {app.contact?.phone}
                   </span>
                 )}
               </div>

@@ -12,16 +12,23 @@
  */
 import type { ResolvedConfig } from "@/types/config.types";
 import { resolveSiteUrl } from "@/lib/seoBuilder";
+import { safeSrc } from "@/lib/safeUrl";
 
 type StructuredDataProps = {
   config: ResolvedConfig;
 };
 
-/** Make a possibly-relative asset path (e.g. /logo.png) absolute against the site origin. */
+/**
+ * Make a possibly-relative asset path (e.g. /logo.png) absolute against the site
+ * origin. Runs the path through safeSrc first so an unsafe URL (javascript:/
+ * data:text/html/protocol-relative) from config is dropped, not serialised into
+ * the JSON-LD.
+ */
 function absolute(siteUrl: string, path?: string): string | undefined {
-  if (!path) return undefined;
-  if (/^https?:\/\//i.test(path)) return path;
-  return siteUrl + (path.startsWith("/") ? path : `/${path}`);
+  const safe = safeSrc(path);
+  if (!safe) return undefined;
+  if (/^https?:\/\//i.test(safe)) return safe;
+  return siteUrl + (safe.startsWith("/") ? safe : `/${safe}`);
 }
 
 /**

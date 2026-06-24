@@ -14,6 +14,7 @@
 import type { Metadata } from "next";
 
 import type { ResolvedConfig, AppConfig } from "@/types/config.types";
+import { safeSrc } from "@/lib/safeUrl";
 
 const envSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -41,8 +42,11 @@ export function buildMetadata(config: ResolvedConfig, pageTitle?: string, path =
   const title = pageTitle ? `${pageTitle} | ${tenant.name}` : seo.title;
   // Canonical absolute URL for THIS page — collapses duplicate-content paths.
   const canonical = siteUrl + (path === "/" ? "/" : path.replace(/\/+$/, ""));
-  const ogImages = seo.ogImage
-    ? [{ url: seo.ogImage, width: 1200, height: 630, alt: tenant.name }]
+  // Drop an unsafe ogImage URL (javascript:/data:text/html/…) before it reaches
+  // the OG/Twitter meta tags.
+  const ogImage = safeSrc(seo.ogImage);
+  const ogImages = ogImage
+    ? [{ url: ogImage, width: 1200, height: 630, alt: tenant.name }]
     : undefined;
   return {
     metadataBase: new URL(siteUrl),
@@ -70,7 +74,7 @@ export function buildMetadata(config: ResolvedConfig, pageTitle?: string, path =
       card: "summary_large_image",
       title,
       description: seo.description,
-      ...(seo.ogImage ? { images: [seo.ogImage] } : {}),
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
   };
 }
