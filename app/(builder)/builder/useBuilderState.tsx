@@ -40,6 +40,8 @@ import type { Field } from "./builderTypes";
 import { PREVIEW_BASE_WIDTH, PREVIEW_MOBILE_WIDTH } from "./preview";
 import { publishTenant, getPublishStatus, type PublishPayload } from "@/lib/api/publish";
 import { makeFieldBuilders } from "./fieldBuilders";
+import { DEFAULT_THEME } from "./themePresets";
+import { validateDraft, blockingIssues, type ValidationIssue } from "./validationSchema";
 
 export function useBuilderState() {
   const [step, setStep] = useState<StepId>("sections");
@@ -67,10 +69,17 @@ export function useBuilderState() {
   const [published, setPublished] = useState(false);
   // Current deploy stage shown while publishing (demo sequence or real status).
   const [publishStage, setPublishStage] = useState<"building" | "bucket" | "deploying" | "live">("building");
-  // Set from the publish response once the site goes live; "" until then.
+  // Set from the publish response once the site goes live; "" until then. In demo
+  // mode this is a placeholder slug domain — see `siteIsLive` to tell them apart.
   const [siteUrl, setSiteUrl] = useState("");
+  // True ONLY when a REAL backend deploy returned a live URL (not the demo mock).
+  // Drives "Visit site": real → redirect (window.open); demo → in-app rendered view.
+  const [siteIsLive, setSiteIsLive] = useState(false);
   // Non-null when a publish attempt failed (e.g. backend not wired yet).
   const [publishError, setPublishError] = useState<string | null>(null);
+  // Blocking content-validation issues found when Publish was clicked. When non-empty
+  // the pre-publish summary panel is shown and the actual publish is NOT run.
+  const [publishIssues, setPublishIssues] = useState<ValidationIssue[]>([]);
   const [previewSheetOpen, setPreviewSheetOpen] = useState(false);
   // The full-page "live site" view shown after a successful publish (demo).
   const [publishedSiteOpen, setPublishedSiteOpen] = useState(false);
@@ -412,18 +421,22 @@ export function useBuilderState() {
       const { id, ...rest } = s as DraftSection & { id: string };
       return rest;
     });
-    // Theme slug → the real per-flavor stylesheet the published site ships.
-    const themeSlug = (config.branding.stylesheet || "/urmedz.css")
-      .replace(/^.*\//, "").replace(/\.css$/, "") || "urmedz";
+    // Colour-theme name → which token file the live site loads as its colour
+    // baseline (public/site-css/themes/<theme>.tokens.css). The shared blocks.css
+    // supplies all structure; the user's brand colours override the theme defaults.
+    const themeName =
+      config.branding.theme ||
+      (config.branding.stylesheet || "").replace(/^.*\//, "").replace(/\.css$/, "") ||
+      DEFAULT_THEME;
     const appConfig: AppConfig = {
       ...config,
-      branding: { ...config.branding, stylesheet: `/${themeSlug}.css` },
+      branding: { ...config.branding, theme: themeName },
       // The builder's local `categories` variant types `emphasis` as a plain
       // string; the engine's Section narrows it. The shapes are structurally the
       // same (the cast mirrors preview.tsx's toSection()).
       content: { ...config.content, sections: inlineSections as AppConfig["content"]["sections"], order: orderTokens },
     };
-    return { slug, theme: themeSlug, appConfig };
+    return { slug, theme: themeName, appConfig };
   }
 
   /**
@@ -437,8 +450,21 @@ export function useBuilderState() {
    */
   async function doPublish() {
     if (publishing) return;
+
+    // ── Content-validation gate ── Run the centralized schema validator first. If
+    // there are blocking errors, DON'T publish — surface the grouped summary panel
+    // so the user can fix each issue (and jump straight to the offending section).
+    const issues = validateDraft(config, sections);
+    const blocking = blockingIssues(issues);
+    if (blocking.length) {
+      setPublishIssues(issues);
+      return;
+    }
+    setPublishIssues([]);
+
     setPublishError(null);
     setSiteUrl("");
+    setSiteIsLive(false);
     setPublished(false);
     setPublishStage("building");
     setPublishing(true);
@@ -470,13 +496,13 @@ export function useBuilderState() {
     // REAL mode — backend build + deploy, polled for status.
     try {
       const res = await publishTenant(flavor);
-      if (res.status === "live") { setSiteUrl(res.siteUrl || liveUrl); setPublished(true); return; }
+      if (res.status === "live") { setSiteUrl(res.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
       let tries = 0;
       const poll = async () => {
         tries += 1;
         try {
           const s = await getPublishStatus(flavor.slug);
-          if (s.status === "live") { setSiteUrl(s.siteUrl || liveUrl); setPublished(true); return; }
+          if (s.status === "live") { setSiteUrl(s.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
           if (s.status === "failed") { setPublishError(s.message || "Build failed."); setPublishing(false); return; }
           setPublishStage(s.status === "queued" ? "building" : "deploying");
         } catch { /* transient — keep polling */ }
@@ -488,6 +514,20 @@ export function useBuilderState() {
       setPublishError(err instanceof Error ? err.message : "Publish failed.");
       setPublishing(false);
     }
+  }
+
+  /**
+   * Jump the editor to the section/step an issue points at, and close the summary
+   * panel. Used by the pre-publish issue list so each issue is one click to fix.
+   */
+  function jumpToIssue(issue: ValidationIssue) {
+    if (issue.sectionId) {
+      setStep("sections");
+      setSelectedSectionId(issue.sectionId);
+    } else if (issue.step) {
+      setStep(issue.step as StepId);
+    }
+    setPublishIssues([]);
   }
 
   // ---------- section heading/eyebrow helpers ----------
@@ -664,8 +704,9 @@ export function useBuilderState() {
     // selection + overlays
     selectedSectionId, setSelectedSectionId,
     pickerOpen, setPickerOpen,
-    publishing, setPublishing, published, setPublished, doPublish, siteUrl, publishError, setPublishError,
+    publishing, setPublishing, published, setPublished, doPublish, siteUrl, siteIsLive, publishError, setPublishError,
     publishStage, publishedSiteOpen, setPublishedSiteOpen,
+    publishIssues, setPublishIssues, jumpToIssue,
     previewSheetOpen, setPreviewSheetOpen,
     saved,
     // sections canvas / drag

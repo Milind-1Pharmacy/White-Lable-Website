@@ -52,7 +52,7 @@ export function BuilderHeader({ api }: { api: BuilderApi }) {
       </div>
 
       <Hoverable as="button" onClick={() => setPreviewSheetOpen(true)} style={BTN_OUTLINE} hover={{ background: "#FAFAFB", borderColor: "#D4D4DB" }}>
-        <span style={{ display: "flex" }}>{icon("eye", 16)}</span>Preview
+        <span style={{ display: "flex" }}>{icon("eye", 16)}</span>Preview live site
       </Hoverable>
       <Hoverable as="button" onClick={doPublish} style={BTN_PRIMARY} hover={{ background: "#2457B0" }}>
         <span style={{ display: "flex" }}>{icon("send", 16)}</span>

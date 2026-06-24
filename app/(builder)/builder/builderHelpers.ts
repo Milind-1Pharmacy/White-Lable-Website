@@ -60,8 +60,10 @@ export function sameOrder(a: string[], b: string[]): boolean {
   return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
-/** localStorage key for the persisted draft (versioned so a shape change can reset). */
-export const DRAFT_KEY = "wb:appConfig:v2";
+/** localStorage key for the persisted draft (versioned so a shape change can reset).
+ *  Bumped to v6: AI-store revamped to capability cards (tile title + description)
+ *  so the seed draft carries the new shape. */
+export const DRAFT_KEY = "wb:appConfig:v6";
 
 /** A CSS colour value is safe only if it's a hex or rgb/hsl function literal. */
 const SAFE_COLOR_RE = /^(?:#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|(?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s/]+\))$/;
