@@ -93,36 +93,6 @@ export function staggerCards(
 }
 
 /**
- * parallaxImage - Scrubs a vertical parallax shift tied to scroll.
- * @param {Target} target - The image element to translate.
- * @param {object} opts - trigger element and travel distance.
- * @returns The GSAP tween, or null when reduced motion is on.
- */
-export function parallaxImage(
-  target: Target,
-  opts: { trigger?: Element | null; distance?: number } = {},
-) {
-  if (REDUCED_MOTION) return null;
-  const { trigger, distance = 80 } = opts;
-  const offset = distance / 10;
-  return gsap.fromTo(
-    target,
-    { yPercent: -offset },
-    {
-      yPercent: offset,
-      ease: "none",
-      immediateRender: false,
-      scrollTrigger: {
-        trigger: trigger ?? (target as Element),
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 0.6,
-      },
-    },
-  );
-}
-
-/**
  * imageReveal - Unmasks an image with a clip-path wipe on scroll.
  * @param {Target} target - The element to reveal.
  * @param {object} opts - trigger element.
@@ -206,15 +176,6 @@ export function revealSplitWords(
     stagger: opts.stagger ?? 0.06,
     delay: opts.delay ?? 0,
   });
-}
-
-/**
- * registerGsap - Registers the ScrollTrigger plugin on the client.
- * @returns Nothing.
- */
-export function registerGsap() {
-  if (typeof window === "undefined") return;
-  gsap.registerPlugin(ScrollTrigger);
 }
 
 export { gsap, ScrollTrigger };
