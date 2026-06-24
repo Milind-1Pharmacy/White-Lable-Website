@@ -153,7 +153,9 @@ Standard slots: `logo.png`, `hero.png`, `about.png`, `og-image.png`, `services/<
 
 - **Config URLs** (href/src from tenant config) → wrap with `safeHref`/`safeSrc` from `lib/safeUrl.ts` before rendering into `<a>`/`<Link>`/`<img>`/`<video>`. They reject `javascript:`/`data:`/`vbscript:`/`//host`. `complianceFilter.ts` only sanitizes CTA *labels*, not hrefs.
 - **Brand colours** reach an injected iframe `<style>` (`PreviewFrame.overrideCss`) — sanitize to hex/rgb/hsl before interpolation; `loadDraft` also scrubs them (localStorage is tamperable).
-- **Image upload** (`lib/api/upload.ts`) needs a `session-token`; validates type/size, sanitizes the filename, allowlists the S3 host. **Publish never builds in the browser** — `doPublish` POSTs a flavor `{slug,theme,appConfig}` and polls; the backend runs `TENANT=<slug> next build`. CSP ships Report-Only in `proxy.ts`.
+- **Image upload** (`lib/api/upload.ts`) needs a `session-token`; validates type/size, sanitizes the filename, allowlists the S3 host. **Publish never builds in the browser** — `doPublish` POSTs a flavor `{slug,theme,appConfig}` and polls; the backend runs `TENANT=<slug> next build`.
+- **`proxy.ts` is DEV-ONLY.** Under `output: "export"` (static S3+CloudFront deploy) edge handlers/middleware do NOT run, so its headers are absent on the live site. Production security headers (enforced CSP, X-Frame-Options, HSTS, …) are set by a CloudFront response-headers policy — see `docs/deploy-security-headers.md`. Never rely on proxy.ts for prod security.
+- **The preview-iframe legal-nav `postMessage`** targets a concrete origin (never `"*"`) via `postLegalNav` in `lib/legalRoutes.ts`; listeners (`useBuilderState`, `Overlays`) validate `e.origin` (own origin, or `"null"` for the opaque srcdoc frame).
 
 ## Adding a new module
 

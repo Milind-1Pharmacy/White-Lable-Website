@@ -1,13 +1,22 @@
 /**
  * @file proxy.ts
  * @description Next 16.2 edge handler that adds security headers to responses.
+ *
+ * ⚠️ DEV/PREVIEW ONLY. This build uses `output: "export"` (next.config.ts) and
+ *    deploys static HTML to S3 behind CloudFront (`npm run deploy:<tenant>`).
+ *    Edge handlers / middleware DO NOT RUN on a static export — so these headers
+ *    are NOT present on the live site. Production security headers MUST be set at
+ *    the CDN: attach a CloudFront response-headers policy (or Lambda@Edge). See
+ *    docs/deploy-security-headers.md for the exact policy to mirror this file,
+ *    including the ENFORCED (not Report-Only) CSP.
+ *
  * @responsibilities
- *  - Set hardening headers on every matched response.
+ *  - Set hardening headers on every matched response (dev/preview server only).
  *  - Skip static assets via the matcher config.
  * @dependencies NextResponse from next/server.
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
- * @lastUpdated 2026-05-26
+ * @lastUpdated 2026-06-24
  */
 import { NextResponse } from "next/server";
 
