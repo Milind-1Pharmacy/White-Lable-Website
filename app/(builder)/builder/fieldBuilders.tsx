@@ -182,7 +182,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         })
       );
       out.push({ kind: "group", label: "Logo", sub: "Upload a mark, or use your name as a wordmark." });
-      out.push({ kind: "upload", label: "Logo mark", hint: "PNG or SVG · square, transparent", value: C.branding.logo || "", onChange: (url: string) => setCfg((c) => (c.branding.logo = url)) });
+      out.push({ kind: "upload", label: "Logo mark", spec: "logo", value: C.branding.logo || "", onChange: (url: string) => setCfg((c) => (c.branding.logo = url)) });
     } else if (s === "seo") {
       // Live length guidance — the search-snippet "sweet spots" that score best.
       const tLen = C.seo.title.length;
@@ -230,7 +230,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
             }
           },
         },
-        { kind: "upload", label: "Social share image", hint: "1200×630 · shown when the link is shared", value: C.seo.ogImage || "", onChange: (url: string) => setCfg((c) => (c.seo.ogImage = url)) },
+        { kind: "upload", label: "Social share image", spec: "ogImage", value: C.seo.ogImage || "", onChange: (url: string) => setCfg((c) => (c.seo.ogImage = url)) },
         ...(!C.seo.ogImage ? [{ kind: "note", label: "Add a share image", text: "Without a 1200×630 image, links shared on social media show no preview thumbnail — which hurts click-through. Upload one above." } as Field] : []),
       ];
     }
@@ -434,7 +434,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           ...itemMeta("slides", hero.slides || []),
           rows: (hero.slides || []).map((sl, i) => ({
             cols: [
-              { key: "image", label: i === 0 ? "Image (main hero)" : "Image", upload: true, placeholder: "/tenant/gallery/img.png", value: sl.image || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].image = url; }) },
+              { key: "image", label: i === 0 ? "Image (main hero)" : "Image", upload: true, spec: "hero", placeholder: "/tenant/gallery/img.png", value: sl.image || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].image = url; }) },
               { key: "tag", label: "Tag", placeholder: "Quick commerce", ...ccap("slides", "tag"), value: sl.tag || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].tag = e.target.value; }), onUpload: () => {} },
               { key: "caption", label: "Caption", area: true, placeholder: "Same-day delivery, neighbourhood-fast", ...ccap("slides", "caption"), value: sl.caption || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].caption = e.target.value; }), onUpload: () => {} },
             ],
@@ -525,7 +525,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           cols: [
             { key: "title", label: "Title", placeholder: "Retail Stores", ...ccap("items", "title"), value: sv.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].title = e.target.value; }), onUpload: () => {} },
             { key: "description", label: "Description", area: true, placeholder: "Short description", ...ccap("items", "description"), value: sv.description || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].description = e.target.value; }), onUpload: () => {} },
-            { key: "icon", label: "Icon", upload: true, placeholder: "/tenant/services/icon.png", value: sv.icon || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { c.content.services![i].icon = url; }) },
+            { key: "icon", label: "Icon", upload: true, spec: "icon", placeholder: "/tenant/services/icon.png", value: sv.icon || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { c.content.services![i].icon = url; }) },
           ],
           onRemove: () => setCfg((c) => c.content.services!.splice(i, 1)),
         })),
@@ -733,8 +733,8 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     // `required` is read from the schema so required images show a "Required" tag.
     const isRequiredImage = (key: string) =>
       (rule?.required ?? []).some((r) => r.key === key && r.kind === "image");
-    const upload = (key: string, label: string, hint?: string): Field => ({
-      kind: "upload", label, hint, value: d[key] || "", required: isRequiredImage(key),
+    const upload = (key: string, label: string, hint?: string, spec?: string): Field => ({
+      kind: "upload", label, hint, spec, value: d[key] || "", required: isRequiredImage(key),
       onChange: (url: string) => setSectionField(id, key, url),
     });
     // A marquee-style string-tag input bound to a top-level array key.
@@ -797,7 +797,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           subTxt("ledger", "averageValue", "Average value", "59%"),
           subTxt("ledger", "footnote", "Footnote", "Across 1,200 prescriptions"),
           { kind: "group", label: "Video", sub: "Optional video block (paste a hosted URL)." },
-          upload("videoPoster", "Video poster", "Shown before play"),
+          upload("videoPoster", "Video poster", "Shown before play", "videoPoster"),
           txt("videoUrl", "Video URL", "https://…"),
           subTxt("videoCopy", "tag", "Video tag", "Behind the scenes"),
           subTxt("videoCopy", "headline", "Video headline", "A look at our centres"),
@@ -818,7 +818,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           ),
           txt("signatureLabel", "Signature label", "Signed,"),
           txt("signature", "Signature", "the team"),
-          upload("logoMark", "Logo mark", "Falls back to the brand logo"),
+          upload("logoMark", "Logo mark", "Falls back to the brand logo", "icon"),
           { kind: "group", label: "Departments", sub: "Coloured department cards." },
           itemList("departments", "Add department", () => ({ code: "00", count: 0, label: "New team", role: "", bg: "#1FAFA6", fg: "#FFFFFF", detail: "" }), [
             { key: "code", label: "Code", placeholder: "01" },
@@ -852,7 +852,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           itemList("items", "Add category", () => ({ title: "New category", icon: "", description: "" }), [
             { key: "title", label: "Title", placeholder: "Medicines" },
             { key: "description", label: "Description", placeholder: "Short description", area: true },
-            { key: "icon", label: "Icon", upload: true, placeholder: "/tenant/icons/…" },
+            { key: "icon", label: "Icon", upload: true, spec: "icon", placeholder: "/tenant/icons/…" },
           ]),
         ];
       case "howItWorks":
@@ -885,7 +885,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         return [
           sectionHeadingField(id, "Heading"),
           area("descriptor", "Descriptor", "Line under the heading"),
-          upload("logo", "App logo", "Falls back to the brand logo"),
+          upload("logo", "App logo", "Falls back to the brand logo", "logoFull"),
           txt("appStoreUrl", "App Store URL", "https://apps.apple.com/…"),
           txt("googlePlayUrl", "Google Play URL", "https://play.google.com/…"),
         ];
@@ -895,7 +895,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           sectionHeadingField(id, "Heading"),
           txt("ctaLabel", "CTA label", "Watch Now"),
           txt("videoUrl", "Video URL", "https://…"),
-          upload("poster", "Poster image", "Shown before play"),
+          upload("poster", "Poster image", "Shown before play", "videoPoster"),
           tagList("marquee", "Marquee words", "Add a word, press Enter"),
         ];
       case "aiStore":
@@ -904,7 +904,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           area("lede", "Lede", "Right-side descriptor"),
           { kind: "group", label: "Capability cards", sub: "Media cards with a tag, title and one-line description — the first leads." },
           itemList("tiles", "Add card", () => ({ image: "", alt: "", tag: "", title: "", description: "", videoUrl: "" }), [
-            { key: "image", label: "Image", upload: true, placeholder: "/tenant/tile.png" },
+            { key: "image", label: "Image", upload: true, spec: "aiTile", placeholder: "/tenant/tile.png" },
             { key: "tag", label: "Tag", placeholder: "e.g. Forecasting" },
             { key: "title", label: "Title", placeholder: "Capability title" },
             { key: "description", label: "Description", placeholder: "One line shown on hover" },
@@ -918,7 +918,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           { kind: "text", label: "Intro line", value: (d.lede as string) || "", placeholder: "A short line shown beside the heading", onChange: (e: InputEvt) => setSectionField(id, "lede", e.target.value) },
           { kind: "group", label: "Frames", sub: "An editorial mosaic — the first frame leads, the rest stack." },
           itemList("images", "Add frame", () => ({ src: "", alt: "", caption: "", title: "", description: "" }), [
-            { key: "src", label: "Image", upload: true, placeholder: "/tenant/gallery/img.png" },
+            { key: "src", label: "Image", upload: true, spec: "gallery", placeholder: "/tenant/gallery/img.png" },
             { key: "caption", label: "Kicker", placeholder: "e.g. Retail · Fulfilment" },
             { key: "title", label: "Title", placeholder: "Editorial title for this frame" },
             { key: "description", label: "Description", placeholder: "One line shown on hover" },

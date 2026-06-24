@@ -295,7 +295,7 @@ export function FieldRow({ f }: { f: Field }) {
               <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "#B45309", flex: "none" }}>required</span>
             )}
           </div>
-          <UploadField value={f.value || ""} hint={f.hint} onChange={f.onChange} />
+          <UploadField value={f.value || ""} hint={f.hint} spec={f.spec} onChange={f.onChange} />
         </>
       )}
 
@@ -358,7 +358,7 @@ export function FieldRow({ f }: { f: Field }) {
                       {!col.upload && col.max && <CharCount count={(col.value || "").length} max={col.max} min={col.min} />}
                     </div>
                     {col.upload ? (
-                      <UploadField value={col.value} hint={col.placeholder} onChange={col.onUpload} />
+                      <UploadField value={col.value} hint={col.placeholder} spec={col.spec} onChange={col.onUpload} />
                     ) : col.area ? (
                       <textarea rows={2} value={col.value} onChange={col.onChange} placeholder={col.placeholder} maxLength={col.max} style={{ width: "100%", padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13, lineHeight: 1.5, color: "#18181B", background: "#fff", outline: "none", resize: "vertical" }} />
                     ) : col.key === "color" || col.key === "bg" || col.key === "fg" || col.key === "accent" || col.key === "tagBg" || col.key === "tagColor" || col.key === "background" ? (

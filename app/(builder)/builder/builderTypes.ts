@@ -41,7 +41,7 @@ export type Field = {
 /** One sub-field within a repeatable item card (used by the `items` field kind).
  *  `limitId` (optional) points at a TEXT_LIMITS id in validationSchema; when set, the
  *  rendered input gets a hard maxLength + live char counter. */
-export type ItemCol = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string };
+export type ItemCol = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string; spec?: string };
 
 // ---------- typed DOM events ----------
 export type InputEvt = React.ChangeEvent<HTMLInputElement>;
@@ -51,7 +51,7 @@ export type KeyEvt = React.KeyboardEvent<HTMLInputElement>;
 
 // ---------- per-row view models (consumed by FieldRow) ----------
 export type ServiceRow = { title: string; desc: string; onTitle: (e: InputEvt) => void; onDesc: (e: AreaEvt) => void; onRemove: () => void };
-export type ItemColField = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string; max?: number; min?: number; value: string; onChange: (e: InputEvt | AreaEvt) => void; onUpload: (url: string) => void };
+export type ItemColField = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string; spec?: string; max?: number; min?: number; value: string; onChange: (e: InputEvt | AreaEvt) => void; onUpload: (url: string) => void };
 export type ItemRow = { cols: ItemColField[]; onRemove: () => void };
 export type NavLinkRow = { label: string; href: string; onLabel: (e: InputEvt) => void; onTarget: (e: SelectEvt) => void; onRemove: () => void };
 export type NavSectionRow = { href: string; sectionLabel: string; label: string; inNav: boolean; toggleDisabled: boolean; canMoveUp: boolean; canMoveDown: boolean; onToggle: () => void; onLabel: (e: InputEvt) => void; onMoveUp: () => void; onMoveDown: () => void };

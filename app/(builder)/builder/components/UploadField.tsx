@@ -14,6 +14,18 @@ import { icon } from "../icons";
 import { UPLOAD_BOX } from "../builderStyles";
 import { uploadImage } from "@/lib/api/upload";
 import { Hoverable } from "./Hoverable";
+import { imageHint, checkImageRatio } from "../validationSchema";
+
+/** Read a File's natural pixel dimensions (0×0 if it can't be decoded, e.g. SVG). */
+function readFileDimensions(file: File): Promise<{ w: number; h: number }> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => { resolve({ w: img.naturalWidth, h: img.naturalHeight }); URL.revokeObjectURL(url); };
+    img.onerror = () => { resolve({ w: 0, h: 0 }); URL.revokeObjectURL(url); };
+    img.src = url;
+  });
+}
 
 /**
  * UploadField - an image input with TWO equivalent ways to set the value:
@@ -23,10 +35,14 @@ import { Hoverable } from "./Hoverable";
  * convenience, never a requirement. A bad/unreachable URL falls back to the
  * placeholder icon so a half-typed URL never shows a broken-image glyph.
  */
-export function UploadField({ value, hint, onChange }: { value: string; hint?: string; onChange?: (url: string) => void }) {
+export function UploadField({ value, hint, spec, onChange }: { value: string; hint?: string; spec?: string; onChange?: (url: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // Off-ratio guidance (a soft warning, never blocks the upload).
+  const [warn, setWarn] = useState<string | null>(null);
+  // The spec-driven hint (ratio · px · formats) takes priority over the generic one.
+  const specHint = imageHint(spec) ?? hint;
   // Remember which URL failed to load (so we show the placeholder instead of a
   // broken thumbnail). Storing the URL — not a boolean — auto-invalidates when
   // `value` changes, with no effect needed.
@@ -43,7 +59,11 @@ export function UploadField({ value, hint, onChange }: { value: string; hint?: s
     if (!file) return;
     setBusy(true);
     setErr(null);
+    setWarn(null);
     try {
+      // Read dimensions BEFORE uploading so we can warn about a poor ratio early.
+      const { w, h } = await readFileDimensions(file);
+      setWarn(checkImageRatio(spec, w, h));
       const url = await uploadImage(file);
       onChange?.(url);
     } catch (ex) {
@@ -51,6 +71,12 @@ export function UploadField({ value, hint, onChange }: { value: string; hint?: s
     } finally {
       setBusy(false);
     }
+  };
+
+  // Check a pasted/loaded URL's dimensions once its thumbnail decodes.
+  const onThumbLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    setWarn(checkImageRatio(spec, img.naturalWidth, img.naturalHeight));
   };
 
   const showThumb = value && !busy && !broken;
@@ -61,7 +87,7 @@ export function UploadField({ value, hint, onChange }: { value: string; hint?: s
         <span style={{ width: 42, height: 42, borderRadius: 10, background: "#fff", border: "1px solid #EAEAEE", display: "flex", alignItems: "center", justifyContent: "center", color: "#9CA3AF", flex: "none", overflow: "hidden" }}>
           {showThumb ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={value} alt="" onError={() => setBrokenUrl(value)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={value} alt="" onError={() => setBrokenUrl(value)} onLoad={onThumbLoad} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : busy ? (
             <span style={{ width: 16, height: 16, border: "2px solid #C7D7F2", borderTopColor: "#2E6ACF", borderRadius: "50%", animation: "wb-spin .7s linear infinite" }} />
           ) : (
@@ -70,7 +96,7 @@ export function UploadField({ value, hint, onChange }: { value: string; hint?: s
         </span>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: 13.5, fontWeight: 600, color: "#52525B" }}>{busy ? "Uploading…" : value ? "Replace image" : "Click to upload"}</div>
-          <div style={{ fontSize: 12, color: "#A1A1AA", marginTop: 2 }}>{hint || "Upload to S3, or paste any image URL below"}</div>
+          <div style={{ fontSize: 12, color: "#A1A1AA", marginTop: 2 }}>{specHint || "Upload to S3, or paste any image URL below"}</div>
         </div>
       </Hoverable>
       {/* URL input — paste any image URL or /tenant path, or edit the uploaded one. */}
@@ -82,6 +108,12 @@ export function UploadField({ value, hint, onChange }: { value: string; hint?: s
         style={{ width: "100%", marginTop: 7, padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontFamily: "'JetBrains Mono',monospace", fontSize: 12, color: "#52525B", background: "#fff", outline: "none" }}
       />
       {err && <p style={{ fontSize: 12, color: "#DC2626", marginTop: 5 }}>{err}</p>}
+      {!err && warn && (
+        <p style={{ display: "flex", gap: 6, fontSize: 12, color: "#B45309", marginTop: 6, lineHeight: 1.45 }}>
+          <span style={{ flex: "none", marginTop: 1 }}>{icon("help", 13)}</span>
+          <span>{warn}</span>
+        </p>
+      )}
     </>
   );
 }

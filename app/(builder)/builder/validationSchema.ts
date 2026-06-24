@@ -89,6 +89,95 @@ export function limitMin(id?: TextLimitId): number | undefined {
 export const MAX_NAV_LINKS = 6;
 
 /* ────────────────────────────────────────────────────────────────────────────
+ * 1b. IMAGE SPECS — per-slot guidance for a SINGLE image that must look good on
+ *     BOTH desktop and mobile. Each slot is cropped (object-fit: cover) to a
+ *     DIFFERENT aspect ratio per device (e.g. hero = 4:5 desktop but 16:9 mobile),
+ *     so chasing one exact ratio is wrong. Instead we guide on minimum RESOLUTION
+ *     + a safe orientation, and only WARN (never block) when an image is too small
+ *     to stay sharp or so extreme (panorama / super-tall) that it crops badly on
+ *     every breakpoint. Normal portraits (2:3, 4:5) and landscapes (4:3, 16:9) pass.
+ * ──────────────────────────────────────────────────────────────────────────── */
+export type ImageSpec = {
+  /** Suggested orientation: "portrait" | "landscape" | "square" | "wide lockup". */
+  shape: string;
+  /** Recommended pixel size to upload (≥ these keeps it sharp across breakpoints). */
+  w: number;
+  h: number;
+  /** Smallest acceptable width before we warn about low resolution. */
+  minW: number;
+  /** Accepted formats (display only — upload.ts enforces the MIME allowlist). */
+  formats: string;
+  /** Min width/height ratio before it's "too tall" to crop well anywhere. */
+  ratioMin: number;
+  /** Max width/height ratio before it's "too wide" (panorama) to crop well. */
+  ratioMax: number;
+};
+
+// Generous orientation bands — a portrait slot accepts anything from ~2:3 (0.50)
+// up to a square; a landscape slot accepts square up to ~2:1. Only extremes warn.
+const PORTRAIT = { ratioMin: 0.48, ratioMax: 1.05 };
+const LANDSCAPE = { ratioMin: 0.95, ratioMax: 2.1 };
+const SQUARE = { ratioMin: 0.8, ratioMax: 1.25 };
+const WIDE = { ratioMin: 1.3, ratioMax: 3.2 };
+
+/** Every uploadable image slot → its guidance. Keyed by a stable slot id. */
+export const IMAGE_SPECS: Record<string, ImageSpec> = {
+  // Hero/about/team render TALL on desktop (4:5) but WIDE on mobile (16:9) — so a
+  // portrait-ish image with the subject centred survives both crops.
+  hero:        { shape: "portrait",  w: 1200, h: 1600, minW: 1000, formats: "JPG or PNG", ...PORTRAIT },
+  about:       { shape: "portrait",  w: 1200, h: 1600, minW: 1000, formats: "JPG or PNG", ...PORTRAIT },
+  teamPhoto:   { shape: "portrait",  w: 1000, h: 1300, minW: 800,  formats: "JPG or PNG", ...PORTRAIT },
+  // Landscape editorial / tiles (cropped to ~4:3 desktop, 16:9 mobile).
+  gallery:     { shape: "landscape", w: 1400, h: 1050, minW: 1000, formats: "JPG or PNG", ...LANDSCAPE },
+  aiTile:      { shape: "landscape", w: 1200, h: 900,  minW: 900,  formats: "JPG or PNG", ...LANDSCAPE },
+  savings:     { shape: "landscape", w: 1400, h: 900,  minW: 1000, formats: "JPG or PNG", ...LANDSCAPE },
+  // Wide poster / video frames.
+  videoPoster: { shape: "wide",      w: 1600, h: 900,  minW: 1200, formats: "JPG or PNG", ...WIDE },
+  // Social share card — a real platform-fixed slot, so keep it close to 1.91:1.
+  ogImage:     { shape: "wide (1.91:1)", w: 1200, h: 630, minW: 1000, formats: "JPG or PNG", ratioMin: 1.7, ratioMax: 2.1 },
+  // Brand marks.
+  logo:        { shape: "square",      w: 512, h: 512, minW: 128, formats: "PNG or SVG (transparent)", ...SQUARE },
+  logoFull:    { shape: "wide lockup", w: 600, h: 300, minW: 200, formats: "PNG or SVG (transparent)", ratioMin: 1.4, ratioMax: 4 },
+  icon:        { shape: "square",      w: 256, h: 256, minW: 64,  formats: "PNG or SVG (transparent)", ...SQUARE },
+};
+
+/**
+ * A one-line guidance hint for an image slot. Frames it as "a single image for
+ * both screens, subject centred", since it's cropped differently per device.
+ * e.g. "Portrait · ≥1200×1600 · subject centred (cropped per device) · JPG or PNG".
+ */
+export function imageHint(specId?: string): string | undefined {
+  const s = specId ? IMAGE_SPECS[specId] : undefined;
+  if (!s) return undefined;
+  const cap = s.shape[0].toUpperCase() + s.shape.slice(1);
+  const center = s.shape === "square" || s.shape.startsWith("wide lockup") ? "" : " · keep the subject centred";
+  return `${cap} · ${s.w}×${s.h}${center} · ${s.formats}`;
+}
+
+/**
+ * Validate an uploaded image against its slot — but ONLY for things that actually
+ * break across both desktop AND mobile: too-low resolution, or an orientation so
+ * extreme it can't crop cleanly anywhere. Normal ratios pass silently. Returns a
+ * warning string or null. SVGs / undecodable (0×0) pass through.
+ */
+export function checkImageRatio(specId: string | undefined, width: number, height: number): string | null {
+  const s = specId ? IMAGE_SPECS[specId] : undefined;
+  if (!s || !width || !height) return null;
+  // Low resolution — will look soft when scaled up to a hero/full-bleed slot.
+  if (width < s.minW) {
+    return `This image is only ${width}px wide — upload at least ${s.w}px so it stays sharp on large screens.`;
+  }
+  const ratio = width / height;
+  if (ratio < s.ratioMin) {
+    return `This image is very tall (${width}×${height}). A ${s.shape} image (around ${s.w}×${s.h}, subject centred) crops better on both desktop and mobile.`;
+  }
+  if (ratio > s.ratioMax) {
+    return `This image is very wide (${width}×${height}). A ${s.shape} image (around ${s.w}×${s.h}, subject centred) crops better on both desktop and mobile.`;
+  }
+  return null;
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
  * 2. URL RULES — host/scheme checks layered on top of safeHref scheme safety.
  * ──────────────────────────────────────────────────────────────────────────── */
 export const URL_RULES = {
