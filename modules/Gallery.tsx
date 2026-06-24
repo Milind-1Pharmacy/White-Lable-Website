@@ -43,14 +43,21 @@ function Frame({
   feature?: boolean;
 }) {
   const hasMeta = it.caption || it.title || it.description;
+  const src = safeSrc(it.src);
   return (
     <figure className={"egal__frame" + (feature ? " egal__frame--feature" : "")}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className="egal__img"
-        src={safeSrc(it.src)}
-        alt={it.alt ?? it.title ?? it.caption ?? ""}
-      />
+      {/* Only render the <img> with a real src — an empty src triggers a full
+          page re-download warning and shows a broken image while editing. */}
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          className="egal__img"
+          src={src}
+          alt={it.alt ?? it.title ?? it.caption ?? ""}
+        />
+      ) : (
+        <span className="egal__img egal__img--empty" aria-hidden="true" />
+      )}
       <span className="egal__scrim" aria-hidden="true" />
       <span className="egal__num">{idx(i)}</span>
       {hasMeta && (

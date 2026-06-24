@@ -45,7 +45,7 @@ export function Services({ data, meta }: ServicesProps) {
           {String(i + 1).padStart(2, "0")} / {total}
         </div>
       </div>
-      {s.icon && (
+      {safeSrc(s.icon) && (
         <div className="service__icon">
           <span className="service__icon-plate">
             {/* eslint-disable-next-line @next/next/no-img-element */}

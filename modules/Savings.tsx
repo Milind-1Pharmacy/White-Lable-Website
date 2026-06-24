@@ -200,7 +200,7 @@ export function Savings({ data }: SavingsProps) {
           <div className="sv__video">
             {!playing ? (
               <>
-                {data.videoPoster && (
+                {safeSrc(data.videoPoster) && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={safeSrc(data.videoPoster)} alt={video?.headline ?? ""} />
                 )}

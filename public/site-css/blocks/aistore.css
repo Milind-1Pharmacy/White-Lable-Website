@@ -67,6 +67,15 @@
   transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Placeholder shown while a card has no image yet (builder editing). */
+.ais__media--empty {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.03) 0 10px, transparent 10px 20px),
+    var(--cream-2, #ececef);
+}
+
 .ais__tile:hover .ais__media,
 .ais__tile:focus-within .ais__media {
   transform: scale(1.06);

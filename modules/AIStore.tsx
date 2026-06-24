@@ -57,8 +57,14 @@ function Tile({
         <video className="ais__media" autoPlay controls src={safeSrc(tile.videoUrl)} />
       ) : (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="ais__media" src={safeSrc(tile.image)} alt={tile.alt ?? tile.title ?? ""} />
+          {/* Only render the <img> with a real src — an empty src triggers a
+              full page re-download warning and a broken image while editing. */}
+          {safeSrc(tile.image) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="ais__media" src={safeSrc(tile.image)} alt={tile.alt ?? tile.title ?? ""} />
+          ) : (
+            <span className="ais__media ais__media--empty" aria-hidden="true" />
+          )}
           <span className="ais__scrim" aria-hidden="true" />
           <span className="ais__corner">
             <span className="ais__num">{idx(i)}</span>

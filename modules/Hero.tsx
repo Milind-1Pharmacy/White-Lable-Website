@@ -128,8 +128,10 @@ export function Hero({ data }: HeroProps) {
                 key={idx}
                 className={"slide" + (idx === i ? " is-active" : "")}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={safeSrc(s.image)} alt={s.caption ?? ""} />
+                {safeSrc(s.image) && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={safeSrc(s.image)} alt={s.caption ?? ""} />
+                )}
                 <div className="overlay" />
               </div>
             ))}

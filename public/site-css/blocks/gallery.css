@@ -114,6 +114,15 @@
   transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
 }
 
+/* Placeholder shown while a frame has no image yet (builder editing). */
+.egal__img--empty {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.03) 0 10px, transparent 10px 20px),
+    var(--cream-2, #ececef);
+}
+
 .egal__frame:hover .egal__img,
 .egal__frame:focus-within .egal__img {
   transform: scale(1.07);

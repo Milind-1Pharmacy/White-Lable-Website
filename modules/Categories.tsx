@@ -72,7 +72,7 @@ export function Categories({ data }: CategoriesProps) {
               <div className="cat-preview__stage">
                 {items.map(
                   (c, i) =>
-                    c.icon && (
+                    safeSrc(c.icon) && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         key={i}
@@ -124,7 +124,7 @@ export function Categories({ data }: CategoriesProps) {
               <span className="cat-tile__num">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              {c.icon && (
+              {safeSrc(c.icon) && (
                 <span className="cat-tile__icon">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={safeSrc(c.icon)} alt="" aria-hidden="true" />
