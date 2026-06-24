@@ -22,6 +22,50 @@ import type { Field, ItemColField, ItemRow, NavCtaRow, NavLinkRow, RichFrag, Ser
 import { Hoverable } from "./Hoverable";
 import { UploadField } from "./UploadField";
 
+/** Quiet char counter — plain mono text, NO pill chrome. Hidden until you're near
+ *  the cap (≥75%), then faint amber; red at the max. Typing is hard-capped by the
+ *  input's own `maxLength`, so this is just a gentle "you're near the limit" hint. */
+function CharCount({ count, max }: { count: number; max?: number; min?: number }) {
+  if (!max) return null;
+  const ratio = count / max;
+  if (ratio < 0.75) return null; // stay invisible until it matters
+  const color = count >= max ? "#DC2626" : "#B45309";
+  return (
+    <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color, flex: "none", opacity: 0.9 }}>
+      {count}/{max}
+    </span>
+  );
+}
+
+/** Derive a short plural unit from a group label, e.g. "Hero images" → "images",
+ *  "Service cards" → "cards", "Pillars" → "pillars". Falls back to "items". */
+function unitFromLabel(label?: string): string {
+  if (!label) return "items";
+  const last = label.trim().split(/\s+/).pop() || "items";
+  return last.toLowerCase();
+}
+
+/** The ONE prominent badge that matters: how many items/images are allowed, the
+ *  minimum, and whether it's required — e.g. "3 / 4 images · min 1 · required".
+ *  Calm grey normally, amber below min, red at max. */
+function MediaBadge({ count, min, max, atMax, belowMin, unit = "items", required }: { count?: number; min?: number; max?: number; atMax?: boolean; belowMin?: boolean; unit?: string; required?: boolean }) {
+  if (count == null && min == null && max == null) return null;
+  const tone =
+    atMax ? { fg: "#B91C1C", bg: "#FEF2F2", bd: "#FECACA" } :
+    belowMin ? { fg: "#B45309", bg: "#FFFBEB", bd: "#FDE68A" } :
+    { fg: "#52525B", bg: "#F6F6F8", bd: "#E8E8EC" };
+  const parts: string[] = [];
+  if (count != null) parts.push(`${count}${max != null ? ` / ${max}` : ""} ${unit}`);
+  else if (max != null) parts.push(`up to ${max} ${unit}`);
+  if (min != null && min > 0) parts.push(`min ${min}`);
+  if (required) parts.push("required");
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", flex: "none", padding: "3px 10px", borderRadius: 999, background: tone.bg, border: `1px solid ${tone.bd}`, fontFamily: "'JetBrains Mono',monospace", fontSize: 10.5, lineHeight: 1.4, color: tone.fg, whiteSpace: "nowrap", fontWeight: 500 }}>
+      {parts.join("  ·  ")}
+    </span>
+  );
+}
+
 export function FieldRow({ f }: { f: Field }) {
   const [focus, setFocus] = useState(false);
   const focusStyle = focus ? { borderColor: "#2E6ACF", boxShadow: "0 0 0 3px rgba(46,106,207,.14)" } : null;
@@ -33,7 +77,12 @@ export function FieldRow({ f }: { f: Field }) {
     <div style={{ marginBottom: 20 }}>
       {f.kind === "group" && (
         <div style={{ margin: "10px 0 2px" }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#27272A" }}>{f.label}</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#27272A" }}>{f.label}</div>
+            {(f.max != null || f.min != null) && (
+              <MediaBadge count={f.count} min={f.min} max={f.max} atMax={f.atMax} belowMin={f.belowMin} unit={unitFromLabel(f.countLabel || f.label)} required={f.min != null && f.min > 0} />
+            )}
+          </div>
           {f.sub && <div style={{ fontSize: 12.5, color: "#A1A1AA", marginTop: 3 }}>{f.sub}</div>}
         </div>
       )}
@@ -50,8 +99,11 @@ export function FieldRow({ f }: { f: Field }) {
 
       {f.kind === "text" && (
         <>
-          <label style={FIELD_LABEL}>{f.label}</label>
-          <input type="text" value={f.value || ""} onChange={f.onChange} placeholder={f.placeholder} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} style={{ ...TEXT_INPUT, ...(focusStyle || {}) }} />
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+            <label style={FIELD_LABEL}>{f.label}</label>
+            <CharCount count={f.count ?? (f.value || "").length} max={f.max} min={f.min} />
+          </div>
+          <input type="text" value={f.value || ""} onChange={f.onChange} placeholder={f.placeholder} maxLength={f.max} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} style={{ ...TEXT_INPUT, ...(focusStyle || {}) }} />
           {f.help && <p style={FIELD_HELP}>{f.help}</p>}
         </>
       )}
@@ -70,8 +122,11 @@ export function FieldRow({ f }: { f: Field }) {
 
       {f.kind === "area" && (
         <>
-          <label style={FIELD_LABEL}>{f.label}</label>
-          <textarea rows={3} value={f.value || ""} onChange={f.onChange} placeholder={f.placeholder} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} style={{ ...TEXT_AREA, ...(focusStyle || {}) }} />
+          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+            <label style={FIELD_LABEL}>{f.label}</label>
+            <CharCount count={f.count ?? (f.value || "").length} max={f.max} min={f.min} />
+          </div>
+          <textarea rows={3} value={f.value || ""} onChange={f.onChange} placeholder={f.placeholder} maxLength={f.max} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} style={{ ...TEXT_AREA, ...(focusStyle || {}) }} />
           {f.help && <p style={FIELD_HELP}>{f.help}</p>}
         </>
       )}
@@ -91,7 +146,12 @@ export function FieldRow({ f }: { f: Field }) {
 
       {f.kind === "upload" && (
         <>
-          <label style={FIELD_LABEL}>{f.label}</label>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+            <label style={FIELD_LABEL}>{f.label}</label>
+            {f.required && (
+              <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: "#B45309", flex: "none" }}>required</span>
+            )}
+          </div>
           <UploadField value={f.value || ""} hint={f.hint} onChange={f.onChange} />
         </>
       )}
@@ -138,17 +198,26 @@ export function FieldRow({ f }: { f: Field }) {
 
       {f.kind === "items" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+          {/* Single clean badge: "3 / 4 images · min 1 · required". The high-value info. */}
+          {(f.max != null || f.min != null) && (
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: -2 }}>
+              <MediaBadge count={f.count} min={f.min} max={f.max} atMax={f.atMax} belowMin={f.belowMin} unit={unitFromLabel(f.countLabel)} required={f.min != null && f.min > 0} />
+            </div>
+          )}
           {f.rows.map((row: ItemRow, i: number) => (
             <div key={i} style={{ padding: 14, border: "1px solid #EDEDF0", borderRadius: 13, background: "#fff", position: "relative" }}>
               <button onClick={row.onRemove} style={SERVICE_X} title="Remove">{icon("x", 13)}</button>
               <div style={{ display: "flex", flexDirection: "column", gap: 9, paddingRight: 26 }}>
                 {row.cols.map((col: ItemColField, j: number) => (
                   <div key={j}>
-                    <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#9CA3AF", marginBottom: 4, letterSpacing: ".01em" }}>{col.label}</label>
+                    <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                      <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#9CA3AF", marginBottom: 4, letterSpacing: ".01em" }}>{col.label}</label>
+                      {!col.upload && col.max && <CharCount count={(col.value || "").length} max={col.max} min={col.min} />}
+                    </div>
                     {col.upload ? (
                       <UploadField value={col.value} hint={col.placeholder} onChange={col.onUpload} />
                     ) : col.area ? (
-                      <textarea rows={2} value={col.value} onChange={col.onChange} placeholder={col.placeholder} style={{ width: "100%", padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13, lineHeight: 1.5, color: "#18181B", background: "#fff", outline: "none", resize: "vertical" }} />
+                      <textarea rows={2} value={col.value} onChange={col.onChange} placeholder={col.placeholder} maxLength={col.max} style={{ width: "100%", padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13, lineHeight: 1.5, color: "#18181B", background: "#fff", outline: "none", resize: "vertical" }} />
                     ) : col.key === "color" || col.key === "bg" || col.key === "fg" || col.key === "accent" || col.key === "tagBg" || col.key === "tagColor" || col.key === "background" ? (
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <label style={{ position: "relative", width: 30, height: 30, borderRadius: 8, overflow: "hidden", border: "1px solid #E4E4EA", flex: "none", cursor: "pointer" }}>
@@ -158,14 +227,23 @@ export function FieldRow({ f }: { f: Field }) {
                         <input type="text" value={col.value} onChange={col.onChange} placeholder={col.placeholder} style={{ flex: 1, minWidth: 0, padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontFamily: "'JetBrains Mono',monospace", fontSize: 12.5, color: "#52525B", background: "#fff", outline: "none", textTransform: "uppercase" }} />
                       </div>
                     ) : (
-                      <input type={col.numeric ? "number" : "text"} value={col.value} onChange={col.onChange} placeholder={col.placeholder} style={{ width: "100%", padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13.5, color: "#18181B", background: "#fff", outline: "none" }} />
+                      <input type={col.numeric ? "number" : "text"} value={col.value} onChange={col.onChange} placeholder={col.placeholder} maxLength={col.max} style={{ width: "100%", padding: "7px 9px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13.5, color: "#18181B", background: "#fff", outline: "none" }} />
                     )}
                   </div>
                 ))}
               </div>
             </div>
           ))}
-          <Hoverable as="button" onClick={f.onAdd} style={ADD_DASHED} hover={{ borderColor: "#2E6ACF", color: "#2E6ACF" }}>{icon("plus", 14)}{f.addLabel || "Add item"}</Hoverable>
+          {/* Below-min advisory. */}
+          {f.belowMin && f.min != null && (
+            <div style={{ fontSize: 12, color: "#D97706", padding: "2px 2px" }}>Add at least {f.min} {(f.countLabel || "items").toLowerCase()}.</div>
+          )}
+          {/* Add disables at max (greyed + tooltip). */}
+          {f.atMax ? (
+            <div title={`Maximum ${f.max} reached`} style={{ ...ADD_DASHED, opacity: 0.45, cursor: "not-allowed", pointerEvents: "none" }}>{icon("plus", 14)}Maximum {f.max} reached</div>
+          ) : (
+            <Hoverable as="button" onClick={f.onAdd} style={ADD_DASHED} hover={{ borderColor: "#2E6ACF", color: "#2E6ACF" }}>{icon("plus", 14)}{f.addLabel || "Add item"}</Hoverable>
+          )}
         </div>
       )}
 
@@ -264,7 +342,8 @@ export function FieldRow({ f }: { f: Field }) {
                 >
                   {icon("grip", 14)}
                 </span>
-                <input type="text" value={frag.text} onChange={frag.onText} style={{ flex: 1, minWidth: 0, padding: "8px 10px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13.5, color: "#18181B", background: "#fff", outline: "none" }} />
+                <input type="text" value={frag.text} onChange={frag.onText} maxLength={frag.max} style={{ flex: 1, minWidth: 0, padding: "8px 10px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 13.5, color: "#18181B", background: "#fff", outline: "none" }} />
+                {frag.max && <CharCount count={(frag.text || "").length} max={frag.max} min={frag.min} />}
                 <select value={frag.emphasis} onChange={frag.onEmphasis} style={{ padding: "8px 7px", border: "1px solid #E4E4EA", borderRadius: 8, fontSize: 12.5, color: "#52525B", background: "#fff", outline: "none", cursor: "pointer" }}>
                   <option value="">Normal</option>
                   <option value="italic">Italic</option>

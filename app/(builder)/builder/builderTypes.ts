@@ -35,8 +35,10 @@ export type Field = {
     | "note";
 };
 
-/** One sub-field within a repeatable item card (used by the `items` field kind). */
-export type ItemCol = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean };
+/** One sub-field within a repeatable item card (used by the `items` field kind).
+ *  `limitId` (optional) points at a TEXT_LIMITS id in validationSchema; when set, the
+ *  rendered input gets a hard maxLength + live char counter. */
+export type ItemCol = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string };
 
 // ---------- typed DOM events ----------
 export type InputEvt = React.ChangeEvent<HTMLInputElement>;
@@ -46,11 +48,11 @@ export type KeyEvt = React.KeyboardEvent<HTMLInputElement>;
 
 // ---------- per-row view models (consumed by FieldRow) ----------
 export type ServiceRow = { title: string; desc: string; onTitle: (e: InputEvt) => void; onDesc: (e: AreaEvt) => void; onRemove: () => void };
-export type ItemColField = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; value: string; onChange: (e: InputEvt | AreaEvt) => void; onUpload: (url: string) => void };
+export type ItemColField = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string; max?: number; min?: number; value: string; onChange: (e: InputEvt | AreaEvt) => void; onUpload: (url: string) => void };
 export type ItemRow = { cols: ItemColField[]; onRemove: () => void };
 export type NavLinkRow = { label: string; href: string; onLabel: (e: InputEvt) => void; onTarget: (e: SelectEvt) => void; onRemove: () => void };
 export type NavCtaRow = { label: string; href: string; variant: string; onLabel: (e: InputEvt) => void; onHref: (e: InputEvt) => void; onVariant: (e: SelectEvt) => void; onRemove: () => void };
-export type RichFrag = { index: number; text: string; emphasis: string; brStyle: React.CSSProperties; onText: (e: InputEvt) => void; onEmphasis: (e: SelectEvt) => void; onBreak: () => void; onRemove: () => void; onDragStart: () => void; onDropOn: () => void; onDragEnd: () => void };
+export type RichFrag = { index: number; text: string; emphasis: string; max?: number; min?: number; brStyle: React.CSSProperties; onText: (e: InputEvt) => void; onEmphasis: (e: SelectEvt) => void; onBreak: () => void; onRemove: () => void; onDragStart: () => void; onDropOn: () => void; onDragEnd: () => void };
 
 // ---------- a section card view model ----------
 export type CardModel = {

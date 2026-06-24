@@ -22,6 +22,14 @@ import { SECTION_ANCHORS, type DraftSection, type StepId } from "./builderData";
 import { clone } from "./builderHelpers";
 import { brStyle, switchStyles } from "./builderStyles";
 import type { AreaEvt, Field, InputEvt, ItemCol, KeyEvt, SelectEvt } from "./builderTypes";
+import { THEME_PRESETS, DEFAULT_THEME, presetByName } from "./themePresets";
+import { SECTION_RULES, limit, type TextLimitId, type CharLimit } from "./validationSchema";
+
+/** Spreadable {max,min} char-limit props for a Field/column from a TEXT_LIMITS id. */
+function limProps(id?: TextLimitId): { max?: number; min?: number } {
+  const l: CharLimit | undefined = limit(id);
+  return l ? { max: l.max, min: l.min } : {};
+}
 
 /** Everything the field builders need from the builder's state engine. */
 export type FieldCtx = {
@@ -56,11 +64,27 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     let out: Field[] = [];
     if (s === "identity")
       out = [
-        { kind: "text", label: "Business name", value: C.tenant.name, placeholder: "e.g. Northwind Bakehouse", help: "Shown in the header, footer and browser tab.", onChange: (e: InputEvt) => setCfg((c) => (c.tenant.name = e.target.value)) },
-        { kind: "text", label: "Category", value: C.tenant.category, placeholder: "e.g. Artisan Bakery & Café", help: "A short descriptor of what you do.", onChange: (e: InputEvt) => setCfg((c) => (c.tenant.category = e.target.value)) },
+        { kind: "text", label: "Business name", value: C.tenant.name, placeholder: "e.g. Northwind Bakehouse", help: "Shown in the header, footer and browser tab.", ...limProps("name"), count: C.tenant.name.length, onChange: (e: InputEvt) => setCfg((c) => (c.tenant.name = e.target.value)) },
+        { kind: "text", label: "Category", value: C.tenant.category, placeholder: "e.g. Artisan Bakery & Café", help: "A short descriptor of what you do.", ...limProps("eyebrow"), count: C.tenant.category.length, onChange: (e: InputEvt) => setCfg((c) => (c.tenant.category = e.target.value)) },
       ];
     else if (s === "branding") {
-      out = [{ kind: "group", label: "Brand colours", sub: "Six tokens drive every surface of your published site." }];
+      // Colour theme FIRST — picking a preset fills the six colour fields below.
+      out = [{ kind: "group", label: "Colour theme", sub: "Pick a ready-made colour set, then fine-tune any colour below." }];
+      out.push({
+        kind: "select",
+        label: "Theme",
+        help: "Sets the colour scheme. You can override any individual colour after.",
+        value: C.branding.theme || DEFAULT_THEME,
+        options: THEME_PRESETS.map((p) => ({ value: p.name, label: p.label })),
+        onChange: (e: SelectEvt) =>
+          setCfg((c) => {
+            const preset = presetByName(e.target.value);
+            c.branding.theme = preset.name;
+            // Fill the six brand colours from the preset (user can still tweak each).
+            c.branding.colors = { ...preset.colors };
+          }),
+      });
+      out.push({ kind: "group", label: "Brand colours", sub: "Six tokens drive every surface of your published site. Type a hex to override the theme." });
       (
         [
           ["primary", "Primary"],
@@ -78,24 +102,12 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           onChange: (e: InputEvt) => setCfg((c) => (c.branding.colors[k] = e.target.value)),
         })
       );
-      out.push({ kind: "group", label: "Theme", sub: "The CSS flavor your published site ships (not the builder preview)." });
-      out.push({
-        kind: "select",
-        label: "Site theme",
-        help: "Determines the stylesheet the live site is built with.",
-        value: (C.branding.stylesheet || "/urmedz.css").replace(/^.*\//, "").replace(/\.css$/, "") || "urmedz",
-        options: [
-          { value: "urmedz", label: "UrMedz — editorial / cream" },
-          { value: "aarav_pharmacy", label: "Aarav Pharmacy" },
-        ],
-        onChange: (e: SelectEvt) => setCfg((c) => (c.branding.stylesheet = `/${e.target.value}.css`)),
-      });
       out.push({ kind: "group", label: "Logo", sub: "Upload a mark, or use your name as a wordmark." });
       out.push({ kind: "upload", label: "Logo mark", hint: "PNG or SVG · square, transparent", value: C.branding.logo || "", onChange: (url: string) => setCfg((c) => (c.branding.logo = url)) });
     } else if (s === "seo")
       out = [
-        { kind: "text", label: "Page title", value: C.seo.title, help: "Appears in search results and the browser tab. Aim for ~60 characters.", onChange: (e: InputEvt) => setCfg((c) => (c.seo.title = e.target.value)) },
-        { kind: "area", label: "Meta description", value: C.seo.description, help: "A one–two sentence summary shown by search engines.", onChange: (e: AreaEvt) => setCfg((c) => (c.seo.description = e.target.value)) },
+        { kind: "text", label: "Page title", value: C.seo.title, help: "Appears in search results and the browser tab. Aim for ~60 characters.", ...limProps("seoTitle"), count: C.seo.title.length, onChange: (e: InputEvt) => setCfg((c) => (c.seo.title = e.target.value)) },
+        { kind: "area", label: "Meta description", value: C.seo.description, help: "A one–two sentence summary shown by search engines.", ...limProps("seoDescription"), count: C.seo.description.length, onChange: (e: AreaEvt) => setCfg((c) => (c.seo.description = e.target.value)) },
         {
           kind: "tags",
           label: "Keywords",
@@ -195,9 +207,9 @@ export function makeFieldBuilders(ctx: FieldCtx) {
       ];
     } else if (s === "contact")
       out = [
-        { kind: "text", label: "Email", value: C.contact.email, onChange: (e: InputEvt) => setCfg((c) => (c.contact.email = e.target.value)) },
-        { kind: "text", label: "Phone", value: C.contact.phone, onChange: (e: InputEvt) => setCfg((c) => (c.contact.phone = e.target.value)) },
-        { kind: "area", label: "Address", value: C.contact.address, onChange: (e: AreaEvt) => setCfg((c) => (c.contact.address = e.target.value)) },
+        { kind: "text", label: "Email", value: C.contact.email, ...limProps("email"), count: (C.contact.email ?? "").length, onChange: (e: InputEvt) => setCfg((c) => (c.contact.email = e.target.value)) },
+        { kind: "text", label: "Phone", value: C.contact.phone, ...limProps("phone"), count: (C.contact.phone ?? "").length, onChange: (e: InputEvt) => setCfg((c) => (c.contact.phone = e.target.value)) },
+        { kind: "area", label: "Address", value: C.contact.address, ...limProps("address"), count: (C.contact.address ?? "").length, onChange: (e: AreaEvt) => setCfg((c) => (c.contact.address = e.target.value)) },
         { kind: "note", label: "Support only", text: "Contact details power an enquiry form — never a checkout. Orders and payments stay off by design." },
       ];
     else if (s === "legal") {
@@ -220,57 +232,72 @@ export function makeFieldBuilders(ctx: FieldCtx) {
   /** Fields for the three fixed core blocks (hero/about/services), edited inline. */
   function buildCoreFields(key: string): Field[] {
     const C = config;
+    // Core blocks read the SAME schema as dynamic sections, so every field shows its
+    // limit. crule = this block's rule; the helpers below resolve caps/counts from it.
+    const crule = SECTION_RULES[key];
+    /** Text {max,min} props for a core text key. */
+    const tcap = (k: string) => limProps(crule?.textFields?.[k]);
+    /** Item-column {max,min} props for a core array column. */
+    const ccap = (arrayKey: string, colKey: string) => limProps(crule?.itemTextFields?.[arrayKey]?.[colKey]);
+    /** Group count metadata (count/min/max/atMax/belowMin/countLabel) for a core array. */
+    const itemMeta = (arrayKey: string, arr: unknown[]) => {
+      const ar = crule?.arrays?.[arrayKey];
+      const count = arr.length;
+      const max = ar?.max, min = ar?.min;
+      return { count, min, max, atMax: max != null && count >= max, belowMin: min != null && count < min, countLabel: ar?.label };
+    };
     if (key === "hero") {
       const hero = C.content.hero;
       const parts = hero.headlineRich?.parts || [];
       return [
         { kind: "group", label: "Headline", sub: "Mix italics and accent colour for emphasis." },
-        { kind: "text", label: "Eyebrow", value: hero.eyebrow, placeholder: "Small label above the headline", onChange: (e: InputEvt) => setCfg((c) => (c.content.hero.eyebrow = e.target.value)) },
+        { kind: "text", label: "Eyebrow", value: hero.eyebrow, placeholder: "Small label above the headline", ...tcap("eyebrow"), count: (hero.eyebrow || "").length, onChange: (e: InputEvt) => setCfg((c) => (c.content.hero.eyebrow = e.target.value)) },
         richField("Headline", parts, (mutate) =>
           setCfg((c) => {
             if (!c.content.hero.headlineRich) c.content.hero.headlineRich = { parts: [] };
             mutate(c.content.hero.headlineRich.parts);
             c.content.hero.headline = c.content.hero.headlineRich.parts.map((p) => p.text).join(" ");
-          })
+          }), crule?.headingLimit
         ),
-        { kind: "area", label: "Tagline", value: hero.tagline, onChange: (e: AreaEvt) => setCfg((c) => (c.content.hero.tagline = e.target.value)) },
+        { kind: "area", label: "Tagline", value: hero.tagline, ...tcap("tagline"), count: (hero.tagline || "").length, onChange: (e: AreaEvt) => setCfg((c) => (c.content.hero.tagline = e.target.value)) },
         { kind: "group", label: "Calls to action", sub: "Transactional labels are auto-rewritten to stay compliant." },
-        { kind: "text", label: "Primary button", value: hero.cta.label, onChange: (e: InputEvt) => setCfg((c) => (c.content.hero.cta.label = e.target.value)) },
-        { kind: "text", label: "Secondary button", value: hero.secondaryCta?.label || "", onChange: (e: InputEvt) => setCfg((c) => { if (!c.content.hero.secondaryCta) c.content.hero.secondaryCta = { label: "" }; c.content.hero.secondaryCta.label = e.target.value; }) },
+        { kind: "text", label: "Primary button", value: hero.cta.label, ...limProps("buttonLabel"), count: (hero.cta.label || "").length, onChange: (e: InputEvt) => setCfg((c) => (c.content.hero.cta.label = e.target.value)) },
+        { kind: "text", label: "Secondary button", value: hero.secondaryCta?.label || "", ...limProps("buttonLabel"), count: (hero.secondaryCta?.label || "").length, onChange: (e: InputEvt) => setCfg((c) => { if (!c.content.hero.secondaryCta) c.content.hero.secondaryCta = { label: "" }; c.content.hero.secondaryCta.label = e.target.value; }) },
         { kind: "text", label: "Secondary link", value: hero.secondaryCta?.href || "", placeholder: "/#services", onChange: (e: InputEvt) => setCfg((c) => { if (!c.content.hero.secondaryCta) c.content.hero.secondaryCta = { label: "" }; c.content.hero.secondaryCta.href = e.target.value; }) },
-        { kind: "group", label: "Imagery", sub: "A single hero image, or a carousel of slides (slides win if present)." },
-        { kind: "upload", label: "Hero image", hint: "Shown when there are no slides", value: hero.image || "", onChange: (url: string) => setCfg((c) => (c.content.hero.image = url)) },
+        { kind: "group", label: "Imagery", sub: "The first image is your main hero image. Add more to turn it into a carousel." },
         {
           kind: "items",
-          addLabel: "Add slide",
+          addLabel: "Add image",
+          ...itemMeta("slides", hero.slides || []),
           rows: (hero.slides || []).map((sl, i) => ({
             cols: [
-              { key: "image", label: "Image", upload: true, placeholder: "/tenant/gallery/img.png", value: sl.image || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].image = url; }) },
-              { key: "tag", label: "Tag", placeholder: "Quick commerce", value: sl.tag || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].tag = e.target.value; }), onUpload: () => {} },
-              { key: "caption", label: "Caption", area: true, placeholder: "Same-day delivery, neighbourhood-fast", value: sl.caption || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].caption = e.target.value; }), onUpload: () => {} },
+              { key: "image", label: i === 0 ? "Image (main hero)" : "Image", upload: true, placeholder: "/tenant/gallery/img.png", value: sl.image || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].image = url; }) },
+              { key: "tag", label: "Tag", placeholder: "Quick commerce", ...ccap("slides", "tag"), value: sl.tag || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].tag = e.target.value; }), onUpload: () => {} },
+              { key: "caption", label: "Caption", area: true, placeholder: "Same-day delivery, neighbourhood-fast", ...ccap("slides", "caption"), value: sl.caption || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].caption = e.target.value; }), onUpload: () => {} },
             ],
             onRemove: () => setCfg((c) => { c.content.hero.slides?.splice(i, 1); }),
           })),
-          onAdd: () => setCfg((c) => { if (!c.content.hero.slides) c.content.hero.slides = []; c.content.hero.slides.push({ image: "" }); }),
+          onAdd: () => setCfg((c) => { if ((c.content.hero.slides?.length ?? 0) >= (crule?.arrays?.slides?.max ?? Infinity)) return; if (!c.content.hero.slides) c.content.hero.slides = []; c.content.hero.slides.push({ image: "" }); }),
         },
         { kind: "group", label: "Stats", sub: "The big numbers shown beside the hero image." },
         {
           kind: "items",
           addLabel: "Add stat",
+          ...itemMeta("meta", hero.meta || []),
           rows: (hero.meta || []).map((m, i) => ({
             cols: [
-              { key: "value", label: "Value", placeholder: "25", value: m.value || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].value = e.target.value; }), onUpload: () => {} },
-              { key: "suffix", label: "Suffix", placeholder: "+ / k / day", value: m.suffix || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].suffix = e.target.value; }), onUpload: () => {} },
-              { key: "label", label: "Label", placeholder: "Retail stores across South India", area: true, value: m.label || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].label = e.target.value; }), onUpload: () => {} },
+              { key: "value", label: "Value", placeholder: "25", ...ccap("meta", "value"), value: m.value || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].value = e.target.value; }), onUpload: () => {} },
+              { key: "suffix", label: "Suffix", placeholder: "+ / k / day", ...ccap("meta", "suffix"), value: m.suffix || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].suffix = e.target.value; }), onUpload: () => {} },
+              { key: "label", label: "Label", placeholder: "Retail stores across South India", area: true, ...ccap("meta", "label"), value: m.label || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].label = e.target.value; }), onUpload: () => {} },
             ],
             onRemove: () => setCfg((c) => { c.content.hero.meta?.splice(i, 1); }),
           })),
-          onAdd: () => setCfg((c) => { ensureMeta(c).push({ value: "0", suffix: "", label: "New stat" }); }),
+          onAdd: () => setCfg((c) => { if ((c.content.hero.meta?.length ?? 0) >= (crule?.arrays?.meta?.max ?? Infinity)) return; ensureMeta(c).push({ value: "0", suffix: "", label: "New stat" }); }),
         },
         { kind: "group", label: "Status rail", sub: "Optional live-status badge beside the hero." },
-        { kind: "text", label: "Live label", value: hero.rail?.liveLabel || "", placeholder: "Live", onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).liveLabel = e.target.value; }) },
-        { kind: "text", label: "Location text", value: hero.rail?.locationText || "", placeholder: "Bengaluru", onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).locationText = e.target.value; }) },
-        { kind: "text", label: "Badge text", value: hero.rail?.badgeText || "", placeholder: "EST 2024", onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).badgeText = e.target.value; }) },
+        { kind: "text", label: "Live label", value: hero.rail?.liveLabel || "", placeholder: "Live", ...limProps("badge"), count: (hero.rail?.liveLabel || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).liveLabel = e.target.value; }) },
+        { kind: "text", label: "Location text", value: hero.rail?.locationText || "", placeholder: "Bengaluru", ...limProps("badge"), count: (hero.rail?.locationText || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).locationText = e.target.value; }) },
+        { kind: "text", label: "Badge text", value: hero.rail?.badgeText || "", placeholder: "EST 2024", ...limProps("badge"), count: (hero.rail?.badgeText || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).badgeText = e.target.value; }) },
         {
           kind: "tags",
           label: "Badge dot colours",
@@ -289,29 +316,30 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     if (key === "about") {
       const a = C.content.about || { description: "" };
       return [
-        { kind: "text", label: "Eyebrow", value: a.eyebrow, onChange: (e: InputEvt) => setCfg((c) => ensureAbout(c).eyebrow = e.target.value) },
+        { kind: "text", label: "Eyebrow", value: a.eyebrow, ...tcap("eyebrow"), count: (a.eyebrow || "").length, onChange: (e: InputEvt) => setCfg((c) => ensureAbout(c).eyebrow = e.target.value) },
         richField("Title", a.title?.parts || [], (mutate) =>
-          setCfg((c) => { const ab = ensureAbout(c); if (!ab.title) ab.title = { parts: [] }; mutate(ab.title.parts); })
+          setCfg((c) => { const ab = ensureAbout(c); if (!ab.title) ab.title = { parts: [] }; mutate(ab.title.parts); }), crule?.headingLimit
         ),
-        { kind: "area", label: "Lede", value: a.lede, placeholder: "Intro paragraph above the story", onChange: (e: AreaEvt) => setCfg((c) => (ensureAbout(c).lede = e.target.value)) },
-        { kind: "area", label: "Your story", value: a.description, onChange: (e: AreaEvt) => setCfg((c) => (ensureAbout(c).description = e.target.value)) },
+        { kind: "area", label: "Lede", value: a.lede, placeholder: "Intro paragraph above the story", ...tcap("lede"), count: (a.lede || "").length, onChange: (e: AreaEvt) => setCfg((c) => (ensureAbout(c).lede = e.target.value)) },
+        { kind: "area", label: "Your story", value: a.description, ...tcap("description"), count: (a.description || "").length, onChange: (e: AreaEvt) => setCfg((c) => (ensureAbout(c).description = e.target.value)) },
         // NOTE: modules/About.tsx renders eyebrow/title/lede + pillars only — it has
         // no image slot, so an "About image" upload would be dead (nothing renders).
         { kind: "group", label: "Pillars", sub: "Numbered cards beneath the story." },
         {
           kind: "items",
           addLabel: "Add pillar",
+          ...itemMeta("pillars", a.pillars || []),
           rows: (a.pillars || []).map((p, i) => ({
             cols: [
-              { key: "n", label: "Number", placeholder: "01", value: p.n || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].n = e.target.value; }), onUpload: () => {} },
-              { key: "title", label: "Title", placeholder: "50,000 sft fulfilment", value: p.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].title = e.target.value; }), onUpload: () => {} },
-              { key: "body", label: "Body", area: true, placeholder: "Purpose-built centres…", value: p.body || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].body = e.target.value; }), onUpload: () => {} },
+              { key: "n", label: "Number", placeholder: "01", ...ccap("pillars", "n"), value: p.n || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].n = e.target.value; }), onUpload: () => {} },
+              { key: "title", label: "Title", placeholder: "50,000 sft fulfilment", ...ccap("pillars", "title"), value: p.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].title = e.target.value; }), onUpload: () => {} },
+              { key: "body", label: "Body", area: true, placeholder: "Purpose-built centres…", ...ccap("pillars", "body"), value: p.body || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].body = e.target.value; }), onUpload: () => {} },
               { key: "accent", label: "Accent", placeholder: "#F5A623", value: p.accent || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].accent = e.target.value; }), onUpload: () => {} },
-              { key: "meta", label: "Meta", placeholder: "Bengaluru · Hyderabad", value: p.meta || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].meta = e.target.value; }), onUpload: () => {} },
+              { key: "meta", label: "Meta", placeholder: "Bengaluru · Hyderabad", ...ccap("pillars", "meta"), value: p.meta || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].meta = e.target.value; }), onUpload: () => {} },
             ],
             onRemove: () => setCfg((c) => { ensureAbout(c).pillars?.splice(i, 1); }),
           })),
-          onAdd: () => setCfg((c) => { const ab = ensureAbout(c); if (!ab.pillars) ab.pillars = []; ab.pillars.push({ n: "", title: "New pillar", body: "", accent: "#1FAFA6", meta: "" }); }),
+          onAdd: () => setCfg((c) => { const ab = ensureAbout(c); if ((ab.pillars?.length ?? 0) >= (crule?.arrays?.pillars?.max ?? Infinity)) return; if (!ab.pillars) ab.pillars = []; ab.pillars.push({ n: "", title: "New pillar", body: "", accent: "#1FAFA6", meta: "" }); }),
         },
       ];
     }
@@ -319,25 +347,26 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     const sm = C.content.servicesMeta;
     return [
       { kind: "group", label: "Services heading", sub: "Eyebrow + heading shown above the grid." },
-      { kind: "text", label: "Eyebrow", value: sm?.eyebrow || "", onChange: (e: InputEvt) => setCfg((c) => (ensureServicesMeta(c).eyebrow = e.target.value)) },
+      { kind: "text", label: "Eyebrow", value: sm?.eyebrow || "", ...tcap("eyebrow"), count: (sm?.eyebrow || "").length, onChange: (e: InputEvt) => setCfg((c) => (ensureServicesMeta(c).eyebrow = e.target.value)) },
       richField("Heading", sm?.heading?.parts || [], (mutate) =>
-        setCfg((c) => { const m = ensureServicesMeta(c); if (!m.heading) m.heading = { parts: [] }; mutate(m.heading.parts); })
+        setCfg((c) => { const m = ensureServicesMeta(c); if (!m.heading) m.heading = { parts: [] }; mutate(m.heading.parts); }), crule?.headingLimit
       ),
-      { kind: "text", label: "CTA label", value: sm?.ctaLabel || "", placeholder: "All services", onChange: (e: InputEvt) => setCfg((c) => (ensureServicesMeta(c).ctaLabel = e.target.value)) },
+      { kind: "text", label: "CTA label", value: sm?.ctaLabel || "", placeholder: "All services", ...tcap("ctaLabel"), count: (sm?.ctaLabel || "").length, onChange: (e: InputEvt) => setCfg((c) => (ensureServicesMeta(c).ctaLabel = e.target.value)) },
       { kind: "text", label: "CTA link", value: sm?.ctaHref || "", placeholder: "/services", onChange: (e: InputEvt) => setCfg((c) => (ensureServicesMeta(c).ctaHref = e.target.value)) },
       { kind: "group", label: "Service cards", sub: "What you offer — rendered as a card grid." },
       {
         kind: "items",
         addLabel: "Add service",
+        ...itemMeta("items", C.content.services || []),
         rows: (C.content.services || []).map((sv, i) => ({
           cols: [
-            { key: "title", label: "Title", placeholder: "Retail Stores", value: sv.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].title = e.target.value; }), onUpload: () => {} },
-            { key: "description", label: "Description", area: true, placeholder: "Short description", value: sv.description || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].description = e.target.value; }), onUpload: () => {} },
+            { key: "title", label: "Title", placeholder: "Retail Stores", ...ccap("items", "title"), value: sv.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].title = e.target.value; }), onUpload: () => {} },
+            { key: "description", label: "Description", area: true, placeholder: "Short description", ...ccap("items", "description"), value: sv.description || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].description = e.target.value; }), onUpload: () => {} },
             { key: "icon", label: "Icon", upload: true, placeholder: "/tenant/services/icon.png", value: sv.icon || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { c.content.services![i].icon = url; }) },
           ],
           onRemove: () => setCfg((c) => c.content.services!.splice(i, 1)),
         })),
-        onAdd: () => setCfg((c) => { if (!c.content.services) c.content.services = []; c.content.services.push({ title: "New service", description: "" }); }),
+        onAdd: () => setCfg((c) => { if ((c.content.services?.length ?? 0) >= (crule?.arrays?.items?.max ?? Infinity)) return; if (!c.content.services) c.content.services = []; c.content.services.push({ title: "New service", description: "" }); }),
       },
     ];
   }
@@ -390,10 +419,13 @@ export function makeFieldBuilders(ctx: FieldCtx) {
   function richField(
     label: string,
     parts: Array<{ text: string; emphasis?: string; br?: boolean }>,
-    apply: (mutate: (parts: Array<{ text: string; emphasis?: string; br?: boolean }>) => void) => void
+    apply: (mutate: (parts: Array<{ text: string; emphasis?: string; br?: boolean }>) => void) => void,
+    limitId?: TextLimitId
   ): Field {
     const setPart = (i: number, fn: (p: { text: string; emphasis?: string; br?: boolean }) => void) =>
       apply((ps) => { if (ps[i]) fn(ps[i]); });
+    // Per-fragment char limit (the heading cap) so every fragment input shows a pill + hard cap.
+    const cap = limProps(limitId);
     return {
       kind: "rich",
       label,
@@ -402,6 +434,8 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         index: i,
         text: p.text,
         emphasis: p.emphasis || "",
+        max: cap.max,
+        min: cap.min,
         brStyle: brStyle(!!p.br),
         onText: (e: InputEvt) => setPart(i, (pp) => (pp.text = e.target.value)),
         onEmphasis: (e: SelectEvt) => setPart(i, (pp) => { const v = e.target.value; if (v) pp.emphasis = v; else delete pp.emphasis; }),
@@ -416,7 +450,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
   }
 
   /** Build a rich field bound to a section's `data.heading` (sections slice). */
-  function sectionHeadingField(secId: string, label = "Heading"): Field {
+  function sectionHeadingField(secId: string, label = "Heading", limitId?: TextLimitId): Field {
     const sec = sections.find((s) => s.id === secId);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const parts = ((sec?.data as any)?.heading?.parts as Array<{ text: string; emphasis?: string; br?: boolean }>) || [];
@@ -432,7 +466,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         })
       );
       markDirty();
-    });
+    }, limitId);
   }
 
   /** Inline RichHeading preview used inside the rich field (serif fragment view). */
@@ -460,12 +494,22 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const d: any = sec.data || {};
     const id = sec.id;
+    // Validation rule for this section type — the single source of truth for char
+    // limits + item min/max. Helpers below read from it so NO number is hardcoded here.
+    const rule = SECTION_RULES[sec.type];
+    /** Resolve the {max,min} char limit for a section-level text key (via the schema). */
+    const capFor = (key: string) => limProps(rule?.textFields?.[key]);
+    /** Resolve the {max,min} char limit for an item-level field within an array. */
+    const itemCapFor = (arrayKey: string, itemKey: string) =>
+      limProps(rule?.itemTextFields?.[arrayKey]?.[itemKey]);
     const txt = (key: string, label: string, placeholder?: string): Field => ({
       kind: "text", label, value: d[key] || "", placeholder,
+      ...capFor(key), count: String(d[key] || "").length,
       onChange: (e: InputEvt) => setSectionField(id, key, e.target.value),
     });
     const area = (key: string, label: string, placeholder?: string): Field => ({
       kind: "area", label, value: d[key] || "", placeholder,
+      ...capFor(key), count: String(d[key] || "").length,
       onChange: (e: AreaEvt) => setSectionField(id, key, e.target.value),
     });
     // A text field bound to a nested object key on the section's data (e.g. ledger.footnote).
@@ -483,26 +527,51 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           return { ...s, data: dd } as DraftSection;
         })),
     });
-    // Build an editable item list. `cols` declares each item's sub-fields.
-    const itemList = (arrayKey: string, addLabel: string, make: () => Record<string, unknown>, cols: ItemCol[]): Field => ({
-      kind: "items",
-      addLabel,
-      rows: (d[arrayKey] || []).map((it: Record<string, unknown>, i: number) => ({
-        cols: cols.map((col) => ({
-          ...col,
-          value: it[col.key] == null ? "" : String(it[col.key]),
-          onChange: (e: InputEvt | AreaEvt) =>
-            setSectionItem(id, arrayKey, i, col.key, col.numeric ? Number(e.target.value) || 0 : e.target.value),
-          onUpload: (url: string) => setSectionItem(id, arrayKey, i, col.key, url),
+    // Build an editable item list. `cols` declares each item's sub-fields. Count
+    // limits (min/max/label) + per-column char caps come from the section's schema
+    // rule — nothing is hardcoded. The `items` field carries count/min/max so the
+    // renderer can show "Label N/M", disable Add at max, and warn below min.
+    const itemList = (arrayKey: string, addLabel: string, make: () => Record<string, unknown>, cols: ItemCol[]): Field => {
+      const arr = (d[arrayKey] as unknown[]) || [];
+      const ar = rule?.arrays?.[arrayKey];
+      const count = arr.length;
+      const max = ar?.max;
+      const min = ar?.min;
+      const atMax = max != null && count >= max;
+      return {
+        kind: "items",
+        addLabel,
+        count,
+        min,
+        max,
+        atMax,
+        belowMin: min != null && count < min,
+        countLabel: ar?.label,
+        rows: (arr as Record<string, unknown>[]).map((it, i) => ({
+          cols: cols.map((col) => {
+            const cap = itemCapFor(arrayKey, col.key);
+            return {
+              ...col,
+              ...cap,
+              value: it[col.key] == null ? "" : String(it[col.key]),
+              onChange: (e: InputEvt | AreaEvt) =>
+                setSectionItem(id, arrayKey, i, col.key, col.numeric ? Number(e.target.value) || 0 : e.target.value),
+              onUpload: (url: string) => setSectionItem(id, arrayKey, i, col.key, url),
+            };
+          }),
+          onRemove: () => removeSectionItem(id, arrayKey, i),
         })),
-        onRemove: () => removeSectionItem(id, arrayKey, i),
-      })),
-      onAdd: () => addSectionItem(id, arrayKey, make),
-    });
+        // Add is a no-op once at max (the renderer also disables the button).
+        onAdd: () => { if (!atMax) addSectionItem(id, arrayKey, make); },
+      };
+    };
 
     // Upload field bound to a top-level section data key (e.g. logoMark, poster).
+    // `required` is read from the schema so required images show a "Required" tag.
+    const isRequiredImage = (key: string) =>
+      (rule?.required ?? []).some((r) => r.key === key && r.kind === "image");
     const upload = (key: string, label: string, hint?: string): Field => ({
-      kind: "upload", label, hint, value: d[key] || "",
+      kind: "upload", label, hint, value: d[key] || "", required: isRequiredImage(key),
       onChange: (url: string) => setSectionField(id, key, url),
     });
     // A marquee-style string-tag input bound to a top-level array key.
@@ -527,8 +596,11 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     });
 
     // Eyebrow + a RICH heading lead every section (rich preserves italics/accents/breaks).
-    const eyebrow: Field = { kind: "text", label: "Eyebrow", value: d.eyebrow || "", placeholder: "Small label above the heading", onChange: (e: InputEvt) => setSectionEyebrow(id, e.target.value) };
-    const head: Field[] = [eyebrow, sectionHeadingField(id)];
+    // The eyebrow always carries a cap/counter: the section's own rule if it maps one,
+    // else the global "eyebrow" limit — so the counter is visible on every section.
+    const eyebrowCap = rule?.textFields?.eyebrow ? capFor("eyebrow") : limProps("eyebrow");
+    const eyebrow: Field = { kind: "text", label: "Eyebrow", value: d.eyebrow || "", placeholder: "Small label above the heading", ...eyebrowCap, count: String(d.eyebrow || "").length, onChange: (e: InputEvt) => setSectionEyebrow(id, e.target.value) };
+    const head: Field[] = [eyebrow, sectionHeadingField(id, "Heading", rule?.headingLimit)];
 
     switch (sec.type) {
       case "stats":
@@ -667,25 +739,27 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         return [
           ...head,
           area("lede", "Lede", "Right-side descriptor"),
-          { kind: "group", label: "Tiles", sub: "Image/video tiles with overlay labels." },
-          itemList("tiles", "Add tile", () => ({ image: "", alt: "", tag: "", tagBg: "#FFFFFF", tagColor: "#0A174C", videoUrl: "", background: "#F4EFE6" }), [
+          { kind: "group", label: "Capability cards", sub: "Media cards with a tag, title and one-line description — the first leads." },
+          itemList("tiles", "Add card", () => ({ image: "", alt: "", tag: "", title: "", description: "", videoUrl: "" }), [
             { key: "image", label: "Image", upload: true, placeholder: "/tenant/tile.png" },
-            { key: "alt", label: "Alt text", placeholder: "Describe the image" },
-            { key: "tag", label: "Tag", placeholder: "Overlay label" },
-            { key: "tagBg", label: "Tag background", placeholder: "#FFFFFF" },
-            { key: "tagColor", label: "Tag text colour", placeholder: "#0A174C" },
+            { key: "tag", label: "Tag", placeholder: "e.g. Forecasting" },
+            { key: "title", label: "Title", placeholder: "Capability title" },
+            { key: "description", label: "Description", placeholder: "One line shown on hover" },
             { key: "videoUrl", label: "Video URL", placeholder: "https://… (optional)" },
-            { key: "background", label: "Tile background", placeholder: "#F4EFE6" },
+            { key: "alt", label: "Alt text", placeholder: "Describe the image" },
           ]),
         ];
       case "gallery":
         return [
           ...head,
-          { kind: "group", label: "Images", sub: "Laid out in up to two rows." },
-          itemList("images", "Add image", () => ({ src: "", alt: "", caption: "" }), [
+          { kind: "text", label: "Intro line", value: (d.lede as string) || "", placeholder: "A short line shown beside the heading", onChange: (e: InputEvt) => setSectionField(id, "lede", e.target.value) },
+          { kind: "group", label: "Frames", sub: "An editorial mosaic — the first frame leads, the rest stack." },
+          itemList("images", "Add frame", () => ({ src: "", alt: "", caption: "", title: "", description: "" }), [
             { key: "src", label: "Image", upload: true, placeholder: "/tenant/gallery/img.png" },
+            { key: "caption", label: "Kicker", placeholder: "e.g. Retail · Fulfilment" },
+            { key: "title", label: "Title", placeholder: "Editorial title for this frame" },
+            { key: "description", label: "Description", placeholder: "One line shown on hover" },
             { key: "alt", label: "Alt text", placeholder: "Describe the image" },
-            { key: "caption", label: "Caption", placeholder: "Optional caption" },
           ]),
         ];
       default:
