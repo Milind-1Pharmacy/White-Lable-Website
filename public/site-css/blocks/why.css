@@ -1,0 +1,38 @@
+/* ── Why ─────────────────────────────────────────────────────────── */
+.why__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+}
+
+@media (max-width: 720px) {
+  .why__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.why-cell {
+  padding: clamp(28px, 4vw, 48px);
+  border-top: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.why-cell:nth-child(2n) {
+  border-right: 0;
+}
+
+.why-cell h4 {
+  font-size: clamp(20px, 1.8vw, 26px);
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  margin: 16px 0 8px;
+}
+
+.why-cell .num {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent);
+  font-size: 30px;
+  line-height: 1;
+}
+

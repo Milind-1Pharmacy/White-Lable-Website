@@ -1,0 +1,259 @@
+/* ── Gallery — editorial mosaic ──────────────────────────────────────────
+   A magazine-style asymmetric layout: a tall feature frame beside a stack of
+   secondary frames, each with a numbered caption block revealed over a gradient
+   scrim on hover. Replaces the old flat two-row grid + dead space. */
+
+.egal {
+  position: relative;
+}
+
+/* ─ Header: heading on the left, lede + frame counter on the right ─ */
+.egal__head {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: clamp(24px, 4vw, 64px);
+  align-items: end;
+  padding-bottom: clamp(28px, 3vw, 44px);
+  margin-bottom: clamp(28px, 3vw, 44px);
+  border-bottom: 1px solid var(--line);
+}
+
+.egal__heading {
+  margin: 14px 0 0;
+  line-height: 1.04;
+  max-width: 16ch;
+}
+
+.egal__head-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+  padding-bottom: 6px;
+}
+
+.egal__lede {
+  margin: 0;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: var(--mute);
+  max-width: 42ch;
+}
+
+.egal__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.egal__count-n {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(38px, 4vw, 58px);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.egal__count-l {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+/* ─ Mosaic: feature frame (tall) + stack of secondary frames ─ */
+.egal__mosaic {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.egal__lead {
+  min-width: 0;
+}
+
+.egal__stack {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
+  gap: 16px;
+}
+
+/* When there are only 2 secondary frames, let them share the column height. */
+.egal__stack > .egal__frame {
+  min-height: 0;
+}
+
+/* ─ Frame: image + scrim + numbered caption ─ */
+.egal__frame {
+  position: relative;
+  margin: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--cream);
+  isolation: isolate;
+  min-height: 220px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.egal__frame--feature {
+  height: 100%;
+  min-height: 420px;
+}
+
+.egal__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+.egal__frame:hover .egal__img,
+.egal__frame:focus-within .egal__img {
+  transform: scale(1.07);
+}
+
+/* Gradient scrim — keeps captions legible, darkens further on hover. */
+.egal__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 14, 30, 0) 34%,
+    rgba(10, 14, 30, 0.28) 62%,
+    rgba(10, 14, 30, 0.78) 100%
+  );
+  opacity: 0.92;
+  transition: opacity 0.5s ease;
+}
+
+.egal__frame:hover .egal__scrim,
+.egal__frame:focus-within .egal__scrim {
+  opacity: 1;
+}
+
+/* Editorial index number, top-left, in the display italic. */
+.egal__num {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* Caption block, bottom-left: kicker · title · description. */
+.egal__meta {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #fff;
+}
+
+.egal__kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.egal__title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.9vw, 28px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+/* Description: collapsed by default, slides open on hover/focus. */
+.egal__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 46ch;
+  /* Reveal animation */
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  overflow: hidden;
+  transition: max-height 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s ease, transform 0.45s ease;
+}
+
+.egal__frame:hover .egal__desc,
+.egal__frame:focus-within .egal__desc {
+  max-height: 120px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* The feature frame gives its description more room and shows it sooner. */
+.egal__frame--feature .egal__title {
+  font-size: clamp(26px, 2.6vw, 40px);
+}
+
+/* ─ Mobile slider: each frame is a uniform card in the shared MobileCarousel.
+   The desktop mosaic is `.m-desktop-only` (hidden ≤980px); the carousel shows
+   only ≤980px. Frames in the carousel get a fixed card height + always-visible
+   captions (no hover on touch). ─ */
+.egal__carousel .egal__frame {
+  height: 380px;
+  min-height: 0;
+  width: 100%;
+}
+
+.egal__carousel .egal__desc {
+  max-height: 140px;
+  opacity: 1;
+  transform: none;
+}
+
+/* ─ Responsive header ─ */
+@media (max-width: 980px) {
+  .egal__head {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 18px;
+  }
+
+  .egal__head-aside {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 18px;
+  }
+}
+
+/* Honour reduced-motion: no zoom/slide, captions always shown. */
+@media (prefers-reduced-motion: reduce) {
+  .egal__img,
+  .egal__desc {
+    transition: none;
+  }
+  .egal__desc {
+    max-height: 120px;
+    opacity: 1;
+    transform: none;
+  }
+}

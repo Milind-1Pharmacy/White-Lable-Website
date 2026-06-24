@@ -1,0 +1,20 @@
+/* default.tokens.css — the DEFAULT premium colour theme. A refined, neutral-forward
+ * palette: warm paper background, near-black graphite ink, one confident emerald
+ * accent. Designed to read premium for any brand out of the box. Structure/layout
+ * comes from blocks.css; this only sets colours. The runtime bridge overrides these
+ * when the user edits brand colours. */
+@import "./_base.tokens.css";
+
+:root {
+  --navy: #14181f;        /* graphite — primary/ink surface */
+  --navy-2: #0d1116;
+  --ink: #14181f;         /* near-black text */
+  --cream: #f6f4ef;       /* warm paper background */
+  --cream-2: #ece8df;     /* slightly deeper paper for panels */
+  --line: rgba(20, 24, 31, 0.12);
+  --line-2: rgba(20, 24, 31, 0.06);
+  --mute: rgba(20, 24, 31, 0.6);
+  --accent: #1f8f6b;      /* refined emerald — CTAs / highlights */
+  --brand-teal: #1f8f6b;
+  --brand-navy: #14181f;
+}

@@ -16,18 +16,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { BrandingColors } from "@/types/config.types";
+import { bridgeVars } from "@/lib/themeBridge";
 
 type PreviewFrameProps = {
   /** Canvas width the document lays out at (1040 desktop, 375 mobile). */
   width: number;
-  /** Tenant stylesheet URL, e.g. "/urmedz.css" or "/aarav_pharmacy.css". */
-  stylesheet?: string;
+  /**
+   * Site stylesheet URLs loaded into the iframe head, in cascade order — e.g.
+   * ["/site-css/blocks.css", "/site-css/themes/urmedz.tokens.css",
+   * "/site-css/preview-overrides.css"]. Same shared files the deployed site uses
+   * (plus the preview-only overrides), so preview = live.
+   */
+  stylesheets?: string[];
   /** Brand colours from the draft — re-injected so the picker drives the preview. */
   colors: BrandingColors;
   /** Reported whenever the rendered content height changes (CSS px, unscaled). */
   onMeasure?: (height: number) => void;
   /** Marker class so fitPreview can target this frame's <iframe>. */
   bodyClassName?: string;
+  /**
+   * "Live site" mode: fill the parent (100% × 100%) and scroll naturally instead
+   * of laying out at a fixed canvas width and locking to a measured height. Used
+   * by the published "Visit site" view so it renders as a real, responsive page —
+   * a true ditto of the deployed site — rather than a scaled thumbnail.
+   */
+  fill?: boolean;
   children: React.ReactNode;
 };
 
@@ -36,64 +49,20 @@ const FONT_LINK =
   "https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap";
 
 /**
- * Validate a colour string before it's interpolated into the injected <style>.
- * Only hex (#rgb/#rrggbb/#rrggbbaa) and rgb()/rgba()/hsl()/hsla() with safe chars
- * are allowed; anything else (e.g. a CSS-injection breakout like `red}body{…`)
- * falls back to a neutral default, so config/localStorage can't break out of the
- * rule. Defends against CSS injection / exfiltration in the preview iframe.
+ * Build the colour-override <style> so the draft's colours win over the sheet's
+ * :root. Uses the SHARED themeBridge (the same mapping the deployed site uses), so
+ * preview and live render identically, then appends the preview-iframe-only font
+ * aliases + html/body reset. The bridge already sanitizes every colour (defends the
+ * injected <style> against CSS-injection from the free-text colour fields / a
+ * tampered localStorage draft).
  */
-const HEX_RE = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
-const FUNC_RE = /^(?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s/]+\)$/i;
-function safeColor(v: string | undefined, fallback = "#000000"): string {
-  if (!v || typeof v !== "string") return fallback;
-  const s = v.trim();
-  return HEX_RE.test(s) || FUNC_RE.test(s) ? s : fallback;
-}
-
-/** Build the colour-override <style> so the draft's colours win over the sheet's :root. */
 function overrideCss(raw: BrandingColors): string {
-  // Sanitize EVERY colour up-front — none of these strings may reach the <style>
-  // text unchecked (the colour fields accept free text + restore from localStorage).
-  const c: BrandingColors = {
-    primary: safeColor(raw.primary),
-    secondary: safeColor(raw.secondary),
-    background: safeColor(raw.background, "#ffffff"),
-    text: safeColor(raw.text),
-    accent: safeColor(raw.accent),
-    ink: safeColor(raw.ink),
-  };
-  const accent = c.accent || c.primary;
-  const ink = c.ink || c.text;
-  // Map the builder's six brand tokens onto BOTH the module vars (--accent, --ink,
-  // …) and the --brand-* vars, overriding the tenant stylesheet's hardcoded :root.
-  return `:root{
-    --accent:${accent};
-    --ink:${ink};
-    --cream:${c.background};
-    --mute:${hexToRgba(c.text, 0.62)};
-    --line:${hexToRgba(c.text, 0.12)};
-    --brand-primary:${c.primary};
-    --brand-secondary:${c.secondary};
-    --brand-background:${c.background};
-    --brand-text:${c.text};
-    --brand-accent:${accent};
-    --brand-ink:${ink};
-    --font-instrument-serif:"Instrument Serif";
-    --font-geist-sans:"Geist";
-  }
+  const vars = bridgeVars(raw);
+  const body = Object.entries(vars)
+    .map(([k, v]) => `${k}:${v};`)
+    .join("");
+  return `:root{${body}--font-instrument-serif:"Instrument Serif";--font-geist-sans:"Geist";}
   html,body{margin:0;padding:0;background:transparent;}`;
-}
-
-/** Minimal hex→rgba (mirrors the muted/line derivations the live theme uses). */
-function hexToRgba(hex: string | undefined, a: number): string {
-  if (!hex) return `rgba(0,0,0,${a})`;
-  let s = hex.replace("#", "");
-  if (s.length === 3) s = s.split("").map((x) => x + x).join("");
-  const r = parseInt(s.slice(0, 2), 16);
-  const g = parseInt(s.slice(2, 4), 16);
-  const b = parseInt(s.slice(4, 6), 16);
-  if ([r, g, b].some(Number.isNaN)) return `rgba(0,0,0,${a})`;
-  return `rgba(${r},${g},${b},${a})`;
 }
 
 /**
@@ -101,10 +70,11 @@ function hexToRgba(hex: string | undefined, a: number): string {
  */
 export function PreviewFrame({
   width,
-  stylesheet,
+  stylesheets,
   colors,
   onMeasure,
   bodyClassName,
+  fill = false,
   children,
 }: PreviewFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -114,10 +84,11 @@ export function PreviewFrame({
   // height to the measured content height so it shows the whole section.
   const [frameHeight, setFrameHeight] = useState(0);
 
-  // Derive the tenant key from the stylesheet filename (e.g. "/urmedz.css" →
-  // "urmedz"). Tenant CSS scopes its font bridge + rules to [data-tenant="…"], so
-  // the iframe's <html> must carry it for the styling to fully apply.
-  const tenant = (stylesheet || "").replace(/^.*\//, "").replace(/\.css$/, "");
+  // The shared theme tokens scope the font bridge to the [data-tenant] attribute
+  // (any value matches), so the iframe's <html> just needs the attribute present.
+  const tenant = "preview";
+  // Serialised list of sheet hrefs — used to re-inject only when the set changes.
+  const sheetKey = (stylesheets || []).join("|");
 
   // Write the base document once on mount and capture its <body> as the portal target.
   useEffect(() => {
@@ -138,15 +109,14 @@ export function PreviewFrame({
   useEffect(() => {
     const doc = iframeRef.current?.contentDocument;
     if (!doc || !headReady) return;
-    if (tenant) doc.documentElement.setAttribute("data-tenant", tenant);
-    else doc.documentElement.removeAttribute("data-tenant");
+    doc.documentElement.setAttribute("data-tenant", tenant);
   }, [tenant, headReady]);
 
-  // Inject the webfonts + tenant stylesheet <link>s ONCE per stylesheet. These
-  // must NOT be re-created on every render — re-adding the tenant <link> re-fetches
-  // and re-applies ~3.6k lines of CSS, flashing the whole frame unstyled (the
-  // "everything changes when I edit" symptom). Only the colour override <style>
-  // (separate effect below) updates as the picker changes.
+  // Inject the webfonts + the site stylesheet <link>s ONCE per stylesheet set. These
+  // must NOT be re-created on every render — re-adding the <link>s re-fetches and
+  // re-applies the CSS, flashing the whole frame unstyled (the "everything changes
+  // when I edit" symptom). Only the colour override <style> (separate effect below)
+  // updates as the picker changes.
   useEffect(() => {
     const doc = iframeRef.current?.contentDocument;
     if (!doc || !headReady) return;
@@ -159,14 +129,17 @@ export function PreviewFrame({
     fonts.setAttribute("data-wb-inject", "fonts");
     head.appendChild(fonts);
 
-    if (stylesheet) {
+    // Append each site sheet in order (blocks → theme tokens → preview overrides).
+    (stylesheets || []).forEach((href) => {
       const link = doc.createElement("link");
       link.rel = "stylesheet";
-      link.href = stylesheet;
+      link.href = href;
       link.setAttribute("data-wb-inject", "tenant");
       head.appendChild(link);
-    }
-  }, [stylesheet, headReady]);
+    });
+    // sheetKey drives re-injection when the set changes; stylesheets is read inside.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheetKey, headReady]);
 
   // Update only the colour-override <style> when the picker changes. Keyed on the
   // serialized colour VALUES (not the object identity) so an immutable config
@@ -255,26 +228,34 @@ export function PreviewFrame({
 
     // Webfonts settling shifts heights; re-measure (and restart the poll) when ready.
     doc.fonts?.ready?.then(() => { stable = 0; ticks = 0; report(read()); }).catch(() => {});
-    // When the injected tenant stylesheet finishes loading, its rules change the
-    // layout height — restart the poll so the new height is captured.
-    const link = doc.head.querySelector<HTMLLinkElement>("[data-wb-inject='tenant']");
+    // When an injected site stylesheet finishes loading, its rules change the layout
+    // height — restart the poll so the new height is captured. Listen on every sheet.
+    const links = Array.from(doc.head.querySelectorAll<HTMLLinkElement>("[data-wb-inject='tenant']"));
     const onLink = () => { stable = 0; ticks = 0; prev = -1; report(read()); };
-    link?.addEventListener("load", onLink);
+    links.forEach((l) => l.addEventListener("load", onLink));
 
     return () => {
       ro?.disconnect();
       win.clearTimeout(pollT);
-      link?.removeEventListener("load", onLink);
+      links.forEach((l) => l.removeEventListener("load", onLink));
     };
-  }, [body, stylesheet, colorKey]);
+  }, [body, sheetKey, colorKey]);
+
+  // Live-site ("fill") mode: the iframe fills its parent and scrolls itself, so the
+  // page lays out at the real viewport width (responsive) — a true ditto of deploy.
+  // Default mode: fixed canvas width, height locked to the measured content so the
+  // parent can transform-scale it as a thumbnail.
+  const frameStyle: React.CSSProperties = fill
+    ? { width: "100%", height: "100%", border: "none", display: "block", background: colors.background }
+    : { width, height: frameHeight || 600, border: "none", display: "block", overflow: "hidden", background: colors.background };
 
   return (
     <iframe
       ref={iframeRef}
       title="preview"
-      scrolling="no"
+      scrolling={fill ? "auto" : "no"}
       className={bodyClassName}
-      style={{ width, height: frameHeight || 600, border: "none", display: "block", overflow: "hidden", background: colors.background }}
+      style={frameStyle}
     >
       {body ? createPortal(children, body) : null}
     </iframe>

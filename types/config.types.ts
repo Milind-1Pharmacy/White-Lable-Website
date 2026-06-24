@@ -33,10 +33,18 @@ export type BrandingColors = {
   ink?: string;
 };
 
-/** Logos, optional stylesheet, and color palette for a tenant. */
+/** Logos, theme, and color palette for a tenant. */
 export type Branding = {
   logo?: string;
   logoFull?: string; // wide ~2:1 lockup; logo is the square mark
+  /**
+   * Colour-theme name → the token file the live site loads as its colour baseline
+   * (public/site-css/themes/<theme>.tokens.css). The shared blocks.css supplies all
+   * structure; the theme only sets default colours, which the user's brand colours
+   * then override at runtime via the colour bridge. Defaults to "default".
+   */
+  theme?: string;
+  /** @deprecated legacy whole-stylesheet path; kept for backward-compat. Prefer `theme`. */
   stylesheet?: string;
   colors: BrandingColors;
 };
@@ -190,13 +198,20 @@ export type HowItWorksSectionData = {
 export type GalleryImage = {
   src: string;
   alt?: string;
+  /** Short kicker shown as an uppercase label (e.g. a place or theme). */
   caption?: string;
+  /** Editorial title for the frame, shown larger on hover/reveal. */
+  title?: string;
+  /** One-line description that fills the frame's caption block. */
+  description?: string;
 };
 
 /** Data for a "gallery" section. */
 export type GallerySectionData = {
   heading?: RichHeading;
   eyebrow?: string;
+  /** Optional intro line shown beside the heading. */
+  lede?: string;
   images: GalleryImage[];
 };
 
@@ -225,6 +240,10 @@ export type AIStoreTile = {
   tagColor?: string;
   videoUrl?: string;
   background?: string;
+  /** Capability title shown on the tile (editorial card). */
+  title?: string;
+  /** One-line description of the capability. */
+  description?: string;
 };
 
 /** Data for an "aiStore" section. */

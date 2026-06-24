@@ -43,13 +43,23 @@ export default async function SiteLayout({
 }>) {
   const config = await getConfig();
   const tenant = process.env.TENANT ?? "app_master";
-  const stylesheet = config.app.branding?.stylesheet;
+  // Resolve the colour-theme name: prefer branding.theme, else derive from the
+  // legacy stylesheet path (e.g. "/urmedz.css" → "urmedz"), else the premium default.
+  const branding = config.app.branding;
+  const theme =
+    branding?.theme ||
+    (branding?.stylesheet || "").replace(/^.*\//, "").replace(/\.css$/, "") ||
+    "default";
 
   return (
     <>
-      {/* Tenant stylesheet — injected here (not in the root layout) so it loads
-          for the render engine but never for the builder app at "/". */}
-      {stylesheet && <link rel="stylesheet" href={stylesheet} />}
+      {/* Shared site stylesheet (all blocks) + the chosen colour-theme tokens.
+          Injected here (not the root layout) so they load for the render engine but
+          never for the builder app at "/". blocks.css supplies structure; the theme
+          file sets default colours, which the user's brand colours override via the
+          bridged CSS vars in `themeStyle` below. */}
+      <link rel="stylesheet" href="/site-css/blocks.css" />
+      <link rel="stylesheet" href={`/site-css/themes/${theme}.tokens.css`} />
       <div
         data-tenant={tenant}
         className="flex min-h-screen flex-col text-[var(--brand-text)]"

@@ -25,6 +25,16 @@ import { StickyCta } from "@/components/layout/StickyCta";
 import { resolveRenderOrder } from "@/lib/renderOrder";
 import { PreviewFrame } from "./PreviewFrame";
 import type { DraftSection, StepId } from "./builderData";
+import { DEFAULT_THEME } from "./themePresets";
+
+/** Resolve the colour-theme name: branding.theme, else a legacy stylesheet path, else default. */
+function resolveTheme(branding: Branding): string {
+  return (
+    branding.theme ||
+    (branding.stylesheet || "").replace(/^.*\//, "").replace(/\.css$/, "") ||
+    DEFAULT_THEME
+  );
+}
 
 /** The desktop canvas width every preview is laid out at, then scaled to the pane. */
 export const PREVIEW_BASE_WIDTH = 1040;
@@ -131,6 +141,14 @@ export type PreviewProps = {
   frameClass?: string;
   /** Reports the iframe's natural (unscaled) content height in CSS px. */
   onMeasure?: (height: number) => void;
+  /**
+   * "Live site" mode for the published "Visit site" view. Renders the page exactly
+   * as it deploys: the draft's REAL tenant stylesheet (config.branding.stylesheet,
+   * e.g. /urmedz.css — not the builder-only preview.css), at full responsive width
+   * with natural scrolling, NOT a fixed-canvas scaled thumbnail. A true ditto of
+   * the deployed site.
+   */
+  published?: boolean;
 };
 
 /**
@@ -148,6 +166,7 @@ function BuilderPreviewImpl({
   scale = 1,
   frameClass,
   onMeasure,
+  published = false,
 }: PreviewProps) {
   const width = device === "mobile" ? PREVIEW_MOBILE_WIDTH : PREVIEW_BASE_WIDTH;
   const [height, setHeight] = useState(0);
@@ -179,6 +198,35 @@ function BuilderPreviewImpl({
     [config, sections, full, step, selectedSectionId]
   );
 
+  // The shared site stylesheets the deployed site loads: the blocks bundle + the
+  // chosen colour-theme tokens. Same files in preview AND deploy → preview = live.
+  // (User brand colours are layered on top via PreviewFrame's colour-override <style>.)
+  const theme = resolveTheme(config.branding);
+  const deploySheets = [
+    "/site-css/blocks.css",
+    `/site-css/themes/${theme}.tokens.css`,
+  ];
+
+  // "Visit site" (published) mode: render exactly as the site deploys — fill the
+  // parent at the REAL viewport width with the SAME shared stylesheets and natural
+  // scrolling, NOT a fixed 1040px canvas scaled down. No preview-only overrides here,
+  // so it's a true ditto of the deployed page.
+  if (published) {
+    return (
+      <div style={{ width: "100%", height: "100%" }}>
+        <PreviewFrame
+          width={width}
+          fill
+          stylesheets={deploySheets}
+          colors={config.branding.colors}
+          bodyClassName={frameClass}
+        >
+          {content}
+        </PreviewFrame>
+      </div>
+    );
+  }
+
   // The outer box occupies the SCALED footprint so the scroll/flex parent lays it
   // out correctly; the iframe is scaled from its top-left inside it.
   return (
@@ -192,11 +240,10 @@ function BuilderPreviewImpl({
       <div style={{ width, height, transform: `scale(${scale})`, transformOrigin: "top left" }}>
         <PreviewFrame
           width={width}
-          /* Always load the combined PREVIEW-ONLY stylesheet (public/preview.css)
-             rather than the draft's live tenant sheet. It's a superset of urmedz.css
-             with the Categories block + preview-only Team-quote fixes, so the live
-             tenant stylesheets stay untouched. */
-          stylesheet="/preview.css"
+          /* The SAME shared deploy stylesheets, PLUS the preview-only overrides
+             (Team-quote wrapping fix for the narrow iframe). The overrides never
+             ship to the live site. */
+          stylesheets={[...deploySheets, "/site-css/preview-overrides.css"]}
           colors={config.branding.colors}
           onMeasure={report}
           bodyClassName={frameClass}

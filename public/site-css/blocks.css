@@ -1,0 +1,35 @@
+/* blocks.css — the SHARED site stylesheet. One <link> loads every block.
+ *
+ * This file only @imports the per-block files in cascade order. Edit a single
+ * block by opening its own small file under blocks/ — no more scrolling one giant
+ * stylesheet. Colours are NOT defined here: every rule reads var(--accent),
+ * var(--ink), var(--cream)… which a theme token file (themes/<name>.tokens.css)
+ * plus the runtime colour bridge supply. So the same blocks render in any theme.
+ *
+ * IMPORT ORDER IS THE CASCADE:
+ *   1. base            — reset, typography, buttons, nav, helpers (structural head)
+ *   2. content blocks  — hero, services, team, … (order ~matches the page)
+ *   3. categories      — optional interactive index block
+ *   4. responsive      — all @media breakpoints, LAST so they override block rules
+ */
+@import "./blocks/base.css";
+@import "./blocks/hero.css";
+@import "./blocks/appstrip.css";
+@import "./blocks/about.css";
+@import "./blocks/services.css";
+@import "./blocks/aboutv2.css";
+@import "./blocks/savings.css";
+@import "./blocks/stats.css";
+@import "./blocks/videofeature.css";
+@import "./blocks/mediasplit.css";
+@import "./blocks/team.css";
+@import "./blocks/gallery.css";
+@import "./blocks/aistore.css";
+@import "./blocks/why.css";
+@import "./blocks/howitworks.css";
+@import "./blocks/testimonials.css";
+@import "./blocks/faq.css";
+@import "./blocks/footer.css";
+@import "./blocks/nav-mobile.css";
+@import "./blocks/categories.css";
+@import "./blocks/responsive.css";
