@@ -22,13 +22,17 @@ import { Overlays } from "./sections/Overlays";
 
 export default function WebsiteBuilder() {
   const api = useBuilderState();
+  // Layout: the LEFT DRAWER spans full height (brand at the very top-left, like a
+  // real sidebar); the header + editor + preview stack in a column to its right.
   return (
-    <div id="wb-root" style={ROOT}>
-      <BuilderHeader api={api} />
-      <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
-        <LeftNav api={api} />
-        <EditorBody api={api} />
-        {!api.veryNarrow && <PreviewPane api={api} />}
+    <div id="wb-root" style={{ ...ROOT, flexDirection: "row" }}>
+      <LeftNav api={api} />
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <BuilderHeader api={api} />
+        <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
+          <EditorBody api={api} />
+          {!api.veryNarrow && <PreviewPane api={api} />}
+        </div>
       </div>
       <Overlays api={api} />
     </div>

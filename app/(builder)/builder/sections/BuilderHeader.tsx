@@ -10,29 +10,36 @@
 "use client";
 
 import React from "react";
-import { PRODUCT_NAME } from "../builderHelpers";
+import Image from "next/image";
 import {
-  BTN_OUTLINE, BTN_PRIMARY, DRAFT_BADGE, HEADER, LOGO_MARK, SPINNER_SM, TENANT_BADGE, TENANT_CHIP,
+  BTN_OUTLINE, BTN_PRIMARY, DRAFT_BADGE, HEADER, SPINNER_SM,
 } from "../builderStyles";
 import { icon } from "../icons";
 import { Hoverable } from "../components/Hoverable";
+import { safeSrc } from "@/lib/safeUrl";
 import type { BuilderApi } from "../useBuilderState";
 
 export function BuilderHeader({ api }: { api: BuilderApi }) {
   const { config, saved, publishing, doPublish, setPreviewSheetOpen } = api;
+  // The website's own logo (if the config has one) + its name. NOT a tenant
+  // switcher — there's no multi-site dropdown here, just an identity label.
+  const siteLogo = safeSrc(config.branding?.logo) || safeSrc(config.branding?.logoFull);
   return (
+    // Brand lockup (1Pharmacy) lives in the left drawer; the header just identifies
+    // the website being edited — its logo (when present) and name.
     <header style={HEADER}>
       <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-        {/* TODO: replace this placeholder mark with the 1Pharmacy logo (drop in an <img src=... />). */}
-        <div style={LOGO_MARK}>{icon("mark", 15, 2)}</div>
-        <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "-.01em" }}>{PRODUCT_NAME}</span>
+        {siteLogo && (
+          <Image
+            src={siteLogo}
+            alt={config.tenant.name}
+            width={24}
+            height={24}
+            style={{ height: 22, width: "auto", maxWidth: 80, display: "block", objectFit: "contain" }}
+          />
+        )}
+        <span style={{ fontSize: 14, fontWeight: 600, color: "#27272A" }}>{config.tenant.name}</span>
       </div>
-      <div style={{ width: 1, height: 22, background: "#EAEAEE" }} />
-      <Hoverable style={TENANT_CHIP} hover={{ background: "#F4F4F6" }} as="button">
-        <span style={TENANT_BADGE}>N</span>
-        <span style={{ fontSize: 13.5, fontWeight: 600 }}>{config.tenant.name}</span>
-        <span style={{ color: "#A1A1AA", display: "flex" }}>{icon("chevronDown", 15)}</span>
-      </Hoverable>
       <span style={DRAFT_BADGE}>DRAFT</span>
 
       <div style={{ flex: 1 }} />
