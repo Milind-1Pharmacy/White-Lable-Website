@@ -76,10 +76,28 @@ export function Navbar({ app }: NavbarProps) {
 
   const closeMenu = () => setMenuOpen(false);
 
+  /**
+   * Smooth-scroll to an in-page anchor (`/#id` or `#id`) within THIS link's own
+   * document, instead of letting the browser do a cross-document navigation. Works
+   * on the live site AND inside the builder preview iframe (where `/#id` would
+   * otherwise resolve against the <base href> and navigate away). Non-hash links
+   * fall through to normal navigation.
+   */
+  const onNavClick = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const hash = href.includes("#") ? href.slice(href.indexOf("#") + 1) : "";
+    if (!hash) return; // not an in-page anchor — let it navigate normally
+    const doc = e.currentTarget.ownerDocument;
+    const target = doc.getElementById(hash);
+    if (!target) return; // anchor not on this page — let it navigate normally
+    e.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    closeMenu();
+  };
+
   return (
     <>
       <header ref={headerRef} className={"nav" + (scrolled ? " is-scrolled" : "")}>
-        <Link href="/" className="nav__brand" onClick={closeMenu}>
+        <Link href="/" className="nav__brand" onClick={onNavClick("#top")}>
           {fullLogo && (
             <Image
               src={fullLogo}
@@ -109,7 +127,7 @@ export function Navbar({ app }: NavbarProps) {
         {links.length > 0 && (
           <nav className="nav__links">
             {links.map((l, i) => (
-              <Link key={i} href={safeHref(l.href)}>
+              <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))}>
                 {l.label}
               </Link>
             ))}
@@ -155,7 +173,7 @@ export function Navbar({ app }: NavbarProps) {
         aria-hidden={!menuOpen}
       >
         {links.map((l, i) => (
-          <Link key={i} href={safeHref(l.href)} onClick={closeMenu}>
+          <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))}>
             {l.label}
           </Link>
         ))}

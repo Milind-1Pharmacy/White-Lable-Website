@@ -163,3 +163,53 @@
     scroll-behavior: auto !important;
   }
 }
+/* ── Builder: phone-frame mockup for the "Preview live site" → Mobile view ──
+   A CSS device bezel; the 375px live-site iframe sits inside .wb-phone__screen.
+   Builder chrome only (parent document) — never shipped to a tenant site. */
+.wb-phone {
+  position: relative;
+  width: 411px;             /* 375 screen + 18px bezel each side */
+  height: 844px;
+  flex: none;
+  border-radius: 56px;
+  padding: 16px;
+  background: linear-gradient(155deg, #2a2a2e 0%, #1a1a1d 55%, #0e0e10 100%);
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.08) inset,
+    0 30px 70px -20px rgba(16, 16, 20, 0.55),
+    0 0 0 2px rgba(0, 0, 0, 0.4);
+}
+/* Side buttons */
+.wb-phone::before,
+.wb-phone::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  border-radius: 2px;
+  background: #0c0c0e;
+}
+.wb-phone::before { left: -3px; top: 150px; height: 64px; box-shadow: 0 84px 0 #0c0c0e, 0 168px 0 #0c0c0e; }
+.wb-phone::after { right: -3px; top: 196px; height: 104px; }
+/* Dynamic Island */
+.wb-phone__island {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 104px;
+  height: 28px;
+  border-radius: 16px;
+  background: #000;
+  z-index: 2;
+  pointer-events: none;
+}
+/* The screen: clips the iframe to rounded corners. */
+.wb-phone__screen {
+  width: 375px;
+  height: 812px;
+  border-radius: 42px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+}
+.wb-phone__screen iframe { width: 375px !important; height: 812px !important; }

@@ -207,11 +207,31 @@ function BuilderPreviewImpl({
     `/site-css/themes/${theme}.tokens.css`,
   ];
 
-  // "Visit site" (published) mode: render exactly as the site deploys — fill the
-  // parent at the REAL viewport width with the SAME shared stylesheets and natural
-  // scrolling, NOT a fixed 1040px canvas scaled down. No preview-only overrides here,
-  // so it's a true ditto of the deployed page.
+  // "Visit site" / live-preview (published) mode: render exactly as the site
+  // deploys, with the SAME shared stylesheets + natural scrolling.
   if (published) {
+    // Mobile: the site (375px) sits INSIDE a phone-frame mockup, centred + scrollable.
+    if (device === "mobile") {
+      return (
+        <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "flex-start", overflow: "auto", padding: "28px 0", background: "#F4F4F6" }}>
+          <div className="wb-phone">
+            <span className="wb-phone__island" />
+            <div className="wb-phone__screen">
+              <PreviewFrame
+                width={PREVIEW_MOBILE_WIDTH}
+                fill
+                stylesheets={deploySheets}
+                colors={config.branding.colors}
+                bodyClassName={frameClass}
+              >
+                {content}
+              </PreviewFrame>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    // Desktop: fill the parent at the REAL viewport width — a true ditto of deploy.
     return (
       <div style={{ width: "100%", height: "100%" }}>
         <PreviewFrame

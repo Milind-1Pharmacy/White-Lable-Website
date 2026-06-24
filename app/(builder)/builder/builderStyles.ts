@@ -82,7 +82,9 @@ export function zoomBtnStyle(disabled: boolean): React.CSSProperties {
 }
 export const FIELD_LABEL: React.CSSProperties = { display: "block", fontSize: 12.5, fontWeight: 600, color: "#3F3F46", marginBottom: 7 };
 export const FIELD_HELP: React.CSSProperties = { fontSize: 12, color: "#A1A1AA", margin: "7px 0 0", lineHeight: 1.5 };
-export const TEXT_INPUT: React.CSSProperties = { width: "100%", padding: "11px 13px", border: "1px solid #E4E4EA", borderRadius: 11, fontSize: 14, color: "#18181B", background: "#fff", outline: "none", transition: "border-color .15s,box-shadow .15s" };
+// Border declared as longhands (not the `border` shorthand) so the focus style can
+// toggle `borderColor` alone — mixing shorthand + longhand trips a React rerender warning.
+export const TEXT_INPUT: React.CSSProperties = { width: "100%", padding: "11px 13px", borderWidth: 1, borderStyle: "solid", borderColor: "#E4E4EA", borderRadius: 11, fontSize: 14, color: "#18181B", background: "#fff", outline: "none", transition: "border-color .15s,box-shadow .15s" };
 export const TEXT_AREA: React.CSSProperties = { ...TEXT_INPUT, lineHeight: 1.55, resize: "none" };
 export const UPLOAD_BOX: React.CSSProperties = { display: "flex", alignItems: "center", gap: 14, padding: 16, border: "1.5px dashed #DDDDE3", borderRadius: 13, background: "#FBFBFC", cursor: "pointer", transition: "border-color .15s,background .15s" };
 export const TAG_X: React.CSSProperties = { width: 17, height: 17, border: "none", background: "transparent", cursor: "pointer", color: "#A1A1AA", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 5 };

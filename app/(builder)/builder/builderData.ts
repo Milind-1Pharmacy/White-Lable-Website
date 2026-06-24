@@ -66,8 +66,8 @@ export const STEPS: Step[] = [
   { id: "identity", label: "Identity", hint: "Name & category", icon: "identity" },
   { id: "branding", label: "Branding", hint: "Logo & colours", icon: "palette" },
   { id: "seo", label: "SEO", hint: "Title & keywords", icon: "search" },
-  { id: "navigation", label: "Navigation", hint: "Nav, footer & CTA", icon: "list" },
   { id: "sections", label: "Sections", hint: "Hero, blocks & more", icon: "grid" },
+  { id: "navigation", label: "Navigation", hint: "Nav, footer & CTA", icon: "list" },
   { id: "contact", label: "Contact", hint: "Get in touch", icon: "mail" },
   { id: "legal", label: "Legal", hint: "Disclaimers", icon: "shield" },
 ];

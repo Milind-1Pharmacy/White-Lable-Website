@@ -30,7 +30,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import type { AppConfig } from "@/types/config.types";
 import {
-  CORE, DEFAULTS, DONE, INITIAL, STEPS, TYPES,
+  CORE, DEFAULTS, DONE, INITIAL, SECTION_ANCHORS, STEPS, TYPES,
   type BuilderSectionType, type DraftSection, type StepId,
 } from "./builderData";
 import {
@@ -385,12 +385,36 @@ export function useBuilderState() {
   }
 
   function removeSection(id: string) {
-    const node = document.querySelector<HTMLElement>('[data-id="' + id + '"]');
+    const sec = sections.find((s) => s.id === id);
+    const anchor = sec ? SECTION_ANCHORS[sec.type] : undefined;
+    const navHref = anchor ? `/#${anchor.id}` : undefined;
+    const name = sec ? TYPES[sec.type]?.label || "this section" : "this section";
+    // Only the LAST section of a given type owns the shared nav link/anchor.
+    const lastOfType = !!sec && sections.filter((s) => s.type === sec.type).length <= 1;
+    // Is this section currently shown in the nav? (drives the confirm copy + cleanup)
+    const inNav = !!navHref && lastOfType && (config.layout?.nav?.links || []).some((l) => l.href === navHref);
+    // Always confirm a section delete; call out the nav removal when relevant.
+    const msg = inNav
+      ? `Delete "${name}"? It's also in your navigation bar — it'll be removed from there too.`
+      : `Delete "${name}"? This can't be undone.`;
+    if (typeof window !== "undefined" && !window.confirm(msg)) return;
+
+    // If another section of the same type remains, its anchor is still valid, so
+    // keep the nav link; only remove it when the LAST one of its type is deleted
+    // (lastOfType computed above).
     const finish = () => {
       setSections((arr) => arr.filter((s) => s.id !== id));
       setBlockOrder((order) => order.filter((bid) => bid !== id));
+      if (navHref && lastOfType) setCfg((c) => {
+        const links = c.layout?.nav?.links;
+        if (links) {
+          const at = links.findIndex((l) => l.href === navHref);
+          if (at >= 0) links.splice(at, 1);
+        }
+      });
       markDirty();
     };
+    const node = document.querySelector<HTMLElement>('[data-id="' + id + '"]');
     if (node && !rm.current) {
       node.style.height = node.offsetHeight + "px";
       node.style.overflow = "hidden";

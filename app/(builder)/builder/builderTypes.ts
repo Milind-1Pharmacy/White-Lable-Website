@@ -29,8 +29,10 @@ export type Field = {
     | "services"
     | "items"
     | "navlinks"
+    | "navsections"
     | "navctas"
     | "select"
+    | "themeselect"
     | "group"
     | "note";
 };
@@ -51,6 +53,7 @@ export type ServiceRow = { title: string; desc: string; onTitle: (e: InputEvt) =
 export type ItemColField = { key: string; label: string; placeholder?: string; numeric?: boolean; area?: boolean; upload?: boolean; limitId?: string; max?: number; min?: number; value: string; onChange: (e: InputEvt | AreaEvt) => void; onUpload: (url: string) => void };
 export type ItemRow = { cols: ItemColField[]; onRemove: () => void };
 export type NavLinkRow = { label: string; href: string; onLabel: (e: InputEvt) => void; onTarget: (e: SelectEvt) => void; onRemove: () => void };
+export type NavSectionRow = { href: string; sectionLabel: string; label: string; inNav: boolean; toggleDisabled: boolean; canMoveUp: boolean; canMoveDown: boolean; onToggle: () => void; onLabel: (e: InputEvt) => void; onMoveUp: () => void; onMoveDown: () => void };
 export type NavCtaRow = { label: string; href: string; variant: string; onLabel: (e: InputEvt) => void; onHref: (e: InputEvt) => void; onVariant: (e: SelectEvt) => void; onRemove: () => void };
 export type RichFrag = { index: number; text: string; emphasis: string; max?: number; min?: number; brStyle: React.CSSProperties; onText: (e: InputEvt) => void; onEmphasis: (e: SelectEvt) => void; onBreak: () => void; onRemove: () => void; onDragStart: () => void; onDropOn: () => void; onDragEnd: () => void };
 

@@ -11,7 +11,7 @@
  */
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PICKER_ORDER, TYPES } from "../builderData";
 import { PUBLISH_DOMAIN } from "../builderHelpers";
 import {
@@ -31,6 +31,8 @@ export function Overlays({ api }: { api: BuilderApi }) {
     publishIssues, setPublishIssues, jumpToIssue,
     previewSheetOpen, setPreviewSheetOpen, previewConfig, sections, step, selectedSectionId,
   } = api;
+  // Device for the full "Preview live site" sheet (desktop full-width / phone frame).
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   // Blocking validation errors gate publishing; warnings are advisory only.
   const blockingCount = publishIssues.filter((x) => x.severity === "error").length;
   // Group issues by their section/step label for the summary panel.
@@ -191,17 +193,25 @@ export function Overlays({ api }: { api: BuilderApi }) {
       {previewSheetOpen && (
         <div style={PREVIEW_SHEET}>
           <div style={{ height: 54, flex: "none", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 18px", background: "#fff", borderBottom: "1px solid #E0E0E6" }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "#71717A" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "#71717A", flex: 1, minWidth: 0 }}>
               <span style={{ display: "flex", color: "#16A34A" }}>{icon("eye", 14)}</span>
-              <span>How your site will look deployed · <b style={{ color: "#3F3F46", fontWeight: 600, fontFamily: "'JetBrains Mono',monospace" }}>{slug + "." + PUBLISH_DOMAIN}</b></span>
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>How your site will look deployed · <b style={{ color: "#3F3F46", fontWeight: 600, fontFamily: "'JetBrains Mono',monospace" }}>{slug + "." + PUBLISH_DOMAIN}</b></span>
             </span>
+            {/* Desktop / Mobile segmented toggle */}
+            <div style={{ display: "flex", flex: "none", gap: 2, padding: 3, borderRadius: 9, background: "#F1F1F4", margin: "0 12px" }}>
+              {(["desktop", "mobile"] as const).map((d) => (
+                <button key={d} onClick={() => setPreviewDevice(d)} title={d === "desktop" ? "Desktop" : "Mobile"} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 11px", borderRadius: 7, border: "none", cursor: "pointer", fontSize: 12, fontWeight: 600, background: previewDevice === d ? "#fff" : "transparent", color: previewDevice === d ? "#27272A" : "#9CA3AF", boxShadow: previewDevice === d ? "0 1px 3px rgba(0,0,0,.08)" : "none" }}>
+                  {icon(d === "desktop" ? "monitor" : "smartphone", 14)}
+                  {d === "desktop" ? "Desktop" : "Mobile"}
+                </button>
+              ))}
+            </div>
             <Hoverable as="button" onClick={() => setPreviewSheetOpen(false)} style={BTN_OUTLINE} hover={{ background: "#FAFAFB" }}>{icon("x", 17)}Close</Hoverable>
           </div>
-          <div id="wb-preview-sheet-scroll" style={{ flex: 1, overflow: "hidden", background: "#fff" }}>
-            {/* Full-bleed, 100%-width render in published mode: real tenant stylesheet,
-                real viewport width, natural scroll — a true ditto of the deployed site.
-                No centered max-content card / scale cap. */}
-            <BuilderPreview config={previewConfig} sections={sections} full published step={step} selectedSectionId={selectedSectionId} slug={slug} device="desktop" />
+          <div id="wb-preview-sheet-scroll" style={{ flex: 1, overflow: previewDevice === "mobile" ? "auto" : "hidden", background: previewDevice === "mobile" ? "#F4F4F6" : "#fff" }}>
+            {/* Published render at the chosen device. Mobile wraps the 375px site in a
+                phone-frame mockup; desktop is the full-bleed true-ditto render. */}
+            <BuilderPreview config={previewConfig} sections={sections} full published step={step} selectedSectionId={selectedSectionId} slug={slug} device={previewDevice} />
           </div>
         </div>
       )}

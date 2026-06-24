@@ -23,7 +23,7 @@ import { clone } from "./builderHelpers";
 import { brStyle, switchStyles } from "./builderStyles";
 import type { AreaEvt, Field, InputEvt, ItemCol, KeyEvt, SelectEvt } from "./builderTypes";
 import { THEME_PRESETS, DEFAULT_THEME, presetByName } from "./themePresets";
-import { SECTION_RULES, limit, type TextLimitId, type CharLimit } from "./validationSchema";
+import { SECTION_RULES, MAX_NAV_LINKS, limit, type TextLimitId, type CharLimit } from "./validationSchema";
 
 /** Spreadable {max,min} char-limit props for a Field/column from a TEXT_LIMITS id. */
 function limProps(id?: TextLimitId): { max?: number; min?: number } {
@@ -71,14 +71,14 @@ export function makeFieldBuilders(ctx: FieldCtx) {
       // Colour theme FIRST — picking a preset fills the six colour fields below.
       out = [{ kind: "group", label: "Colour theme", sub: "Pick a ready-made colour set, then fine-tune any colour below." }];
       out.push({
-        kind: "select",
+        kind: "themeselect",
         label: "Theme",
-        help: "Sets the colour scheme. You can override any individual colour after.",
+        help: "Pick a palette — the swatches show each theme's colours. You can fine-tune any colour after.",
         value: C.branding.theme || DEFAULT_THEME,
-        options: THEME_PRESETS.map((p) => ({ value: p.name, label: p.label })),
-        onChange: (e: SelectEvt) =>
+        presets: THEME_PRESETS,
+        onSelect: (name: string) =>
           setCfg((c) => {
-            const preset = presetByName(e.target.value);
+            const preset = presetByName(name);
             c.branding.theme = preset.name;
             // Fill the six brand colours from the preset (user can still tweak each).
             c.branding.colors = { ...preset.colors };
@@ -142,40 +142,67 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         seenHref.add(href);
         targets.push({ href, label: a.label, navLabel: a.navLabel });
       };
-      pushTarget("hero");
+      // Hero is intentionally NOT a nav-link option — the logo already scrolls to
+      // the top (Hero), so listing "Home → Hero" would be redundant. (Dynamic
+      // sections are never of type "hero"; hero is a core block edited separately.)
       if (C.content.about) pushTarget("about");
       if (C.content.services?.length) pushTarget("services");
       sections.forEach((sec) => pushTarget(sec.type));
-      const navLabelFor = (href: string) => targets.find((t) => t.href === href)?.navLabel || "";
 
+      // The nav is a VIEW of the page's blocks: every nav-able block (core +
+      // dynamic, in page order) is a row that can be toggled into the nav and
+      // relabelled. nav.links is derived from these toggles, so a link can never
+      // point at a section that doesn't exist (no dangling links).
+      const navLinks = (nav?.links as Array<{ label?: string; href?: string }>) || [];
+      const linkFor = (href: string) => navLinks.find((l) => l.href === href);
+      // Reorder a nav link (only links present in the nav participate in ordering).
+      const moveNavLink = (href: string, dir: -1 | 1) => setCfg((c) => {
+        const arr = ensureNav(c).links!;
+        const from = arr.findIndex((l) => l.href === href);
+        if (from < 0) return;
+        const to = from + dir;
+        if (to < 0 || to >= arr.length) return;
+        const [m] = arr.splice(from, 1);
+        arr.splice(to, 0, m);
+      });
+
+      const navAtMax = navLinks.length >= MAX_NAV_LINKS;
       out = [
-        { kind: "group", label: "Navigation bar", sub: "Each link scrolls to one of your sections — pick the section and give it a label." },
+        { kind: "group", label: "Navigation bar", sub: "Toggle which sections appear in your top nav, rename them, and reorder. The logo always links to the top." },
         {
-          kind: "navlinks",
-          addLabel: "Add link",
-          targets,
-          rows: ((nav?.links as Array<{ label?: string; href?: string }>) || []).map((lnk, i) => ({
-            label: lnk.label || "",
-            href: lnk.href || "",
-            onLabel: (e: InputEvt) => setCfg((c) => { const arr = ensureNav(c).links!; if (arr[i]) arr[i].label = e.target.value; }),
-            // Switching the target section auto-fills the label with that section's
-            // friendly default UNLESS the user has typed a custom label already.
-            onTarget: (e: SelectEvt) => setCfg((c) => {
-              const arr = ensureNav(c).links!;
-              if (!arr[i]) return;
-              const wasDefault = !arr[i].label || arr[i].label === navLabelFor(arr[i].href);
-              arr[i].href = e.target.value;
-              if (wasDefault) arr[i].label = navLabelFor(e.target.value) || arr[i].label;
-            }),
-            onRemove: () => setCfg((c) => ensureNav(c).links!.splice(i, 1)),
-          })),
-          onAdd: () => setCfg((c) => {
-            const arr = ensureNav(c).links!;
-            // Default the new link to the first section not already linked, with
-            // that section's friendly label prefilled.
-            const used = new Set(arr.map((l) => l.href));
-            const pick = targets.find((t) => !used.has(t.href)) || targets[0];
-            arr.push({ label: pick?.navLabel || "Link", href: pick?.href || "/#top" });
+          kind: "navsections",
+          count: navLinks.length,
+          max: MAX_NAV_LINKS,
+          atMax: navAtMax,
+          rows: targets.map((t) => {
+            const existing = linkFor(t.href);
+            const inNav = !!existing;
+            const navOrder = inNav ? navLinks.findIndex((l) => l.href === t.href) : -1;
+            const linkCount = navLinks.length;
+            return {
+              href: t.href,
+              sectionLabel: t.label,
+              label: existing?.label ?? t.navLabel,
+              inNav,
+              // Can't toggle ON once the nav is full (toggling OFF is always allowed).
+              toggleDisabled: !inNav && navAtMax,
+              canMoveUp: inNav && navOrder > 0,
+              canMoveDown: inNav && navOrder < linkCount - 1,
+              // Toggle this section in/out of the nav (capped at MAX_NAV_LINKS).
+              onToggle: () => setCfg((c) => {
+                const arr = ensureNav(c).links!;
+                const at = arr.findIndex((l) => l.href === t.href);
+                if (at >= 0) arr.splice(at, 1);
+                else if (arr.length < MAX_NAV_LINKS) arr.push({ label: t.navLabel, href: t.href });
+              }),
+              // Rename the nav label (no-op if the section isn't in the nav).
+              onLabel: (e: InputEvt) => setCfg((c) => {
+                const l = ensureNav(c).links!.find((x) => x.href === t.href);
+                if (l) l.label = e.target.value;
+              }),
+              onMoveUp: () => moveNavLink(t.href, -1),
+              onMoveDown: () => moveNavLink(t.href, 1),
+            };
           }),
         },
         { kind: "group", label: "Nav CTAs", sub: "Buttons on the right of the header (external links allowed)." },

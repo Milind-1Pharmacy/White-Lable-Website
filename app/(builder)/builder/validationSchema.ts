@@ -83,6 +83,11 @@ export function limitMin(id?: TextLimitId): number | undefined {
   return id ? (TEXT_LIMITS[id] as CharLimit).min : undefined;
 }
 
+/** Max links allowed in the top navigation bar. Kept low for UX: 5–7 is the
+ *  scannable sweet spot; beyond ~6 the nav crowds the logo + CTAs and wraps.
+ *  Single source of truth — tune here. */
+export const MAX_NAV_LINKS = 6;
+
 /* ────────────────────────────────────────────────────────────────────────────
  * 2. URL RULES — host/scheme checks layered on top of safeHref scheme safety.
  * ──────────────────────────────────────────────────────────────────────────── */

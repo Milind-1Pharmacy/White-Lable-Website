@@ -11,14 +11,15 @@
  */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { icon } from "../icons";
 import {
   ADD_DASHED, ADD_FRAG, FIELD_HELP, FIELD_LABEL, FRAG_X, ITEM_COL_LABEL, ITEM_INPUT,
   SERVICE_X, TAG_X, TEXT_AREA, TEXT_INPUT,
 } from "../builderStyles";
 import { CTA_VARIANTS, ctaPreviewStyle } from "../builderHelpers";
-import type { Field, ItemColField, ItemRow, NavCtaRow, NavLinkRow, RichFrag, ServiceRow } from "../builderTypes";
+import type { Field, ItemColField, ItemRow, NavCtaRow, NavLinkRow, NavSectionRow, RichFrag, ServiceRow } from "../builderTypes";
 import { Hoverable } from "./Hoverable";
 import { UploadField } from "./UploadField";
 
@@ -63,6 +64,125 @@ function MediaBadge({ count, min, max, atMax, belowMin, unit = "items", required
     <span style={{ display: "inline-flex", alignItems: "center", flex: "none", padding: "3px 10px", borderRadius: 999, background: tone.bg, border: `1px solid ${tone.bd}`, fontFamily: "'JetBrains Mono',monospace", fontSize: 10.5, lineHeight: 1.4, color: tone.fg, whiteSpace: "nowrap", fontWeight: 500 }}>
       {parts.join("  ·  ")}
     </span>
+  );
+}
+
+type ThemePreset = { name: string; label: string; colors: Record<string, string> };
+/** The six colour tokens shown for each theme — key → short label. In display order. */
+const SWATCH_KEYS: Array<{ key: string; label: string }> = [
+  { key: "background", label: "BG" },
+  { key: "primary", label: "Primary" },
+  { key: "accent", label: "Accent" },
+  { key: "secondary", label: "Secondary" },
+  { key: "text", label: "Text" },
+  { key: "ink", label: "Ink" },
+];
+
+/** Compact fused swatch strip (no labels) — used on the trigger button. */
+function SwatchStrip({ colors, size = 16 }: { colors: Record<string, string>; size?: number }) {
+  return (
+    <span style={{ display: "inline-flex", flex: "none", borderRadius: 6, overflow: "hidden", border: "1px solid rgba(0,0,0,.1)" }}>
+      {SWATCH_KEYS.map((s) => (
+        <span key={s.key} title={s.label} style={{ width: size, height: size, background: colors[s.key] || "#fff" }} />
+      ))}
+    </span>
+  );
+}
+
+/** Labeled palette grid: each colour token as a block with its name + hex below.
+ *  This is the clear "this colour = this token" layout the dropdown rows use. */
+function PaletteGrid({ colors }: { colors: Record<string, string> }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6, width: "100%" }}>
+      {SWATCH_KEYS.map((s) => {
+        const hex = (colors[s.key] || "#FFFFFF").toUpperCase();
+        return (
+          <div key={s.key} style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
+            <span style={{ height: 30, borderRadius: 7, background: hex, border: "1px solid rgba(0,0,0,.1)" }} />
+            <span style={{ fontSize: 9.5, fontWeight: 600, color: "#52525B", letterSpacing: ".01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{s.label}</span>
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 8.5, color: "#A1A1AA" }}>{hex}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** A theme picker that shows each theme's labeled colour palette in the dropdown,
+ *  so the user sees exactly which colour is which token before selecting. */
+function ThemeSelect({ value, presets, onSelect }: { value: string; presets: ThemePreset[]; onSelect: (name: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [rect, setRect] = useState<{ left: number; top: number; width: number } | null>(null);
+  const current = presets.find((p) => p.name === value) ?? presets[0];
+
+  // Measure the trigger so the portalled panel can sit right under it. Recompute
+  // on open, and on scroll/resize while open (the editor body scrolls).
+  useLayoutEffect(() => {
+    if (!open) return;
+    const place = () => {
+      const r = triggerRef.current?.getBoundingClientRect();
+      if (r) setRect({ left: r.left, top: r.bottom + 6, width: r.width });
+    };
+    place();
+    window.addEventListener("scroll", place, true);
+    window.addEventListener("resize", place);
+    return () => {
+      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [open]);
+
+  // Close on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return (
+    <div style={{ position: "relative" }}>
+      {/* Trigger: current theme label + a compact swatch strip. */}
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", border: "1px solid #E4E4EA", borderRadius: 11, background: "#fff", cursor: "pointer", outline: "none", textAlign: "left" }}
+      >
+        {current && <SwatchStrip colors={current.colors} />}
+        <span style={{ flex: 1, minWidth: 0, fontSize: 13.5, fontWeight: 600, color: "#27272A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{current?.label}</span>
+        <span style={{ display: "flex", color: "#9CA3AF", transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" }}>{icon("chevronDown", 16)}</span>
+      </button>
+      {/* Panel is PORTALLED to <body> — escapes the editor's scroll container and all
+          sibling stacking, so it paints fully opaque over the form (no bleed-through). */}
+      {open && rect && typeof document !== "undefined" && createPortal(
+        <>
+          <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 1000 }} />
+          <div style={{ position: "fixed", left: rect.left, top: rect.top, width: rect.width, zIndex: 1001, background: "#fff", border: "1px solid #E4E4EA", borderRadius: 13, boxShadow: "0 18px 50px rgba(16,16,20,.2)", padding: 7, display: "flex", flexDirection: "column", gap: 4, maxHeight: 380, overflowY: "auto" }}>
+            {presets.map((p) => {
+              const active = p.name === value;
+              return (
+                <Hoverable
+                  as="button"
+                  key={p.name}
+                  onClick={() => { onSelect(p.name); setOpen(false); }}
+                  style={{ display: "flex", flexDirection: "column", gap: 9, width: "100%", padding: "11px 12px", border: `1px solid ${active ? "#A9C6EF" : "#EDEDF0"}`, borderRadius: 11, background: active ? "#F7FAFE" : "#fff", cursor: "pointer", textAlign: "left" }}
+                  hover={{ borderColor: active ? "#A9C6EF" : "#D4D4DB", background: active ? "#F1F6FD" : "#FAFAFB" }}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
+                    <span style={{ flex: 1, minWidth: 0, fontSize: 13.5, fontWeight: 600, color: "#27272A" }}>{p.label}</span>
+                    {active && <span style={{ display: "flex", color: "#2E6ACF", flex: "none" }}>{icon("check", 15)}</span>}
+                  </span>
+                  <PaletteGrid colors={p.colors} />
+                </Hoverable>
+              );
+            })}
+          </div>
+        </>,
+        document.body,
+      )}
+    </div>
   );
 }
 
@@ -116,6 +236,14 @@ export function FieldRow({ f }: { f: Field }) {
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
+          {f.help && <p style={FIELD_HELP}>{f.help}</p>}
+        </>
+      )}
+
+      {f.kind === "themeselect" && (
+        <>
+          <label style={FIELD_LABEL}>{f.label}</label>
+          <ThemeSelect value={f.value || ""} presets={f.presets} onSelect={f.onSelect} />
           {f.help && <p style={FIELD_HELP}>{f.help}</p>}
         </>
       )}
@@ -281,6 +409,60 @@ export function FieldRow({ f }: { f: Field }) {
           )}
           {f.targets.length > 0 && (
             <Hoverable as="button" onClick={f.onAdd} style={ADD_DASHED} hover={{ borderColor: "#2E6ACF", color: "#2E6ACF" }}>{icon("plus", 14)}{f.addLabel || "Add link"}</Hoverable>
+          )}
+        </div>
+      )}
+
+      {f.kind === "navsections" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {/* Nav-link count badge: "4 / 6 nav links" (red at the cap). */}
+          {f.max != null && (
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <MediaBadge count={f.count} max={f.max} atMax={f.atMax} unit="nav links" />
+            </div>
+          )}
+          {f.atMax && (
+            <div style={{ fontSize: 11.5, color: "#B45309", padding: "0 2px 2px" }}>Max {f.max} nav links reached — turn one off to add another.</div>
+          )}
+          {f.rows.length === 0 ? (
+            <div style={{ fontSize: 12.5, color: "#A1A1AA", padding: "6px 2px" }}>Add sections first — the nav links to your page sections.</div>
+          ) : (
+            f.rows.map((row: NavSectionRow, i: number) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 11px", border: "1px solid #EDEDF0", borderRadius: 11, background: row.inNav ? "#fff" : "#FAFAFB", opacity: row.toggleDisabled ? 0.55 : 1 }}>
+                {/* Show-in-nav toggle (disabled when the nav is full and this is off) */}
+                <button
+                  onClick={row.onToggle}
+                  disabled={row.toggleDisabled}
+                  title={row.toggleDisabled ? "Nav is full — turn one off first" : row.inNav ? "Hide from nav" : "Show in nav"}
+                  aria-pressed={row.inNav}
+                  style={{ flex: "none", width: 38, height: 22, borderRadius: 999, border: "none", padding: 2, cursor: row.toggleDisabled ? "not-allowed" : "pointer", background: row.inNav ? "#2E6ACF" : "#D4D4DB", transition: "background .2s", display: "flex", justifyContent: row.inNav ? "flex-end" : "flex-start", alignItems: "center" }}
+                >
+                  <span style={{ width: 18, height: 18, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 2px rgba(0,0,0,.2)" }} />
+                </button>
+                {/* Section name (always) + editable nav label (when in nav) */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {row.inNav ? (
+                    <input
+                      type="text"
+                      value={row.label}
+                      onChange={row.onLabel}
+                      placeholder={row.sectionLabel}
+                      style={{ width: "100%", padding: "5px 8px", border: "1px solid #E4E4EA", borderRadius: 7, fontSize: 13.5, fontWeight: 600, color: "#18181B", background: "#fff", outline: "none" }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: 13.5, fontWeight: 500, color: "#9CA3AF" }}>{row.sectionLabel}</span>
+                  )}
+                  <div style={{ fontSize: 10.5, color: "#B4B4BE", marginTop: 2, paddingLeft: row.inNav ? 8 : 0 }}>{row.inNav ? "Shown in nav · " + row.sectionLabel : "Hidden from nav"}</div>
+                </div>
+                {/* Reorder arrows (only when in nav) */}
+                {row.inNav && (
+                  <div style={{ display: "flex", flexDirection: "column", flex: "none" }}>
+                    <button onClick={row.onMoveUp} disabled={!row.canMoveUp} title="Move up" style={{ border: "none", background: "transparent", cursor: row.canMoveUp ? "pointer" : "default", color: row.canMoveUp ? "#71717A" : "#D4D4DB", display: "flex", padding: 0, height: 13, transform: "rotate(180deg)" }}>{icon("chevronDown", 13)}</button>
+                    <button onClick={row.onMoveDown} disabled={!row.canMoveDown} title="Move down" style={{ border: "none", background: "transparent", cursor: row.canMoveDown ? "pointer" : "default", color: row.canMoveDown ? "#71717A" : "#D4D4DB", display: "flex", padding: 0, height: 13 }}>{icon("chevronDown", 13)}</button>
+                  </div>
+                )}
+              </div>
+            ))
           )}
         </div>
       )}

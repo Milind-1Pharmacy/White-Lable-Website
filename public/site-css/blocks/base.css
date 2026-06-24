@@ -183,6 +183,8 @@ a {
 .section {
   padding: clamp(72px, 9vw, 140px) 0;
   position: relative;
+  /* Clear the fixed navbar when an anchor link scrolls to this section. */
+  scroll-margin-top: 84px;
 }
 
 .section--cream {
