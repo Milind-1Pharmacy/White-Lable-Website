@@ -1,0 +1,18 @@
+/* botanica.tokens.css — Botanica colour theme (deep forest / warm sand). Organic,
+ * natural. Structure/layout comes from blocks.css; this only sets colours. The
+ * runtime bridge overrides these when the user edits brand colours. */
+@import "./_base.tokens.css";
+
+:root {
+  --navy: #1e3d2f;
+  --navy-2: #16241c;
+  --ink: #1e2a22;
+  --cream: #f4f1e8;
+  --cream-2: #e9e4d6;
+  --line: rgba(30, 42, 34, 0.12);
+  --line-2: rgba(30, 42, 34, 0.06);
+  --mute: rgba(30, 42, 34, 0.62);
+  --accent: #3e7c5a;
+  --brand-teal: #3e7c5a;
+  --brand-navy: #1e3d2f;
+}

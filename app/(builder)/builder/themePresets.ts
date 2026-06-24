@@ -63,6 +63,42 @@ export const THEME_PRESETS: ThemePreset[] = [
       ink: "#0E1B2A",
     },
   },
+  {
+    name: "noir",
+    label: "Noir — charcoal / amber",
+    colors: {
+      primary: "#17171A",
+      secondary: "#C8892B",
+      background: "#F3F1EC",
+      text: "#1A1A1D",
+      accent: "#C8892B",
+      ink: "#0F0F11",
+    },
+  },
+  {
+    name: "botanica",
+    label: "Botanica — forest / sand",
+    colors: {
+      primary: "#1E3D2F",
+      secondary: "#9C6B3F",
+      background: "#F4F1E8",
+      text: "#1E2A22",
+      accent: "#3E7C5A",
+      ink: "#16241C",
+    },
+  },
+  {
+    name: "coral",
+    label: "Coral — terracotta / ivory",
+    colors: {
+      primary: "#7A2E22",
+      secondary: "#E0633E",
+      background: "#FBF5EE",
+      text: "#2B1B16",
+      accent: "#E0633E",
+      ink: "#3A1E16",
+    },
+  },
 ];
 
 /** Default theme name when a config doesn't specify one. */
