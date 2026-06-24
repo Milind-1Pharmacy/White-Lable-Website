@@ -20,7 +20,7 @@ import type { BuilderApi } from "../useBuilderState";
 export function PreviewPane({ api }: { api: BuilderApi }) {
   const {
     previewView, setPreviewView, zoomFactor, setZoomFactor, zoomBy, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
-    previewConfig, sections, step, selectedSectionId, slug, previewScale, setDeskH, setMobH,
+    previewConfig, sections, step, selectedSectionId, slug, previewScale,
     legalSection,
   } = api;
   return (
@@ -57,7 +57,7 @@ export function PreviewPane({ api }: { api: BuilderApi }) {
           <div style={{ flex: "none" }}>
             <div style={DEVICE_LABEL}>{icon("monitor", 13)}DESKTOP</div>
             <div style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 6px 22px rgba(16,16,20,.07)" }}>
-              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} device="desktop" scale={previewScale} onMeasure={setDeskH} />
+              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} device="desktop" scale={previewScale} />
             </div>
           </div>
         )}
@@ -67,7 +67,7 @@ export function PreviewPane({ api }: { api: BuilderApi }) {
           <div style={{ flex: "none" }}>
             <div style={DEVICE_LABEL}>{icon("smartphone", 13)}MOBILE · 375</div>
             <div style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 6px 22px rgba(16,16,20,.07)" }}>
-              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} device="mobile" scale={previewScale} onMeasure={setMobH} />
+              <BuilderPreview config={previewConfig} sections={sections} full={false} step={step} selectedSectionId={selectedSectionId} slug={slug} legalSection={legalSection} device="mobile" scale={previewScale} />
             </div>
           </div>
         )}

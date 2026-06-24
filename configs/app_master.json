@@ -535,9 +535,9 @@
           "heading": "Resources",
           "links": [
             { "label": "FAQ", "href": "/#faq" },
-            { "label": "Privacy", "href": "/privacy-policy" },
-            { "label": "Terms", "href": "/terms-conditions" },
-            { "label": "Deactivate account", "href": "/deactivate-account" }
+            { "label": "Privacy Policy", "href": "/privacy-policy" },
+            { "label": "Terms & Conditions", "href": "/terms-conditions" },
+            { "label": "Data deletion", "href": "/deactivate-account" }
           ]
         }
       ]

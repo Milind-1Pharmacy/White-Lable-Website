@@ -142,26 +142,29 @@ export function LeftNav({ api }: { api: BuilderApi }) {
           </span>
         </div>
 
-        {/* Body: SETUP label + pin toggle (collapsed: just the lock, centered), then steps. */}
+        {/* Body: SETUP label + pin toggle — shown ONLY when expanded. The collapsed
+            rail is just the logo + step icons (no confusing lock chip). */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: open ? "14px 12px 4px" : "14px 0 4px", minHeight: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: open ? "space-between" : "center", padding: open ? "0 2px 10px" : "0 0 10px", minHeight: 24 }}>
-            <span style={{ ...NAV_LABEL, padding: 0, display: open ? "block" : "none", whiteSpace: "nowrap" }}>SETUP</span>
-            <button
-              onClick={togglePin}
-              title={pinned ? "Unpin sidebar" : "Pin sidebar open"}
-              aria-label={pinned ? "Unpin sidebar" : "Pin sidebar open"}
-              style={{
-                width: 30, height: 30, borderRadius: 8, flex: "none", cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                border: "1px solid " + (pinned ? "#D8E4F7" : "transparent"),
-                background: dark ? "rgba(255,255,255,.14)" : (pinned ? "#F1F6FD" : "transparent"),
-                color: dark ? "#fff" : (pinned ? "#2E6ACF" : "#B4B4BE"),
-                transition: "all .15s",
-              }}
-            >
-              {icon("lock", 15)}
-            </button>
-          </div>
+          {open && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2px 10px", minHeight: 24 }}>
+              <span style={{ ...NAV_LABEL, padding: 0, whiteSpace: "nowrap" }}>SETUP</span>
+              <button
+                onClick={togglePin}
+                title={pinned ? "Unpin sidebar" : "Pin sidebar open"}
+                aria-label={pinned ? "Unpin sidebar" : "Pin sidebar open"}
+                style={{
+                  width: 30, height: 30, borderRadius: 8, flex: "none", cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  border: "1px solid " + (pinned ? "#D8E4F7" : "transparent"),
+                  background: pinned ? "#F1F6FD" : "transparent",
+                  color: pinned ? "#2E6ACF" : "#B4B4BE",
+                  transition: "all .15s",
+                }}
+              >
+                {icon(pinned ? "lock" : "chevronRight", 15)}
+              </button>
+            </div>
+          )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: open ? "stretch" : "center" }}>
             {STEPS.map((s) => {
@@ -178,7 +181,25 @@ export function LeftNav({ api }: { api: BuilderApi }) {
                     justifyContent: open ? "flex-start" : "center",
                   }}
                 >
-                  <span style={iconChip(active, done, dark)}>{done && !active ? icon("check", 15, 2.2) : icon(s.icon, 16)}</span>
+                  {/* The step's OWN icon (so it's identifiable), with a small tick
+                      BADGE overlaid when that step is complete. */}
+                  <span style={{ position: "relative", flex: "none" }}>
+                    <span style={iconChip(active, done, dark)}>{icon(s.icon, 16)}</span>
+                    {done && !active && (
+                      <span
+                        aria-label="complete"
+                        style={{
+                          position: "absolute", right: -3, bottom: -3,
+                          width: 15, height: 15, borderRadius: "50%",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          background: "#22C55E", color: "#fff",
+                          border: "2px solid " + (dark ? "#2E6ACF" : "#fff"),
+                        }}
+                      >
+                        {icon("check", 9, 3)}
+                      </span>
+                    )}
+                  </span>
                   <span
                     style={{
                       display: open ? "flex" : "none",

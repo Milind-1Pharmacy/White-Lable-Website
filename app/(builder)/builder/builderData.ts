@@ -423,7 +423,7 @@ export function INITIAL(): {
         columns: [
           { heading: "Company", links: [{ label: "About", href: "/#about" }, { label: "Team", href: "/#team" }, { label: "Careers", href: "/contact" }] },
           { heading: "Services", links: [{ label: "Retail stores", href: "/#services" }, { label: "Fulfilment", href: "/#fulfilment" }, { label: "Get the app", href: "/#app" }] },
-          { heading: "Legal", links: [{ label: "Privacy", href: "/privacy-policy" }, { label: "Terms", href: "/terms-conditions" }, { label: "Disclaimer", href: "/disclaimer" }, { label: "Data deletion", href: "/deactivate-account" }] },
+          { heading: "Legal", links: [{ label: "Privacy Policy", href: "/privacy-policy" }, { label: "Terms & Conditions", href: "/terms-conditions" }, { label: "Disclaimer", href: "/disclaimer" }, { label: "Data deletion", href: "/deactivate-account" }] },
         ],
       },
       stickyCta: { enabled: true, text: "The UrMedz app is here.", ctaLabel: "Download App Now", ctaHref: "#app" },

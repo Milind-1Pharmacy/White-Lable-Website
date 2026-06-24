@@ -100,9 +100,8 @@ export function useBuilderState() {
   const ZOOM_STEP = 0.1;
 
   // Measured iframe content heights (CSS px, unscaled) + the preview pane box size.
-  // Scale is derived from these so the visible frame(s) fit the pane width AND height.
-  const [deskH, setDeskH] = useState(0);
-  const [mobH, setMobH] = useState(0);
+  // The preview scales to PANE WIDTH only (it scrolls vertically), so the parent no
+  // longer tracks the measured frame heights — each BuilderPreview self-measures.
   const [paneW, setPaneW] = useState(0);
   const [paneH, setPaneH] = useState(0);
   const [sheetW, setSheetW] = useState(0);
@@ -228,26 +227,16 @@ export function useBuilderState() {
   // component is fully visible without scrolling. "all" stacks both frames; the
   // single-frame views fit that one frame. The user zoom factor multiplies on top.
   const previewScale = (() => {
-    const LABEL = 26; // per-frame device label row
-    const GAP = 22; // gap between stacked frames
     const availW = paneW - 40; // pane horizontal padding (20 each side)
     const availH = paneH - 40;
     if (availW <= 0 || availH <= 0) return 1;
-    let scale: number;
-    if (previewView === "desktop") {
-      const wLimit = availW / PREVIEW_BASE_WIDTH;
-      const hLimit = deskH > 0 ? (availH - LABEL) / deskH : wLimit;
-      scale = Math.min(wLimit, hLimit);
-    } else if (previewView === "mobile") {
-      const wLimit = availW / PREVIEW_MOBILE_WIDTH;
-      const hLimit = mobH > 0 ? (availH - LABEL) / mobH : wLimit;
-      scale = Math.min(wLimit, hLimit);
-    } else {
-      const wLimit = availW / Math.max(PREVIEW_BASE_WIDTH, PREVIEW_MOBILE_WIDTH);
-      const totalH = deskH + mobH;
-      const hLimit = totalH > 0 ? (availH - 2 * LABEL - GAP) / totalH : wLimit;
-      scale = Math.min(wLimit, hLimit);
-    }
+    // Fit to WIDTH only — the preview pane scrolls vertically (#wb-preview-scroll is
+    // overflow:auto), so the desktop width stays consistent regardless of how tall
+    // the page is. (Previously we also clamped to the measured height, which made a
+    // long page — e.g. a legal/Privacy page — uniformly shrink, distorting the
+    // apparent width. Tall content should scroll, not squish.)
+    const frameW = previewView === "mobile" ? PREVIEW_MOBILE_WIDTH : PREVIEW_BASE_WIDTH;
+    const scale = availW / frameW;
     return Math.max(0.05, scale) * zoomFactor;
   })();
 
@@ -774,7 +763,6 @@ export function useBuilderState() {
     legalSection, setLegalSection,
     previewScale, sheetScale,
     zoomFactor, setZoomFactor, zoomBy, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
-    setDeskH, setMobH,
   };
 }
 

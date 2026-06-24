@@ -4,7 +4,9 @@
    preview (app/(builder)/builder/LegalPreview.tsx) → preview = live. */
 
 .legal-page {
-  padding: 72px 0 96px;
+  /* Top padding clears the FIXED navbar (≈84px tall with the logo) so the eyebrow
+     and heading never sit under / overlap it. Extra breathing room below that. */
+  padding: clamp(120px, 14vw, 168px) 0 96px;
   background: var(--white);
 }
 
@@ -147,6 +149,7 @@ a.contact-value:hover {
     grid-template-columns: 1fr;
   }
   .legal-page {
-    padding: 48px 0 64px;
+    /* Still clear the fixed mobile navbar — only the bottom padding shrinks. */
+    padding: 104px 0 56px;
   }
 }
