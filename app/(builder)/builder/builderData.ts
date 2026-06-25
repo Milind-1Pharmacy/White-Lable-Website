@@ -299,6 +299,43 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
 }
 
 /**
+ * BLANK - A minimal but VALID empty draft, for the dev-only "Clear all data"
+ * action: every field is empty/default so you can build a site from scratch, but
+ * the shape is complete so nothing crashes (modules already render empty config as
+ * null). No sections, default theme, empty text.
+ * @returns An empty AppConfig draft + empty sections + a hero-only block order.
+ */
+export function BLANK(): {
+  config: AppConfig;
+  sections: DraftSection[];
+  blockOrder: string[];
+} {
+  const config: AppConfig = {
+    tenant: { name: "", category: "" },
+    branding: {
+      theme: "default",
+      colors: { primary: "#1F2937", secondary: "#F3F4F6", background: "#FFFFFF", text: "#111827", accent: "#2563EB", ink: "#0B1220" },
+    },
+    seo: { title: "", description: "", keywords: [] },
+    content: {
+      hero: { eyebrow: "", headline: "", headlineRich: { parts: [] }, tagline: "", cta: { label: "", type: "safe-action" }, slides: [] },
+      about: undefined,
+      services: [],
+      sections: [],
+    },
+    contact: { email: "", phone: "", address: "" },
+    features: { enableChat: false, enableForms: false, enablePayments: false, enableCart: false },
+    compliance: { mode: "business-profile-safe", disclaimer: "" },
+    layout: {
+      nav: { links: [], ctas: [] },
+      footer: { columns: [] },
+      stickyCta: { enabled: false, text: "", ctaLabel: "", ctaHref: "" },
+    },
+  };
+  return { config, sections: [], blockOrder: ["hero", "about", "services"] };
+}
+
+/**
  * INITIAL - Produce a complete, valid AppConfig draft to seed the builder,
  * themed as a pharmacy (mirrors the real urmedz/aarav content shapes).
  * @returns A fresh AppConfig (deep-cloned defaults) plus draft sections.

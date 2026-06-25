@@ -41,6 +41,8 @@ export const SPINNER_SM: React.CSSProperties = { width: 13, height: 13, border: 
 export const SPINNER_LG: React.CSSProperties = { width: 46, height: 46, border: "3px solid rgba(255,255,255,.25)", borderTopColor: "#fff", borderRadius: "50%", animation: "wb-spin .8s linear infinite" };
 export const BTN_OUTLINE: React.CSSProperties = { display: "flex", alignItems: "center", gap: 7, padding: "8px 13px", borderRadius: 10, border: "1px solid #E2E2E8", background: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#3F3F46" };
 export const BTN_PRIMARY: React.CSSProperties = { display: "flex", alignItems: "center", gap: 7, padding: "8px 16px", borderRadius: 10, border: "none", background: "#2E6ACF", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#fff", boxShadow: "0 2px 10px rgba(46,106,207,.32)" };
+/** Small dev-only header button (Fill mock data / Clear all) — dashed to signal it's a tool, not a user action. */
+export const DEV_BTN: React.CSSProperties = { display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: "1px dashed #E2E2E8", background: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600, color: "#52525B" };
 export const NAV: React.CSSProperties = { flex: "none", background: "#fff", borderRight: "1px solid #EAEAEE", display: "flex", flexDirection: "column", padding: "16px 12px", transition: "width .25s" };
 export const NAV_LABEL: React.CSSProperties = { fontFamily: "'JetBrains Mono',monospace", fontSize: 10, letterSpacing: ".14em", color: "#B4B4BE", padding: "4px 8px 12px" };
 export const STEP_INDEX: React.CSSProperties = { fontFamily: "'JetBrains Mono',monospace", fontSize: 11, letterSpacing: ".1em", color: "#2E6ACF", marginBottom: 9 };

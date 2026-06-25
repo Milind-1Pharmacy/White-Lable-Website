@@ -30,7 +30,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import type { AppConfig } from "@/types/config.types";
 import {
-  CORE, DEFAULTS, DONE, INITIAL, SECTION_ANCHORS, STEPS, TYPES,
+  BLANK, CORE, DEFAULTS, DONE, INITIAL, SECTION_ANCHORS, STEPS, TYPES,
   type BuilderSectionType, type DraftSection, type StepId, type LegalSectionId,
 } from "./builderData";
 import {
@@ -360,6 +360,30 @@ export function useBuilderState() {
     },
     [markDirty]
   );
+
+  /**
+   * Replace the entire draft (config + sections + block order) and jump to the
+   * first step. Used by the dev-only "Fill with mock data" / "Clear all data"
+   * buttons. The autosave effect persists the new draft to localStorage.
+   */
+  const loadDraftState = useCallback((draft: { config: AppConfig; sections: DraftSection[]; blockOrder: string[] }) => {
+    setConfig(draft.config);
+    setSections(draft.sections);
+    setBlockOrder(draft.blockOrder);
+    setSelectedSectionId("hero");
+    setEditingKey(null);
+    setStep("identity");
+    markDirty();
+  }, [markDirty]);
+
+  /** DEV ONLY — populate the draft with the full mock site (INITIAL seed). */
+  const fillMockData = useCallback(() => loadDraftState(INITIAL()), [loadDraftState]);
+
+  /** DEV ONLY — wipe to an empty-but-valid draft so you can build from scratch. */
+  const clearAllData = useCallback(() => {
+    if (typeof window !== "undefined" && !window.confirm("Clear all builder data and start from an empty site? This can't be undone.")) return;
+    loadDraftState(BLANK());
+  }, [loadDraftState]);
 
   /**
    * Commit a drag-reorder of the UNIFIED block list. `target` is a gap index into
@@ -745,6 +769,8 @@ export function useBuilderState() {
     doneCount, pct,
     // draft
     config, sections, slug,
+    // dev-only draft actions
+    fillMockData, clearAllData,
     // selection + overlays
     selectedSectionId, setSelectedSectionId,
     pickerOpen, setPickerOpen,
