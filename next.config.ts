@@ -1,19 +1,30 @@
 /**
  * @file next.config.ts
- * @description Next.js config for static export to S3/CloudFront.
+ * @description Next.js config with TWO build modes for two deploy targets:
+ *  - STATIC tenant sites (S3/CloudFront via CodeBuild): `output: "export"`.
+ *  - The BUILDER app (Vercel): a normal dynamic Next.js app (no static export),
+ *    so its API routes / uploads / publish flow keep working.
+ *  The mode is selected by the STATIC_EXPORT env var, which the tenant pipeline
+ *  (buildspec.yml) sets to "1". Vercel does NOT set it → dynamic builder build.
  * @responsibilities
- *  - Enable static HTML export output.
+ *  - Switch `output` between static export and a normal server build.
  *  - Disable image optimization for static hosting.
  *  - Allow remote image patterns and trailing-slash URLs.
  * @dependencies NextConfig type from next.
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
- * @lastUpdated 2026-05-26
+ * @lastUpdated 2026-06-25
  */
 import type { NextConfig } from "next";
 
+// Tenant-site builds (CodeBuild/S3) set STATIC_EXPORT=1. The builder on Vercel
+// leaves it unset and builds as a normal dynamic app.
+const STATIC_EXPORT = process.env.STATIC_EXPORT === "1";
+
 const nextConfig: NextConfig = {
-  output: "export",
+  // Static HTML export ONLY for the tenant-site pipeline; the builder needs a
+  // normal (server) build on Vercel, so leave `output` undefined there.
+  output: STATIC_EXPORT ? "export" : undefined,
   // Static export ships HTML to S3/CDN — Next's image optimizer needs
   // a Node runtime, so we disable it. Images are served as-is from /public.
   images: {
