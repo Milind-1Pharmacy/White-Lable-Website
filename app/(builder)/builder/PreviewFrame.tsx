@@ -16,7 +16,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { BrandingColors } from "@wl/config-types";
-import { bridgeVars } from "@/lib/themeBridge";
+import { bridgeVars } from "@wl/render-engine/lib/themeBridge";
 
 type PreviewFrameProps = {
   /** Canvas width the document lays out at (1040 desktop, 375 mobile). */

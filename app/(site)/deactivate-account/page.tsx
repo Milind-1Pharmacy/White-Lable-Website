@@ -12,10 +12,10 @@
  */
 import type { Metadata } from "next";
 
-import { getConfig } from "@/lib/getConfig";
-import { buildMetadata } from "@/lib/seoBuilder";
-import { SectionWrapper } from "@/components/common/SectionWrapper";
-import { LegalArticle } from "@/components/common/LegalArticle";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
+import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
+import { SectionWrapper } from "@wl/render-engine/components/common/SectionWrapper";
+import { LegalArticle } from "@wl/render-engine/components/common/LegalArticle";
 
 /**
  * generateMetadata - Builds SEO metadata for the Deactivate Account page.

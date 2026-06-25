@@ -14,8 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { Container } from "@/components/layout/Container";
-import { listConfigs } from "@/lib/getConfig";
+import { Container } from "@wl/render-engine/components/layout/Container";
+import { listConfigs } from "@wl/render-engine/lib/getConfig";
 
 export const metadata: Metadata = {
   title: "Tenant Preview — WhiteLabel Platform",

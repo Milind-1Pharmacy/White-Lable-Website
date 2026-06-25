@@ -8,8 +8,8 @@
  * @created 2026-06-24
  */
 import type { MetadataRoute } from "next";
-import { getConfig } from "@/lib/getConfig";
-import { resolveSiteUrl } from "@/lib/seoBuilder";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
+import { resolveSiteUrl } from "@wl/render-engine/lib/seoBuilder";
 
 export const dynamic = "force-static";
 

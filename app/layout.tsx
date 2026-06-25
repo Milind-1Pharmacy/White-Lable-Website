@@ -16,7 +16,7 @@
 import { Fraunces, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-import { MotionProvider } from "@/components/motion/MotionProvider";
+import { MotionProvider } from "@wl/render-engine/components/motion/MotionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

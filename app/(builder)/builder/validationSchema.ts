@@ -13,11 +13,11 @@
  *    item-level text-field→limit maps, and URL field rules.
  *  - URL_RULES: host/scheme patterns for store + video URLs.
  *  - validateDraft(): the one function the publish gate + completion meter call.
- * @dependencies @/lib/safeUrl, @wl/config-types
+ * @dependencies @wl/render-engine/lib/safeUrl, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-24
  */
-import { safeHref, safeSrc } from "@/lib/safeUrl";
+import { safeHref, safeSrc } from "@wl/render-engine/lib/safeUrl";
 import type { AppConfig } from "@wl/config-types";
 
 /* ────────────────────────────────────────────────────────────────────────────

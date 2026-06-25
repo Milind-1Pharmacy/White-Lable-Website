@@ -14,7 +14,7 @@
 import React, { useState, useEffect } from "react";
 import { PICKER_ORDER, TYPES, LEGAL_SECTIONS, type LegalSectionId } from "../builderData";
 import { PUBLISH_DOMAIN } from "../builderHelpers";
-import { isLegalNavMessage } from "@/lib/legalRoutes";
+import { isLegalNavMessage } from "@wl/render-engine/lib/legalRoutes";
 import {
   BTN_OUTLINE, CHECK_RING, CONFETTI, PICKER_BACK, PICKER_CLOSE, PICKER_POP, PICK_ITEM,
   PREVIEW_SHEET, PUBLISH_BTN_GHOST, PUBLISH_BTN_PRIMARY, PUBLISH_CARD, PUBLISH_OVERLAY,

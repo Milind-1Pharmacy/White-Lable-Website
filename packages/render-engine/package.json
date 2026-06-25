@@ -7,7 +7,9 @@
     ".": "./src/index.ts",
     "./modules/*": "./src/modules/*.tsx",
     "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*"
+    "./components/*": "./src/components/*.tsx",
+    "./components/ui/*": "./src/components/ui/*.tsx",
+    "./types/*": "./src/types/*.ts"
   },
   "dependencies": {
     "@wl/config-types": "*",

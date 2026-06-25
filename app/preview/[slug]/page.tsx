@@ -14,12 +14,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { Hero } from "@/modules/Hero";
-import { About } from "@/modules/About";
-import { Services } from "@/modules/Services";
-import { SectionRenderer } from "@/modules/SectionRenderer";
-import { getConfigBySlug, listConfigs } from "@/lib/getConfig";
-import { buildMetadata } from "@/lib/seoBuilder";
+import { Hero } from "@wl/render-engine/modules/Hero";
+import { About } from "@wl/render-engine/modules/About";
+import { Services } from "@wl/render-engine/modules/Services";
+import { SectionRenderer } from "@wl/render-engine/modules/SectionRenderer";
+import { getConfigBySlug, listConfigs } from "@wl/render-engine/lib/getConfig";
+import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
 
 type Params = { slug: string };
 

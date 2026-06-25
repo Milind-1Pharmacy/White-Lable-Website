@@ -16,7 +16,7 @@ import {
 } from "../builderStyles";
 import { icon } from "../icons";
 import { Hoverable } from "../components/Hoverable";
-import { safeSrc } from "@/lib/safeUrl";
+import { safeSrc } from "@wl/render-engine/lib/safeUrl";
 import type { BuilderApi } from "../useBuilderState";
 
 export function BuilderHeader({ api }: { api: BuilderApi }) {

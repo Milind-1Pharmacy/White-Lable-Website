@@ -10,12 +10,12 @@
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
  */
-import { getConfig } from "@/lib/getConfig";
-import { Hero } from "@/modules/Hero";
-import { About } from "@/modules/About";
-import { Services } from "@/modules/Services";
-import { SectionRenderer } from "@/modules/SectionRenderer";
-import { resolveRenderOrder, aboutHasContent } from "@/lib/renderOrder";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
+import { Hero } from "@wl/render-engine/modules/Hero";
+import { About } from "@wl/render-engine/modules/About";
+import { Services } from "@wl/render-engine/modules/Services";
+import { SectionRenderer } from "@wl/render-engine/modules/SectionRenderer";
+import { resolveRenderOrder, aboutHasContent } from "@wl/render-engine/lib/renderOrder";
 
 /**
  * HomePage - Renders the full landing page from config sections, in the order

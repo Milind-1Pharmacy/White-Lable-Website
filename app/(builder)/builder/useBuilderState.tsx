@@ -39,7 +39,7 @@ import {
 import type { Field } from "./builderTypes";
 import { PREVIEW_BASE_WIDTH, PREVIEW_MOBILE_WIDTH } from "./preview";
 import { publishTenant, getPublishStatus, type PublishPayload } from "@/lib/api/publish";
-import { isLegalNavMessage } from "@/lib/legalRoutes";
+import { isLegalNavMessage } from "@wl/render-engine/lib/legalRoutes";
 import { makeFieldBuilders } from "./fieldBuilders";
 import { DEFAULT_THEME } from "./themePresets";
 import { validateDraft, blockingIssues, type ValidationIssue } from "./validationSchema";

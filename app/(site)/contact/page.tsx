@@ -12,10 +12,10 @@
  */
 import type { Metadata } from "next";
 
-import { getConfig } from "@/lib/getConfig";
-import { buildMetadata } from "@/lib/seoBuilder";
-import { SectionWrapper } from "@/components/common/SectionWrapper";
-import { ContactDisplay } from "@/components/forms/ContactDisplay";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
+import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
+import { SectionWrapper } from "@wl/render-engine/components/common/SectionWrapper";
+import { ContactDisplay } from "@wl/render-engine/components/forms/ContactDisplay";
 
 /**
  * generateMetadata - Builds SEO metadata for the Contact page.

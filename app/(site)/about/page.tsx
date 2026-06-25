@@ -12,10 +12,10 @@
  */
 import type { Metadata } from "next";
 
-import { getConfig } from "@/lib/getConfig";
-import { buildMetadata } from "@/lib/seoBuilder";
-import { About } from "@/modules/About";
-import { SectionRenderer } from "@/modules/SectionRenderer";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
+import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
+import { About } from "@wl/render-engine/modules/About";
+import { SectionRenderer } from "@wl/render-engine/modules/SectionRenderer";
 
 /**
  * generateMetadata - Builds SEO metadata for the About page.

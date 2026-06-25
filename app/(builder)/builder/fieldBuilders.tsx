@@ -39,7 +39,7 @@ import {
   servicesTemplate,
   sectionTemplate,
 } from "./sectionTemplates";
-import { needsSpaceBetween, richHeadingToText } from "@/modules/RichHeading";
+import { needsSpaceBetween, richHeadingToText } from "@wl/render-engine/modules/RichHeading";
 import type { LegalPage } from "@wl/config-types";
 
 /** The "Let AI write it" button as a Field — fills a section with tailored template content. */

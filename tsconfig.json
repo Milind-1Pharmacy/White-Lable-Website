@@ -19,10 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@wl/config-types": ["./packages/config-types/src/index.ts"],
-      "@wl/render-engine": ["./packages/render-engine/src/index.ts"],
-      "@wl/render-engine/*": ["./packages/render-engine/src/*"]
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -35,6 +32,8 @@
   ],
   "exclude": [
     "node_modules",
+    "packages",
+    "apps",
     "vitest.config.ts",
     "vitest.setup.ts",
     "**/*.test.ts",

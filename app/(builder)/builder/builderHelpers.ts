@@ -15,7 +15,7 @@
 import type React from "react";
 import type { AppConfig, RichHeading } from "@wl/config-types";
 import type { DraftSection, StepId } from "./builderData";
-import { richHeadingToText } from "@/modules/RichHeading";
+import { richHeadingToText } from "@wl/render-engine/modules/RichHeading";
 
 /** Join a RichHeading's parts (or a plain string) into one display string, with
  *  the SAME smart spacing the heading renders with (so labels/SEO text match). */

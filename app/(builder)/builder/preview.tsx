@@ -6,7 +6,7 @@
  *  - Map the active step / selected section to the real modules/*.tsx component.
  *  - Render hero/about/services + SectionRenderer with the draft's data + branding.
  *  - Host them in PreviewFrame (iframe) and transform-scale to the requested size.
- * @dependencies react, @/modules/*, ./PreviewFrame, @wl/config-types
+ * @dependencies react, @wl/render-engine/modules/*, ./PreviewFrame, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-22
  * @lastUpdated 2026-06-23
@@ -15,14 +15,14 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import type { AppConfig, Branding, Section } from "@wl/config-types";
-import { Hero } from "@/modules/Hero";
-import { About } from "@/modules/About";
-import { Services } from "@/modules/Services";
-import { SectionRenderer } from "@/modules/SectionRenderer";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { StickyCta } from "@/components/layout/StickyCta";
-import { resolveRenderOrder } from "@/lib/renderOrder";
+import { Hero } from "@wl/render-engine/modules/Hero";
+import { About } from "@wl/render-engine/modules/About";
+import { Services } from "@wl/render-engine/modules/Services";
+import { SectionRenderer } from "@wl/render-engine/modules/SectionRenderer";
+import { Navbar } from "@wl/render-engine/components/layout/Navbar";
+import { Footer } from "@wl/render-engine/components/layout/Footer";
+import { StickyCta } from "@wl/render-engine/components/layout/StickyCta";
+import { resolveRenderOrder } from "@wl/render-engine/lib/renderOrder";
 import { PreviewFrame } from "./PreviewFrame";
 import type { DraftSection, StepId, LegalSectionId } from "./builderData";
 import { DEFAULT_THEME } from "./themePresets";

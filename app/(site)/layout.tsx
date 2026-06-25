@@ -12,13 +12,13 @@
  */
 import type { Metadata } from "next";
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { StickyCta } from "@/components/layout/StickyCta";
-import { StructuredData } from "@/components/common/SEO";
-import { getConfig } from "@/lib/getConfig";
-import { themeStyle } from "@/lib/themeLoader";
-import { buildMetadata } from "@/lib/seoBuilder";
+import { Navbar } from "@wl/render-engine/components/layout/Navbar";
+import { Footer } from "@wl/render-engine/components/layout/Footer";
+import { StickyCta } from "@wl/render-engine/components/layout/StickyCta";
+import { StructuredData } from "@wl/render-engine/components/common/SEO";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
+import { themeStyle } from "@wl/render-engine/lib/themeLoader";
+import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
 
 /**
  * generateMetadata - Builds default SEO metadata for the site.

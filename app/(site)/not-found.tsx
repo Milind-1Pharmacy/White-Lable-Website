@@ -12,10 +12,10 @@
  */
 import Link from "next/link";
 
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/layout/Container";
-import { cn } from "@/lib/utils";
-import { getConfig } from "@/lib/getConfig";
+import { buttonVariants } from "@wl/render-engine/components/ui/button";
+import { Container } from "@wl/render-engine/components/layout/Container";
+import { cn } from "@wl/render-engine/lib/utils";
+import { getConfig } from "@wl/render-engine/lib/getConfig";
 
 /**
  * NotFound - Shows the 404 page with config-driven text and CTA.

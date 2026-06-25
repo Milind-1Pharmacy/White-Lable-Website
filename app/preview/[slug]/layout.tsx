@@ -12,11 +12,11 @@
  */
 import { notFound } from "next/navigation";
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { StructuredData } from "@/components/common/SEO";
-import { getConfigBySlug } from "@/lib/getConfig";
-import { themeStyle } from "@/lib/themeLoader";
+import { Navbar } from "@wl/render-engine/components/layout/Navbar";
+import { Footer } from "@wl/render-engine/components/layout/Footer";
+import { StructuredData } from "@wl/render-engine/components/common/SEO";
+import { getConfigBySlug } from "@wl/render-engine/lib/getConfig";
+import { themeStyle } from "@wl/render-engine/lib/themeLoader";
 
 type Params = { slug: string };
 
