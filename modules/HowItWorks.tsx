@@ -12,7 +12,7 @@
  * @lastUpdated 2026-05-26
  */
 import Link from "next/link";
-import type { HowItWorksSectionData } from "@/types/config.types";
+import type { HowItWorksSectionData } from "@wl/config-types";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeHref } from "@/lib/safeUrl";

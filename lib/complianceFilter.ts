@@ -5,7 +5,7 @@
  *  - Rewrite unsafe CTA labels to safe fallbacks.
  *  - Force-disable banned features and filter sections by allowlist.
  *  - Guarantee a footer disclaimer on every page.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
@@ -15,7 +15,7 @@ import type {
   Section,
   SectionType,
   SystemConfig,
-} from "@/types/config.types";
+} from "@wl/config-types";
 
 /**
  * isUnsafeLabel - Checks if a CTA label matches the banned list.

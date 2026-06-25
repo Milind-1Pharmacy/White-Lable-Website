@@ -8,12 +8,12 @@
  * @responsibilities
  *  - LegalArticlePreview: render a LegalPage (intro + titled sections, p/list).
  *  - ContactPreview: render the support-only contact details grid.
- * @dependencies @/types/config.types (LegalPage / LegalBlock / Contact)
+ * @dependencies @wl/config-types (LegalPage / LegalBlock / Contact)
  * @author WhiteLabel Platform Team
  * @created 2026-06-24
  */
 import React from "react";
-import type { Contact, LegalBlock, LegalPage } from "@/types/config.types";
+import type { Contact, LegalBlock, LegalPage } from "@wl/config-types";
 
 /** Render one legal body block: a plain string / paragraph / ordered|unordered list. */
 function Block({ block }: { block: string | LegalBlock }) {

@@ -6,7 +6,7 @@
  *  - Portal real React module children into the iframe body (live data, full styling).
  *  - Auto-measure content height and report it so the parent can fit/scale the frame.
  *  - Keep all of the tenant CSS's global selectors out of the builder chrome.
- * @dependencies react, react-dom (createPortal), @/types/config.types
+ * @dependencies react, react-dom (createPortal), @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
  * @lastUpdated 2026-06-23
@@ -15,7 +15,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { BrandingColors } from "@/types/config.types";
+import type { BrandingColors } from "@wl/config-types";
 import { bridgeVars } from "@/lib/themeBridge";
 
 type PreviewFrameProps = {

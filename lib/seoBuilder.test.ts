@@ -6,7 +6,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { buildMetadata, resolveSiteUrl } from "./seoBuilder";
-import type { ResolvedConfig } from "@/types/config.types";
+import type { ResolvedConfig } from "@wl/config-types";
 
 /** Minimal ResolvedConfig fixture — only the fields seoBuilder reads. */
 function fixture(overrides: Record<string, unknown> = {}): ResolvedConfig {

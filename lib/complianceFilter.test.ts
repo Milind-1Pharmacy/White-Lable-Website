@@ -6,7 +6,7 @@
  */
 import { describe, it, expect } from "vitest";
 import { applyCompliance } from "./complianceFilter";
-import type { AppConfig, SystemConfig } from "@/types/config.types";
+import type { AppConfig, SystemConfig } from "@wl/config-types";
 
 const system = {
   sectionAllowlist: ["hero", "about", "services"],

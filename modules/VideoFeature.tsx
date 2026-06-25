@@ -14,7 +14,7 @@
  */
 
 import { useState } from "react";
-import type { VideoFeatureSectionData } from "@/types/config.types";
+import type { VideoFeatureSectionData } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeSrc } from "@/lib/safeUrl";
 

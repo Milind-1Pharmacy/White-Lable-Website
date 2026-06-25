@@ -14,7 +14,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { StickyCtaConfig } from "@/types/config.types";
+import type { StickyCtaConfig } from "@wl/config-types";
 import { safeHref } from "@/lib/safeUrl";
 
 type StickyCtaProps = {

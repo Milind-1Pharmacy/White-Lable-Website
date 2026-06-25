@@ -12,7 +12,7 @@
  * @lastUpdated 2026-05-26
  */
 import Image from "next/image";
-import type { AppStripSectionData, Branding } from "@/types/config.types";
+import type { AppStripSectionData, Branding } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeHref } from "@/lib/safeUrl";
 

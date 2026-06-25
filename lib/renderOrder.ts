@@ -6,11 +6,11 @@
  * @responsibilities
  *  - Turn `content.order` (tokens) + `content.sections[]` into a flat, ordered
  *    list of render blocks the page/preview can map straight to components.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
  */
-import type { Content, Section } from "@/types/config.types";
+import type { Content, Section } from "@wl/config-types";
 
 /** One resolved block to render, in final order. */
 export type RenderBlock =

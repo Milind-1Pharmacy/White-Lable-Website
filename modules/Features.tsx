@@ -16,7 +16,7 @@ import { useIsMobile } from "@/lib/useIsMobile";
 import type {
   FeatureItem,
   FeaturesSectionData,
-} from "@/types/config.types";
+} from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 

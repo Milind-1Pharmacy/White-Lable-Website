@@ -13,12 +13,12 @@
  *    item-level text-field→limit maps, and URL field rules.
  *  - URL_RULES: host/scheme patterns for store + video URLs.
  *  - validateDraft(): the one function the publish gate + completion meter call.
- * @dependencies @/lib/safeUrl, @/types/config.types
+ * @dependencies @/lib/safeUrl, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-24
  */
 import { safeHref, safeSrc } from "@/lib/safeUrl";
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig } from "@wl/config-types";
 
 /* ────────────────────────────────────────────────────────────────────────────
  * 1. TEXT CHARACTER LIMITS — one entry per logical field type.

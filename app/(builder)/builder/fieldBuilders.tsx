@@ -10,14 +10,14 @@
  *  - buildSectionDetailFields(sec) — fields for a dynamic section.
  *  - ensure-helpers, richField, sectionHeadingField, renderRichInline.
  * @dependencies react, ./builderData, ./builderHelpers, ./builderStyles,
- *  ./builderTypes, @/types/config.types
+ *  ./builderTypes, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
  */
 "use client";
 
 import React from "react";
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig } from "@wl/config-types";
 import { SECTION_ANCHORS, type DraftSection, type StepId, type LegalSectionId } from "./builderData";
 import { clone } from "./builderHelpers";
 import { brStyle, switchStyles } from "./builderStyles";
@@ -40,7 +40,7 @@ import {
   sectionTemplate,
 } from "./sectionTemplates";
 import { needsSpaceBetween, richHeadingToText } from "@/modules/RichHeading";
-import type { LegalPage } from "@/types/config.types";
+import type { LegalPage } from "@wl/config-types";
 
 /** The "Let AI write it" button as a Field — fills a section with tailored template content. */
 function aiFillField(onFill: () => void): Field {

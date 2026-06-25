@@ -6,7 +6,7 @@
  *  - Map the active step / selected section to the real modules/*.tsx component.
  *  - Render hero/about/services + SectionRenderer with the draft's data + branding.
  *  - Host them in PreviewFrame (iframe) and transform-scale to the requested size.
- * @dependencies react, @/modules/*, ./PreviewFrame, @/types/config.types
+ * @dependencies react, @/modules/*, ./PreviewFrame, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-22
  * @lastUpdated 2026-06-23
@@ -14,7 +14,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import type { AppConfig, Branding, Section } from "@/types/config.types";
+import type { AppConfig, Branding, Section } from "@wl/config-types";
 import { Hero } from "@/modules/Hero";
 import { About } from "@/modules/About";
 import { Services } from "@/modules/Services";

@@ -20,7 +20,7 @@
  */
 
 import { useState } from "react";
-import type { AIStoreSectionData, AIStoreTile } from "@/types/config.types";
+import type { AIStoreSectionData, AIStoreTile } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeSrc } from "@/lib/safeUrl";
 import { MobileCarousel } from "@/components/common/MobileCarousel";

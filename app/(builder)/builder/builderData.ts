@@ -5,12 +5,12 @@
  *  - Define the wizard STEPS and section TYPES metadata (the types our live sites use).
  *  - Provide DEFAULTS(type) returning valid section `data`, seeded with pharmacy copy.
  *  - Provide INITIAL() returning a complete, valid AppConfig draft to seed the builder.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-22
  * @lastUpdated 2026-06-23
  */
-import type { AppConfig, Section, SectionType } from "@/types/config.types";
+import type { AppConfig, Section, SectionType } from "@wl/config-types";
 import {
   legalInfoFromConfig,
   privacyPolicyTemplate,

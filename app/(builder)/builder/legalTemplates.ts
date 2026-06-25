@@ -14,11 +14,11 @@
  *  - legalInfoFromConfig(config) — pull {tenantName,email,phone,address,site} out.
  *  - privacyPolicyTemplate / termsTemplate / disclaimerTemplate /
  *    dataDeletionTemplate — build a LegalPage each.
- * @dependencies @/types/config.types (LegalPage / LegalSection)
+ * @dependencies @wl/config-types (LegalPage / LegalSection)
  * @author WhiteLabel Platform Team
  * @created 2026-06-24
  */
-import type { AppConfig, LegalPage, LegalSection } from "@/types/config.types";
+import type { AppConfig, LegalPage, LegalSection } from "@wl/config-types";
 
 /** The minimal business facts the templates interpolate into the boilerplate. */
 export type LegalInfo = {

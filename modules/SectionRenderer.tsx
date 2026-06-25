@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 import { Features } from "@/modules/Features";
 import { HowItWorks } from "@/modules/HowItWorks";
 import { Gallery } from "@/modules/Gallery";
-import type { Branding, Section } from "@/types/config.types";
+import type { Branding, Section } from "@wl/config-types";
 
 // Lazy-load below-the-fold client modules
 const Stats = dynamic(() =>

@@ -6,14 +6,14 @@
  *  - Build Open Graph and Twitter card metadata (incl. canonical url).
  *  - Resolve the canonical site URL (tenant siteUrl → env → localhost).
  *  - Emit an explicit robots directive (index/follow) for crawlers.
- * @dependencies next Metadata, @/types/config.types
+ * @dependencies next Metadata, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
  * @lastUpdated 2026-06-24
  */
 import type { Metadata } from "next";
 
-import type { ResolvedConfig, AppConfig } from "@/types/config.types";
+import type { ResolvedConfig, AppConfig } from "@wl/config-types";
 import { safeSrc } from "@/lib/safeUrl";
 
 const envSiteUrl =

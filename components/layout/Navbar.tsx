@@ -15,7 +15,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { AppConfig, NavCta } from "@/types/config.types";
+import type { AppConfig, NavCta } from "@wl/config-types";
 import { safeHref, safeSrc } from "@/lib/safeUrl";
 import { postLegalNav, legalSectionForHref } from "@/lib/legalRoutes";
 

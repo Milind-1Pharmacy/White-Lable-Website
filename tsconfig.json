@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@wl/config-types": ["./packages/config-types/src/index.ts"],
+      "@wl/render-engine": ["./packages/render-engine/src/index.ts"],
+      "@wl/render-engine/*": ["./packages/render-engine/src/*"]
     }
   },
   "include": [

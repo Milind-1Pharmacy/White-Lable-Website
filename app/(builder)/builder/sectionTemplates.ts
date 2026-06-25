@@ -11,11 +11,11 @@
  *
  *  ► SWAP-POINT: each generator below is the single place a real LLM call would
  *    replace the static return — same signature, same output shape.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-25
  */
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig } from "@wl/config-types";
 
 /** Business facts the templates interpolate. */
 export type TemplateInfo = {

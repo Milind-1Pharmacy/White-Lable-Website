@@ -12,7 +12,7 @@
  * @lastUpdated 2026-05-26
  */
 import { useState } from "react";
-import type { CategoriesSectionData } from "@/types/config.types";
+import type { CategoriesSectionData } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeSrc } from "@/lib/safeUrl";
 import { useIsMobile } from "@/lib/useIsMobile";

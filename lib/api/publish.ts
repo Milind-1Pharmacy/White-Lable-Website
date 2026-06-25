@@ -13,7 +13,7 @@
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
  */
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig } from "@wl/config-types";
 import { getURL } from "./endpoints";
 
 /** The exact body the builder POSTs on Publish — the publishable "flavor". */

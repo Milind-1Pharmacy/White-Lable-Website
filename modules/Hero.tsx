@@ -15,7 +15,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { HeroContent, HeroSlide } from "@/types/config.types";
+import type { HeroContent, HeroSlide } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeHref, safeSrc } from "@/lib/safeUrl";
 import { safeColor } from "@/lib/themeBridge";

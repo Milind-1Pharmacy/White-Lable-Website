@@ -13,7 +13,7 @@
  * @lastUpdated 2026-05-26
  */
 
-import type { ServiceItem, ServicesMeta } from "@/types/config.types";
+import type { ServiceItem, ServicesMeta } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 import { safeHref, safeSrc } from "@/lib/safeUrl";

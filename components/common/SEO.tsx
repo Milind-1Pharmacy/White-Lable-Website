@@ -10,7 +10,7 @@
  * @created 2026-05-26
  * @lastUpdated 2026-06-24
  */
-import type { ResolvedConfig } from "@/types/config.types";
+import type { ResolvedConfig } from "@wl/config-types";
 import { resolveSiteUrl } from "@/lib/seoBuilder";
 import { safeSrc } from "@/lib/safeUrl";
 

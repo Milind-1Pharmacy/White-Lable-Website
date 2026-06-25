@@ -6,11 +6,11 @@
  *  fields; the user can then override any one by typing a hex. Each preset's `name`
  *  also selects the matching token file the published site loads
  *  (public/site-css/themes/<name>.tokens.css) as the default-colour baseline.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-24
  */
-import type { BrandingColors } from "@/types/config.types";
+import type { BrandingColors } from "@wl/config-types";
 
 /** A selectable colour theme: a display label + the six brand colours it sets. */
 export type ThemePreset = {

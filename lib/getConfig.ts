@@ -15,7 +15,7 @@ import { cache } from "react";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import type { AppConfig, ResolvedConfig, SystemConfig } from "@/types/config.types";
+import type { AppConfig, ResolvedConfig, SystemConfig } from "@wl/config-types";
 import { applyCompliance } from "@/lib/complianceFilter";
 
 const CONFIG_DIR = path.join(process.cwd(), "configs");

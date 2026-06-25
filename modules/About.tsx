@@ -11,7 +11,7 @@
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
  */
-import type { AboutContent } from "@/types/config.types";
+import type { AboutContent } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 import { safeColor } from "@/lib/themeBridge";

@@ -18,7 +18,7 @@ import type {
   Branding,
   TeamDepartment,
   TeamSectionData,
-} from "@/types/config.types";
+} from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 import { safeColor } from "@/lib/themeBridge";

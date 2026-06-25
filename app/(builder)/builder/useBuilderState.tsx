@@ -10,7 +10,7 @@
  *  - Derive preview scale, section cards, and the active-surface field list.
  *  - Expose mutations (add/dup/remove/reorder sections, setCfg, item edits).
  * @dependencies react, gsap, ./builderData, ./builderHelpers, ./builderStyles,
- *  ./builderTypes, ./preview, @/types/config.types
+ *  ./builderTypes, ./preview, @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
  */
@@ -28,7 +28,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig } from "@wl/config-types";
 import {
   BLANK, CORE, DEFAULTS, DONE, INITIAL, SECTION_ANCHORS, STEPS, TYPES,
   type BuilderSectionType, type DraftSection, type StepId, type LegalSectionId,

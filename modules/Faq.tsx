@@ -15,7 +15,7 @@
  */
 import { useState } from "react";
 import Link from "next/link";
-import type { FaqSectionData } from "@/types/config.types";
+import type { FaqSectionData } from "@wl/config-types";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeHref } from "@/lib/safeUrl";

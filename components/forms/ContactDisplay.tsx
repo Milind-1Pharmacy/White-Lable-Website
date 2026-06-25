@@ -11,7 +11,7 @@
  * @lastUpdated 2026-05-26
  */
 import { Card, CardContent } from "@/components/ui/card";
-import type { Contact } from "@/types/config.types";
+import type { Contact } from "@wl/config-types";
 
 type ContactDisplayProps = {
   contact: Contact;

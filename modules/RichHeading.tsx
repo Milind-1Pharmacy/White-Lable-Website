@@ -17,7 +17,7 @@
  */
 
 import { Fragment } from "react";
-import type { RichHeading as RichHeadingT } from "@/types/config.types";
+import type { RichHeading as RichHeadingT } from "@wl/config-types";
 
 type Props = {
   value?: RichHeadingT;

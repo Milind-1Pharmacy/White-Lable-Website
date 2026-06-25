@@ -10,7 +10,7 @@
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
  */
-import type { LegalBlock, LegalPage } from "@/types/config.types";
+import type { LegalBlock, LegalPage } from "@wl/config-types";
 import { safeSrc } from "@/lib/safeUrl";
 
 type Props = {

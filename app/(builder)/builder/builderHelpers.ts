@@ -8,12 +8,12 @@
  *  - DRAFT_KEY + loadDraft/saveDraft (SSR-guarded localStorage persistence).
  *  - genId, PRODUCT_NAME, PUBLISH_DOMAIN, CTA_VARIANTS, ctaPreviewStyle.
  *  - stepTitle / stepSub copy.
- * @dependencies react (CSSProperties type), @/types/config.types, ./builderData
+ * @dependencies react (CSSProperties type), @wl/config-types, ./builderData
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
  */
 import type React from "react";
-import type { AppConfig, RichHeading } from "@/types/config.types";
+import type { AppConfig, RichHeading } from "@wl/config-types";
 import type { DraftSection, StepId } from "./builderData";
 import { richHeadingToText } from "@/modules/RichHeading";
 

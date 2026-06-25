@@ -15,7 +15,7 @@
  * @created 2026-05-26
  * @lastUpdated 2026-06-24
  */
-import type { GalleryImage, GallerySectionData } from "@/types/config.types";
+import type { GalleryImage, GallerySectionData } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeSrc } from "@/lib/safeUrl";
 import { MobileCarousel } from "@/components/common/MobileCarousel";

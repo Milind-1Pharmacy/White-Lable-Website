@@ -16,7 +16,7 @@
  */
 import Image from "next/image";
 import Link from "next/link";
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig } from "@wl/config-types";
 import { safeHref, safeSrc } from "@/lib/safeUrl";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { postLegalNav, legalSectionForHref } from "@/lib/legalRoutes";

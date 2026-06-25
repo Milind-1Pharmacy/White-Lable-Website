@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import type { SavingsSectionData } from "@/types/config.types";
+import type { SavingsSectionData } from "@wl/config-types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeSrc } from "@/lib/safeUrl";
 import { safeColor } from "@/lib/themeBridge";

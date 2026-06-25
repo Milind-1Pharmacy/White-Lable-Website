@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import type { StatsSectionData } from "@/types/config.types";
+import type { StatsSectionData } from "@wl/config-types";
 
 /**
  * useReveal - Reports when its element first scrolls into view.

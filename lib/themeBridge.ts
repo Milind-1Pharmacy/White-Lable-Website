@@ -13,11 +13,11 @@
  *  - hexToRgba: derive the muted/line translucent colours from the text colour.
  *  - bridgeVars: produce the { cssVarName: value } map from the six brand colours.
  *  - bridgeCss: serialise that map into a `:root{…}` string for an injected <style>.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-06-24
  */
-import type { BrandingColors } from "@/types/config.types";
+import type { BrandingColors } from "@wl/config-types";
 
 /**
  * Validate a colour string before it reaches an injected <style>. Only hex

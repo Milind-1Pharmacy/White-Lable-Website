@@ -4,12 +4,12 @@
  * @responsibilities
  *  - Merge tenant colors with system fallbacks.
  *  - Emit brand CSS variable strings and React style objects.
- * @dependencies @/types/config.types
+ * @dependencies @wl/config-types
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
  */
-import type { BrandingColors, ResolvedConfig } from "@/types/config.types";
+import type { BrandingColors, ResolvedConfig } from "@wl/config-types";
 import { bridgeVars } from "@/lib/themeBridge";
 
 /**
