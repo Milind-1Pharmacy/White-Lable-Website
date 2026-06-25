@@ -43,15 +43,12 @@ phases:
         else
           echo "Using the source CodeBuild already checked out (sourceVersion / project default)."
         fi
-      # Clean-slate install. Wipe node_modules (root + every workspace) FIRST so a
-      # stale/poisoned CodeBuild cache can never shadow the install — the recurring
-      # "Cannot find module @tailwindcss/postcss" failures came from a restored cache
-      # missing a dep. A fresh `npm ci` then installs the whole workspace exactly to
-      # the lockfile. (Slightly slower than a warm cache, but deterministic.)
-      - rm -rf node_modules apps/*/node_modules packages/*/node_modules
-      # apps/site needs build-time tooling at runtime (@tailwindcss/postcss +
-      # tailwindcss for CSS; typescript + @types/* for the build type-check) — those
-      # live in apps/site `dependencies` so the build survives even `--omit=dev`.
+      # Workspace install. apps/site needs build-time tooling at runtime
+      # (@tailwindcss/postcss + tailwindcss for CSS; typescript + @types/* for the
+      # build type-check) — those live in apps/site `dependencies` so the build
+      # survives even `--omit=dev`. `npm ci` prunes node_modules to the lockfile, so
+      # the cache stays warm across builds. (If a poisoned cache ever resurfaces, the
+      # guard below fails fast — clear the CodeBuild cache once to recover.)
       - npm ci
       # Fail FAST if the critical CSS build dep is missing (e.g. a poisoned cache),
       # instead of an opaque Turbopack/PostCSS crash later. Block scalar so YAML
