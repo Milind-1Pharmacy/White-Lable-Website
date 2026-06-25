@@ -35,10 +35,19 @@ zero builder) for tenant S3 deploys via `buildspec.yml`; `npm run build:builder`
 (dynamic) for Vercel. The `promote-site-root.mjs` workaround is **deleted** — the
 site owns `/` natively. `scripts/prune-tenant-assets.mjs` now targets `apps/site/out`.
 
+**Vercel (monorepo):** the project **Root Directory** must point at the app you're
+deploying — **`apps/builder`** for the builder, **`apps/site`** (+ `TENANT=<slug>`
+env) for a tenant demo site — and **"Include files outside the root directory in the
+Build Step" must be ON** (apps import `@wl/*` from `packages/`). A stale project on
+the old `app/(builder)` path fails with "Root Directory does not exist". The
+`NEXT_PUBLIC_API_ENV` env key is **`atest`** (no hyphen). Full steps:
+`docs/vercel-deployment.md`.
+
 The architectural sections below still describe behavior accurately (config flow,
 compliance, animation, security), but **translate any `app/(site)`, `app/(builder)`,
 `modules/`, `lib/`, `types/` path to its new home above.** New docs:
-`docs/monorepo-layout.md`.
+`docs/monorepo-layout.md`, `docs/vercel-deployment.md`,
+`docs/monorepo-migration-handoff.md`.
 
 ## Project
 
