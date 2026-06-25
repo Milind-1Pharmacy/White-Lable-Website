@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:urmedz": "TENANT=urmedz next build",
+    "sync:urmedz": "aws s3 sync out/ s3://www.urmedz.in/ --delete --profile urmedz",
+    "deploy:urmedz": "npm run build:urmedz && npm run sync:urmedz"
   },
   "dependencies": {
     "@wl/config-types": "*",

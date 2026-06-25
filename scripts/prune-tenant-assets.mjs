@@ -24,8 +24,13 @@
 import { readdirSync, readFileSync, rmSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-const OUT = "out";
-const PUBLIC = "public";
+// Base dir of the SITE app (its out/, public/, configs/ live here). Defaults to
+// the monorepo's apps/site; override with the 2nd CLI arg or SITE_DIR env if the
+// layout changes. The build runs from the repo root, so paths are relative to it.
+const SITE_DIR = process.argv[3] || process.env.SITE_DIR || "apps/site";
+const OUT = join(SITE_DIR, "out");
+const PUBLIC = join(SITE_DIR, "public");
+const CONFIGS = join(SITE_DIR, "configs");
 // Shared dirs in public/ that are NOT per-tenant assets — never prune candidates.
 const SHARED_PUBLIC_DIRS = new Set(["site-css"]);
 
@@ -45,7 +50,7 @@ function candidateFolders() {
  * candidate folders — so a config that points at "/urmedz/hero.png" keeps urmedz/.
  */
 function referencedFolders(candidates) {
-  const path = join("configs", `${tenant}.json`);
+  const path = join(CONFIGS, `${tenant}.json`);
   if (!tenant || !existsSync(path)) return new Set(); // no config → keep nothing extra
   const raw = readFileSync(path, "utf8");
   const found = new Set();

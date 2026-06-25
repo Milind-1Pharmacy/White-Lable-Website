@@ -2,6 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ Monorepo layout (read first — paths below this section may be pre-split)
+
+This repo is an **npm-workspaces monorepo**. The old single-app layout (`app/(site)`,
+`app/(builder)`, root `modules/`, `lib/`, `types/`) was split into:
+
+```
+packages/config-types   → @wl/config-types   — the AppConfig/SystemConfig types
+packages/render-engine   → @wl/render-engine   — SHARED: modules/*, components/*,
+                            and shared lib/* (getConfig, complianceFilter, themeBridge,
+                            themeLoader, renderOrder, legalRoutes, safeUrl, seoBuilder,
+                            motion, utils, useIsMobile) + types/ui.types
+apps/site                → @wl/site   — the PUBLIC render engine. STATIC export
+                            (output:'export' ALWAYS, no STATIC_EXPORT flag). The
+                            homepage is apps/site/app/page.tsx → served at "/"
+                            (there is NO /site route anymore). Owns configs/, public/,
+                            proxy.ts. /preview lives here (it reads configs).
+apps/builder             → @wl/builder   — the authoring UI. DYNAMIC app → Vercel.
+                            Owns "/", lib/api/* (publish/upload). Imports
+                            @wl/render-engine for the live preview iframe.
+```
+
+**Import rules:** apps import shared code as `@wl/render-engine/<subpath>` (e.g.
+`@wl/render-engine/modules/Hero`, `@wl/render-engine/lib/getConfig`,
+`@wl/render-engine/components/layout/Navbar`) and types as `@wl/config-types`.
+Inside `packages/render-engine`, files **self-reference** via `@wl/render-engine/*`
+(not `@/`) so they resolve identically in tsc, vitest, and Next. Each app keeps
+`@/*` → its own root (e.g. the builder's `@/lib/api/publish`).
+
+**Build/deploy:** `npm run build:site` (static → `apps/site/out`, the site at `/`,
+zero builder) for tenant S3 deploys via `buildspec.yml`; `npm run build:builder`
+(dynamic) for Vercel. The `promote-site-root.mjs` workaround is **deleted** — the
+site owns `/` natively. `scripts/prune-tenant-assets.mjs` now targets `apps/site/out`.
+
+The architectural sections below still describe behavior accurately (config flow,
+compliance, animation, security), but **translate any `app/(site)`, `app/(builder)`,
+`modules/`, `lib/`, `types/` path to its new home above.** New docs:
+`docs/monorepo-layout.md`.
+
 ## Project
 
 A **config-driven Next.js (App Router) platform** that generates compliant, SEO-friendly business profile websites from a single JSON file. The same component code serves every tenant — only `configs/app_master.json` changes. The platform is single-tenant today and upgradeable to multi-tenant.

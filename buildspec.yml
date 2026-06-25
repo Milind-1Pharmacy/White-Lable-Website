@@ -1,9 +1,14 @@
-# buildspec.yml — AWS CodeBuild recipe for building ONE tenant's site.
+# buildspec.yml — AWS CodeBuild recipe for building ONE tenant's SITE.
 #
-# Backend-oriented: the backend writes the tenant's AppConfig to a small S3 object,
-# then calls codebuild.start_build with the slug + bucket. CodeBuild runs:
-#   1. install deps (cached)   2. pull config from S3 + provision the site bucket
-#   3. STATIC_EXPORT build → ./out   4. sync ./out to the site bucket + invalidate CF
+# Monorepo layout: this repo is npm workspaces — apps/site (the static render
+# engine, built here) + apps/builder (the authoring UI, deployed separately to
+# Vercel) + packages/* (shared render engine + types). CodeBuild builds ONLY
+# apps/site; the builder is a different app and never ships to a tenant bucket.
+#
+# Flow: the backend writes the tenant's AppConfig to a small S3 object, then calls
+# codebuild.start_build with the slug + bucket. CodeBuild runs:
+#   1. install deps (root npm ci — workspaces)   2. pull config + provision bucket
+#   3. build apps/site (static export → apps/site/out)   4. prune + sync + invalidate
 #
 # Env vars the backend passes via environmentVariablesOverride on start_build:
 #   TENANT         tenant slug (e.g. "urmedz") — the build target + config filename
@@ -38,18 +43,17 @@ phases:
         else
           echo "Using the source CodeBuild already checked out (sourceVersion / project default)."
         fi
-      # Full install. NOTE: `next build` needs build-time tooling at runtime —
-      # @tailwindcss/postcss + tailwindcss (CSS) and typescript + @types/* (the
-      # build type-checks). Those now live in `dependencies` (not devDependencies)
-      # so the build survives even an `npm ci --omit=dev`, and `npm ci` prunes the
-      # cached node_modules to match the lockfile — so the cache stays warm across
-      # builds (no forced cold install). The guard below catches any bad state.
+      # Root install for the whole workspace. apps/site needs build-time tooling at
+      # runtime (@tailwindcss/postcss + tailwindcss for CSS; typescript + @types/*
+      # for the build type-check) — those live in apps/site `dependencies` so the
+      # build survives even `npm ci --omit=dev`. `npm ci` prunes to the lockfile, so
+      # the cache stays warm across builds.
       - npm ci
-      # Fail FAST with a clear message if the critical build dep is still missing,
-      # instead of letting it surface later as an opaque Turbopack/PostCSS error.
-      # Block scalar (|) so YAML doesn't try to parse the embedded quotes.
+      # Fail FAST if the critical CSS build dep is missing (e.g. a poisoned cache),
+      # instead of an opaque Turbopack/PostCSS crash later. Block scalar so YAML
+      # doesn't try to parse the embedded quotes.
       - |
-        if [ -d node_modules/@tailwindcss/postcss ]; then
+        if [ -d node_modules/@tailwindcss/postcss ] || [ -d apps/site/node_modules/@tailwindcss/postcss ]; then
           echo "OK: @tailwindcss/postcss present"
         else
           echo "FATAL: @tailwindcss/postcss missing after npm ci — clear the CodeBuild cache and retry" >&2
@@ -58,8 +62,9 @@ phases:
 
   pre_build:
     commands:
-      # Download this tenant's config from S3 into the configs folder.
-      - aws s3 cp "$CONFIG_S3_URI" "configs/$TENANT.json"
+      # Download this tenant's config into the SITE app's configs folder (getConfig
+      # reads configs/ relative to the app's cwd at build time).
+      - aws s3 cp "$CONFIG_S3_URI" "apps/site/configs/$TENANT.json"
       # Self-provision the tenant's PUBLIC site bucket on first publish so a brand-new
       # tenant deploys with no manual AWS setup. All three are idempotent (re-publishing
       # an existing tenant is a no-op): create the bucket (|| true swallows
@@ -74,21 +79,21 @@ phases:
 
   build:
     commands:
-      # Build ONLY this tenant as a STATIC export. STATIC_EXPORT=1 flips
-      # next.config.ts into `output: "export"` (the builder on Vercel leaves it
-      # unset and builds dynamically). TENANT selects configs/$TENANT.json
-      # (lib/getConfig.ts); the static site is emitted to ./out.
-      - STATIC_EXPORT=1 TENANT="$TENANT" npm run build
-      # Next copies ALL of public/ into out/, so the export carries EVERY tenant's
-      # image folder (public/<project>/). Prune the foreign ones — keep only the
-      # folders this tenant's config references — so the bucket ships just this
+      # Build ONLY the SITE app for this tenant. apps/site is always a static export
+      # (output:'export'), so the site is emitted to apps/site/out — no STATIC_EXPORT
+      # flag, no /site promotion, no builder anywhere. TENANT selects the config.
+      - TENANT="$TENANT" npm run build:site
+      # Next copies ALL of apps/site/public into out/, so the export carries EVERY
+      # tenant's image folder (public/<project>/). Prune the foreign ones — keep only
+      # the folders this tenant's config references — so the bucket ships just this
       # tenant's assets (no cross-tenant leak, much smaller sync).
       - node scripts/prune-tenant-assets.mjs "$TENANT"
 
   post_build:
     commands:
-      # Upload the built site to the tenant's S3 bucket.
-      - aws s3 sync out/ "s3://$BUCKET" --delete
+      # Upload the built SITE to the tenant's S3 bucket. The site is at the root of
+      # out/ (index.html is the homepage) — no post-processing needed.
+      - aws s3 sync apps/site/out/ "s3://$BUCKET" --delete
       # Invalidate CloudFront if a distribution id was provided.
       - |
         if [ -n "${DISTRIBUTION:-}" ]; then
@@ -98,3 +103,4 @@ phases:
 cache:
   paths:
     - 'node_modules/**/*'
+    - 'apps/site/node_modules/**/*'
