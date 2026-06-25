@@ -1,30 +1,30 @@
 # buildspec.yml — AWS CodeBuild recipe for building ONE tenant's SITE.
 #
-# Monorepo layout: this repo is npm workspaces — apps/site (the static render
-# engine, built here) + apps/builder (the authoring UI, deployed separately to
-# Vercel) + packages/* (shared render engine + types). CodeBuild builds ONLY
-# apps/site; the builder is a different app and never ships to a tenant bucket.
+# FILE LOCATION: stays at the repo root (CodeBuild's "Use a buildspec file" points
+# here — the backend does NOT change that). The COMMANDS inside target apps/site
+# because this is now an npm-workspaces monorepo: apps/site (the static render
+# engine, built here) + apps/builder (the authoring UI, deployed to Vercel) +
+# packages/* (shared render engine + types). CodeBuild builds ONLY apps/site; the
+# builder is a different app and never ships to a tenant bucket.
 #
 # Flow: the backend writes the tenant's AppConfig to a small S3 object, then calls
 # codebuild.start_build with the slug + bucket. CodeBuild runs:
-#   1. install deps (root npm ci — workspaces)   2. pull config + provision bucket
-#   3. build apps/site (static export → apps/site/out)   4. prune + sync + invalidate
+#   1. install deps (root npm ci — workspaces)
+#   2. pull config + provision the bucket + ensure a CloudFront distribution
+#   3. build apps/site (static export → apps/site/out)
+#   4. prune foreign tenant assets + sync + invalidate CloudFront
 #
 # Env vars the backend passes via environmentVariablesOverride on start_build:
 #   TENANT         tenant slug (e.g. "urmedz") — the build target + config filename
 #   CONFIG_S3_URI  s3://<configs-bucket>/<slug>.json — where the backend wrote the AppConfig
 #   BUCKET         the tenant's S3 SITE bucket (e.g. "urmedz.1pharmacy.io")
 #   AWS_REGION     bucket region for create-bucket (defaults to ap-south-1 below)
-#   DISTRIBUTION   optional — CloudFront distribution id to invalidate (may be empty)
+#   DISTRIBUTION   optional — a CloudFront distribution id to invalidate. If empty,
+#                  pre_build ensures one exists (created once, then reused per tenant).
 #   BRANCH         optional — only used by the install-phase fallback below; defaults to main
 #
 # WHY S3, not an env var: a full AppConfig easily exceeds CodeBuild's start_build /
 # env-var size limits, so the config travels via S3 and only small scalars are env vars.
-#
-# Which branch is built:
-#   PREFERRED — pass `sourceVersion` to start_build ("main" / a branch / a commit SHA);
-#   CodeBuild checks it out before this file runs. The BRANCH env var below is only a
-#   fallback for workflows that do NOT set sourceVersion (no-op when BRANCH is unset).
 
 version: 0.2
 
@@ -65,17 +65,94 @@ phases:
       # Download this tenant's config into the SITE app's configs folder (getConfig
       # reads configs/ relative to the app's cwd at build time).
       - aws s3 cp "$CONFIG_S3_URI" "apps/site/configs/$TENANT.json"
-      # Self-provision the tenant's PUBLIC site bucket on first publish so a brand-new
-      # tenant deploys with no manual AWS setup. All three are idempotent (re-publishing
-      # an existing tenant is a no-op): create the bucket (|| true swallows
-      # "already owned by you"), drop the block-public-access guards, then attach a
-      # read-only public-object policy so the static site is served straight from S3.
-      # NOTE: only needed when the bucket is served via the S3 *website* endpoint. If a
-      # tenant is fronted by CloudFront + OAC, the bucket should stay PRIVATE and these
-      # three commands should be skipped for it (see docs/deploy-security-headers.md).
+      # Self-provision the tenant's S3 site bucket (idempotent). Public-read so it can
+      # also serve directly; CloudFront (below) is the primary, HTTPS-capable origin.
       - aws s3api create-bucket --bucket "$BUCKET" --region "${AWS_REGION:-ap-south-1}" --create-bucket-configuration "LocationConstraint=${AWS_REGION:-ap-south-1}" || true
       - aws s3api put-public-access-block --bucket "$BUCKET" --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
       - aws s3api put-bucket-policy --bucket "$BUCKET" --policy "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::$BUCKET/*\"}]}"
+      # Ensure a CloudFront distribution exists for this tenant (created once on the
+      # first publish, then reused). The id/domain are persisted to <tenant>-meta.json
+      # in the configs bucket so later builds and the EventBridge listener can read
+      # them. CloudFront gives the tenant HTTPS + a default-root-object so "/" serves
+      # index.html — fixing the bare-S3 "no HTTPS" / 403 problems. (Backend-authored
+      # block; unchanged by the monorepo split — it operates on $BUCKET, not on paths.)
+      - |
+        python3 << 'PYEOF'
+        import json, os, subprocess, sys
+
+        tenant = os.environ['TENANT']
+        bucket = os.environ['BUCKET']
+        config_s3_uri = os.environ['CONFIG_S3_URI']
+        configs_bucket = config_s3_uri.replace('s3://', '').split('/')[0]
+        meta_s3_key = f'{tenant}-meta.json'
+        meta_s3_path = f's3://{configs_bucket}/{meta_s3_key}'
+
+        # Check for existing CloudFront distribution
+        r = subprocess.run(['aws', 's3', 'cp', meta_s3_path, '-'], capture_output=True, text=True)
+        meta = json.loads(r.stdout) if r.returncode == 0 and r.stdout.strip() else {}
+
+        dist_id = meta.get('distributionId', '')
+        cf_domain = meta.get('cfDomain', '')
+
+        if not dist_id:
+            # Create a new CloudFront distribution for this tenant
+            cf_config = {
+                'CallerReference': f'{tenant}-webstore',
+                'Comment': f'Webstore for {tenant}',
+                'DefaultRootObject': 'index.html',
+                'Origins': {
+                    'Quantity': 1,
+                    'Items': [{
+                        'Id': f'S3-{bucket}',
+                        'DomainName': f'{bucket}.s3.ap-south-1.amazonaws.com',
+                        'S3OriginConfig': {'OriginAccessIdentity': ''},
+                    }],
+                },
+                'DefaultCacheBehavior': {
+                    'TargetOriginId': f'S3-{bucket}',
+                    'ViewerProtocolPolicy': 'redirect-to-https',
+                    'AllowedMethods': {
+                        'Quantity': 2,
+                        'Items': ['GET', 'HEAD'],
+                        'CachedMethods': {'Quantity': 2, 'Items': ['GET', 'HEAD']},
+                    },
+                    'CachePolicyId': '658327ea-f89d-4fab-a63d-7e88639e58f6',  # CachingOptimized
+                    'Compress': True,
+                },
+                'CustomErrorResponses': {
+                    'Quantity': 1,
+                    'Items': [{'ErrorCode': 404, 'ResponseCode': '404', 'ResponsePagePath': '/404.html'}],
+                },
+                'Enabled': True,
+                'HttpVersion': 'http2',
+                'PriceClass': 'PriceClass_All',
+            }
+            result = subprocess.run(
+                ['aws', 'cloudfront', 'create-distribution',
+                 '--distribution-config', json.dumps(cf_config)],
+                capture_output=True, text=True,
+            )
+            if result.returncode != 0:
+                print('CloudFront create-distribution failed:', result.stderr, file=sys.stderr)
+                sys.exit(1)
+            data = json.loads(result.stdout)
+            dist_id = data['Distribution']['Id']
+            cf_domain = data['Distribution']['DomainName']
+            # Save for future builds and for the EventBridge listener
+            updated_meta = json.dumps({'distributionId': dist_id, 'cfDomain': cf_domain})
+            subprocess.run(
+                ['aws', 's3', 'cp', '-', meta_s3_path],
+                input=updated_meta, text=True, check=True,
+            )
+            print(f'Created CloudFront distribution {dist_id} at {cf_domain}')
+        else:
+            print(f'Reusing CloudFront distribution {dist_id}')
+
+        # Write env file so post_build can read it (CodeBuild phases run in separate shells)
+        with open('/tmp/cf_env.sh', 'w') as f:
+            f.write(f'export DISTRIBUTION={dist_id}\n')
+            f.write(f'export CF_DOMAIN={cf_domain}\n')
+        PYEOF
 
   build:
     commands:
@@ -94,9 +171,11 @@ phases:
       # Upload the built SITE to the tenant's S3 bucket. The site is at the root of
       # out/ (index.html is the homepage) — no post-processing needed.
       - aws s3 sync apps/site/out/ "s3://$BUCKET" --delete
-      # Invalidate CloudFront if a distribution id was provided.
+      # Invalidate CloudFront. Prefer the DISTRIBUTION env (if the backend passed one),
+      # else the id written by the pre_build CloudFront step (/tmp/cf_env.sh).
       - |
-        if [ -n "${DISTRIBUTION:-}" ]; then
+        source /tmp/cf_env.sh 2>/dev/null || true
+        if [ -n "$DISTRIBUTION" ]; then
           aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" --paths "/*"
         fi
 
