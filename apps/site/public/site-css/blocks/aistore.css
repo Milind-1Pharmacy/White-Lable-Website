@@ -23,6 +23,9 @@
   margin: 14px 0 0;
   line-height: 1.04;
   max-width: 18ch;
+  /* Reserve height for a 2-line heading so the grid below never overlaps it
+     (matches Features' min-height fix). */
+  min-height: 2.08em;
 }
 
 .ais__lede {
