@@ -3,10 +3,9 @@
     "name": "UrMedz",
     "category": "Pharmacy & Fulfilment"
   },
-
   "branding": {
-    "logo": "/urmedz/logo.png",
-    "logoFull": "/urmedz/logo-full.png",
+    "logo": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
+    "logoFull": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368748_logo-full.png",
     "theme": "urmedz",
     "colors": {
       "primary": "#0A174C",
@@ -17,7 +16,6 @@
       "ink": "#0A174C"
     }
   },
-
   "seo": {
     "title": "UrMedz — Authentic Medicines, Delivered to Your Door",
     "description": "India's most trusted pharmaceutical retail and fulfilment company. 25+ stores, 10,000+ orders daily, and 80,000 SKUs — all sourced from licensed distributors.",
@@ -30,23 +28,32 @@
       "generic medicines",
       "quick commerce pharma"
     ],
-    "ogImage": "/urmedz/og-image.jpg"
+    "ogImage": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png"
   },
-
   "content": {
     "hero": {
       "eyebrow": "Pharmacy & Health-Tech · Est. 2024",
       "headline": "Authentic medicines, fingertip-fast.",
       "headlineRich": {
         "parts": [
-          { "text": "Authentic", "br": true },
-          { "text": "medicines, " },
-          { "text": "fingertip-", "emphasis": "italic" },
-          { "text": "fast." }
+          {
+            "text": "Authentic",
+            "br": true
+          },
+          {
+            "text": "medicines, "
+          },
+          {
+            "text": "fingertip-",
+            "emphasis": "italic"
+          },
+          {
+            "text": "fast."
+          }
         ]
       },
       "tagline": "A network of 25 retail stores and India's largest pharma fulfilment centres — delivering trusted medicines to you.",
-      "image": "/urmedz/hero.png",
+      "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png",
       "cta": {
         "label": "Learn More",
         "type": "safe-action"
@@ -62,17 +69,17 @@
       ],
       "slides": [
         {
-          "image": "/urmedz/gallery/img-1.png",
+          "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png",
           "tag": "Quick commerce",
           "caption": "Same-day delivery, neighbourhood-fast"
         },
         {
-          "image": "/urmedz/gallery/img-3.png",
+          "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png",
           "tag": "Hi-tech fulfilment",
           "caption": "India's most advanced pharma centres"
         },
         {
-          "image": "/urmedz/gallery/img-2.png",
+          "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png",
           "tag": "Retail stores",
           "caption": "Safe, private, and staffed by licensed pharmacists"
         }
@@ -94,19 +101,34 @@
         }
       ]
     },
-
     "about": {
       "description": "UrMedz is building India's most trusted pharmaceutical infrastructure — connecting patients with authentic, affordable medicines through a network of licensed retail stores, hi-tech fulfilment centres, and trained pharmacists. Founded in Bengaluru in 2024, we believe that access to genuine medicine should never be a question of geography or cost.",
-      "image": "/urmedz/about.jpg",
+      "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png",
       "eyebrow": "About UrMedz · Est. 2024 · Bengaluru",
       "title": {
         "parts": [
-          { "text": "Medicines are " },
-          { "text": "indispensable.", "emphasis": "italic", "br": true },
-          { "text": "Access", "emphasis": "italic-accent" },
-          { "text": " and " },
-          { "text": "affordability", "emphasis": "italic-accent" },
-          { "text": " change everything." }
+          {
+            "text": "Medicines are "
+          },
+          {
+            "text": "indispensable.",
+            "emphasis": "italic",
+            "br": true
+          },
+          {
+            "text": "Access",
+            "emphasis": "italic-accent"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "text": "affordability",
+            "emphasis": "italic-accent"
+          },
+          {
+            "text": " change everything."
+          }
         ]
       },
       "lede": "The pharma sector is experiencing a much-needed transformation. UrMedz is the pharmacy-and-platform layer that brings a wide range of options — and real choice — to your doorstep.",
@@ -134,52 +156,61 @@
         }
       ]
     },
-
     "services": [
       {
         "title": "Retail Stores",
         "description": "A network of 25 neighbourhood pharmacies stocked with authentic, licensed medicines — and growing across South India.",
-        "image": "/urmedz/services/retail.jpg"
+        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png"
       },
       {
         "title": "Quick Commerce",
         "description": "India's largest network of pharma dark stores — enabling same-day and on-demand medicine delivery directly to your door.",
-        "image": "/urmedz/services/quick-commerce.jpg"
+        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png"
       },
       {
         "title": "Hi-Tech Fulfilment",
         "description": "State-of-the-art fulfilment centres with cold-chain handling, batch traceability, and audit-ready dispatch built in.",
-        "image": "/urmedz/services/fulfilment.jpg"
+        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png"
       },
       {
         "title": "E-commerce Partner",
         "description": "India's largest pharmaceutical fulfilment partner for e-commerce platforms — accurate, fast, and fully compliant.",
-        "image": "/urmedz/services/ecommerce.jpg"
+        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png"
       }
     ],
-
     "servicesMeta": {
       "eyebrow": "What we do",
       "heading": {
         "parts": [
-          { "text": "Four pillars. " },
-          { "text": "One network.", "emphasis": "italic" }
+          {
+            "text": "Four pillars. "
+          },
+          {
+            "text": "One network.",
+            "emphasis": "italic"
+          }
         ]
       },
       "ctaLabel": "All services  ",
       "ctaHref": "/services"
     },
-
     "sections": [
       {
         "type": "appStrip",
         "data": {
-          "logo": "/urmedz/logo.png",
+          "logo": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
           "heading": {
             "parts": [
-              { "text": "Download the " },
-              { "text": "UrMedz", "emphasis": "italic-accent" },
-              { "text": " app" }
+              {
+                "text": "Download the "
+              },
+              {
+                "text": "UrMedz",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " app"
+              }
             ]
           },
           "descriptor": "Authentic medicines · licensed pharmacists · doorstep delivery",
@@ -187,7 +218,6 @@
           "googlePlayUrl": "https://play.google.com/store/apps/details?id=com.urmedzB2C"
         }
       },
-
       {
         "type": "stats",
         "data": {
@@ -222,16 +252,22 @@
           ]
         }
       },
-
       {
         "type": "savings",
         "data": {
           "eyebrow": "Customer savings · Q1 2026",
           "heading": {
             "parts": [
-              { "text": "Unraveling the magic of " },
-              { "text": "brand options", "emphasis": "italic-accent" },
-              { "text": " in medicines." }
+              {
+                "text": "Unraveling the magic of "
+              },
+              {
+                "text": "brand options",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " in medicines."
+              }
             ]
           },
           "lede": "Prices vary dramatically from brand to brand, yet the composition stays identical. The UrMedz engine surfaces the optimal pick for every prescription.",
@@ -263,20 +299,26 @@
           ]
         }
       },
-
       {
         "type": "videoFeature",
         "data": {
           "tag": "Behind the scenes",
           "heading": {
             "parts": [
-              { "text": "A look at our " },
-              { "text": "hi-tech", "emphasis": "italic-accent" },
-              { "text": " fulfilment centres." }
+              {
+                "text": "A look at our "
+              },
+              {
+                "text": "hi-tech",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " fulfilment centres."
+              }
             ]
           },
           "ctaLabel": "Watch Now",
-          "poster": "/urmedz/savings-poster.png",
+          "poster": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369226_savings-poster.png",
           "videoUrl": "https://www.urmedz.in/wp-content/uploads/2024/11/new-ur_medz_video-4.mp4",
           "marquee": [
             "Authentic",
@@ -290,19 +332,31 @@
           ]
         }
       },
-
       {
         "type": "team",
         "data": {
           "eyebrow": "Our team of specialists · 200+ strong",
-          "logoMark": "/urmedz/logo.png",
+          "logoMark": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
           "quote": {
             "parts": [
-              { "text": "United by a single purpose — to make healthcare " },
-              { "text": "accessible, affordable", "emphasis": "italic-accent" },
-              { "text": " and", "br": true },
-              { "text": "trustworthy", "emphasis": "italic-accent" },
-              { "text": " for everyone." }
+              {
+                "text": "United by a single purpose — to make healthcare "
+              },
+              {
+                "text": "accessible, affordable",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " and",
+                "br": true
+              },
+              {
+                "text": "trustworthy",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " for everyone."
+              }
             ]
           },
           "signatureLabel": "Signed,",
@@ -346,20 +400,29 @@
             }
           ],
           "credentials": [
-            { "label": "Care SLA", "value": "Avg. reply < 1 hrs · 3 languages" }
+            {
+              "label": "Care SLA",
+              "value": "Avg. reply < 1 hrs · 3 languages"
+            }
           ]
         }
       },
-
       {
         "type": "features",
         "data": {
           "eyebrow": "Why UrMedz",
           "heading": {
             "parts": [
-              { "text": "Pharmacy infrastructure, " },
-              { "text": "quietly", "emphasis": "italic-accent" },
-              { "text": " done right." }
+              {
+                "text": "Pharmacy infrastructure, "
+              },
+              {
+                "text": "quietly",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " done right."
+              }
             ]
           },
           "items": [
@@ -382,16 +445,22 @@
           ]
         }
       },
-
       {
         "type": "howItWorks",
         "data": {
           "eyebrow": "How it works",
           "heading": {
             "parts": [
-              { "text": "Prescription to " },
-              { "text": "pocket", "emphasis": "italic-accent" },
-              { "text": " — in three steps." }
+              {
+                "text": "Prescription to "
+              },
+              {
+                "text": "pocket",
+                "emphasis": "italic-accent"
+              },
+              {
+                "text": " — in three steps."
+              }
             ]
           },
           "steps": [
@@ -413,15 +482,20 @@
           ]
         }
       },
-
       {
         "type": "faq",
         "data": {
           "eyebrow": "Frequently asked",
           "heading": {
             "parts": [
-              { "text": "Questions,", "br": true },
-              { "text": "answered.", "emphasis": "italic-accent" }
+              {
+                "text": "Questions,",
+                "br": true
+              },
+              {
+                "text": "answered.",
+                "emphasis": "italic-accent"
+              }
             ]
           },
           "lede": "Anything we missed? Reach out — our team replies within a working day.",
@@ -459,34 +533,48 @@
       }
     ]
   },
-
   "contact": {
     "email": "care@urmedz.in",
     "phone": "+91 80 4567 0049",
     "address": "Cheemasandra, Whitefield, Bengaluru 560049"
   },
-
   "features": {
     "enableChat": false,
     "enableForms": false,
     "enablePayments": false,
     "enableCart": false
   },
-
   "compliance": {
     "mode": "business-profile-safe",
     "disclaimer": "UrMedz Retail Pvt. Ltd. is a licensed pharmaceutical retail and fulfilment company. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication."
   },
-
   "layout": {
     "nav": {
       "links": [
-        { "label": "About", "href": "/#about" },
-        { "label": "Services", "href": "/#services" },
-        { "label": "Fulfilment", "href": "/#fulfilment" },
-        { "label": "Team", "href": "/#team" },
-        { "label": "FAQ", "href": "/#faq" },
-        { "label": "Contact", "href": "/contact" }
+        {
+          "label": "About",
+          "href": "/#about"
+        },
+        {
+          "label": "Services",
+          "href": "/#services"
+        },
+        {
+          "label": "Fulfilment",
+          "href": "/#fulfilment"
+        },
+        {
+          "label": "Team",
+          "href": "/#team"
+        },
+        {
+          "label": "FAQ",
+          "href": "/#faq"
+        },
+        {
+          "label": "Contact",
+          "href": "/contact"
+        }
       ],
       "ctas": [
         {
@@ -495,7 +583,11 @@
           "variant": "primary",
           "external": true
         },
-        { "label": "Get the app", "href": "/contact", "variant": "ghost" }
+        {
+          "label": "Get the app",
+          "href": "/contact",
+          "variant": "ghost"
+        }
       ]
     },
     "stickyCta": {
@@ -507,9 +599,17 @@
     "footer": {
       "headline": {
         "parts": [
-          { "text": "Authentic medicines,", "br": true },
-          { "text": "delivered with", "emphasis": "italic-accent" },
-          { "text": " care." }
+          {
+            "text": "Authentic medicines,",
+            "br": true
+          },
+          {
+            "text": "delivered with",
+            "emphasis": "italic-accent"
+          },
+          {
+            "text": " care."
+          }
         ]
       },
       "description": "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
@@ -518,26 +618,56 @@
         {
           "heading": "Company",
           "links": [
-            { "label": "About", "href": "/#about" },
-            { "label": "Team", "href": "/#team" },
-            { "label": "Careers", "href": "/contact" }
+            {
+              "label": "About",
+              "href": "/#about"
+            },
+            {
+              "label": "Team",
+              "href": "/#team"
+            },
+            {
+              "label": "Careers",
+              "href": "/contact"
+            }
           ]
         },
         {
           "heading": "Services",
           "links": [
-            { "label": "Retail stores", "href": "/#services" },
-            { "label": "Fulfilment", "href": "/#fulfilment" },
-            { "label": "Get the app", "href": "/#app" }
+            {
+              "label": "Retail stores",
+              "href": "/#services"
+            },
+            {
+              "label": "Fulfilment",
+              "href": "/#fulfilment"
+            },
+            {
+              "label": "Get the app",
+              "href": "/#app"
+            }
           ]
         },
         {
           "heading": "Resources",
           "links": [
-            { "label": "FAQ", "href": "/#faq" },
-            { "label": "Privacy Policy", "href": "/privacy-policy" },
-            { "label": "Terms & Conditions", "href": "/terms-conditions" },
-            { "label": "Data deletion", "href": "/deactivate-account" }
+            {
+              "label": "FAQ",
+              "href": "/#faq"
+            },
+            {
+              "label": "Privacy Policy",
+              "href": "/privacy-policy"
+            },
+            {
+              "label": "Terms & Conditions",
+              "href": "/terms-conditions"
+            },
+            {
+              "label": "Data deletion",
+              "href": "/deactivate-account"
+            }
           ]
         }
       ]

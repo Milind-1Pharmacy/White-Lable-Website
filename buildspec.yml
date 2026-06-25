@@ -41,14 +41,9 @@ phases:
       # Full install. NOTE: `next build` needs build-time tooling at runtime —
       # @tailwindcss/postcss + tailwindcss (CSS) and typescript + @types/* (the
       # build type-checks). Those now live in `dependencies` (not devDependencies)
-      # so the build survives even an `npm ci --omit=dev`.
-      #
-      # Wipe node_modules FIRST so a poisoned CACHE can't shadow this install: an
-      # earlier `npm ci --omit=dev` run cached a tree WITHOUT @tailwindcss/postcss,
-      # and a restored stale cache makes the build fail "Cannot find module
-      # @tailwindcss/postcss" even though package.json is correct. `npm ci` already
-      # prunes, but removing the dir defends against a cache restored over the top.
-      - rm -rf node_modules
+      # so the build survives even an `npm ci --omit=dev`, and `npm ci` prunes the
+      # cached node_modules to match the lockfile — so the cache stays warm across
+      # builds (no forced cold install). The guard below catches any bad state.
       - npm ci
       # Fail FAST with a clear message if the critical build dep is still missing,
       # instead of letting it surface later as an opaque Turbopack/PostCSS error.
@@ -57,7 +52,7 @@ phases:
         if [ -d node_modules/@tailwindcss/postcss ]; then
           echo "OK: @tailwindcss/postcss present"
         else
-          echo "FATAL: @tailwindcss/postcss missing after npm ci (poisoned cache?)" >&2
+          echo "FATAL: @tailwindcss/postcss missing after npm ci — clear the CodeBuild cache and retry" >&2
           exit 1
         fi
 
@@ -84,6 +79,11 @@ phases:
       # unset and builds dynamically). TENANT selects configs/$TENANT.json
       # (lib/getConfig.ts); the static site is emitted to ./out.
       - STATIC_EXPORT=1 TENANT="$TENANT" npm run build
+      # Next copies ALL of public/ into out/, so the export carries EVERY tenant's
+      # image folder (public/<project>/). Prune the foreign ones — keep only the
+      # folders this tenant's config references — so the bucket ships just this
+      # tenant's assets (no cross-tenant leak, much smaller sync).
+      - node scripts/prune-tenant-assets.mjs "$TENANT"
 
   post_build:
     commands:
