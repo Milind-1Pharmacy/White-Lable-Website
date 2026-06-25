@@ -34,7 +34,7 @@ import {
   type BuilderSectionType, type DraftSection, type StepId, type LegalSectionId,
 } from "./builderData";
 import {
-  clone, genId, headingText, loadDraft, prefersReducedMotion, PUBLISH_DOMAIN, sameOrder, saveDraft,
+  clone, genId, headingText, loadDraft, prefersReducedMotion, sameOrder, saveDraft,
 } from "./builderHelpers";
 import type { Field } from "./builderTypes";
 import { PREVIEW_BASE_WIDTH, PREVIEW_MOBILE_WIDTH } from "./preview";
@@ -534,6 +534,25 @@ export function useBuilderState() {
   }
 
   /**
+   * Hold in the "live" stage for a short grace window, THEN reveal the success
+   * screen. The backend reports `live` the instant CodeBuild finishes the build +
+   * S3 sync, but neither the backend nor we can track the final hop — the new
+   * objects still need a few seconds to propagate through CloudFront and warm the
+   * edge cache before the URL actually serves the fresh site. So instead of
+   * declaring success the moment the API says `live`, we dwell on the "Final checks
+   * & cache warm-up" phase for FINALIZE_MS (~12s) so the user isn't handed a link
+   * that 404s/serves stale for the first few seconds. Override via
+   * NEXT_PUBLIC_PUBLISH_FINALIZE_SEC. cancelPublish clears this timer like any other.
+   */
+  function finalizeLive() {
+    if (pubT.current) clearTimeout(pubT.current);
+    setPublishStage("live");
+    const sec = Number(process.env.NEXT_PUBLIC_PUBLISH_FINALIZE_SEC);
+    const FINALIZE_MS = (Number.isFinite(sec) && sec > 0 ? sec : 12) * 1000;
+    pubT.current = setTimeout(() => setPublished(true), FINALIZE_MS);
+  }
+
+  /**
    * Publish. Two modes:
    *  - DEMO (default): a front-end-only mock — run a staged sequence (building →
    *    bucket → deploying → live) then reveal the full-page generated site. No
@@ -566,20 +585,18 @@ export function useBuilderState() {
     setPublishing(true);
 
     const flavor = buildFlavor();
-    const liveUrl = `${slug}.${PUBLISH_DOMAIN}`;
 
-    // DEMO mode — staged mock, no network. The flavor is still built for real so
-    // the revealed "live site" shows exactly what the user created. Stages are
-    // chained through one `pubT` handle so unmount cleanup cancels the sequence.
+    // DEMO mode — staged mock, no network. NOTE: we do NOT fabricate a live URL
+    // here (the old `<slug>.1pharmacy.site` was misleading — that address isn't a
+    // real deploy target). Demo just shows the staged success; a real URL only ever
+    // comes from the backend in REAL mode below.
     if (!process.env.NEXT_PUBLIC_PUBLISH_API) {
       const steps: Array<"bucket" | "deploying" | "live"> = ["bucket", "deploying", "live"];
       let i = 0;
       const next = () => {
         const stage = steps[i++];
         if (stage === "live") {
-          setSiteUrl(liveUrl);
-          setPublishStage("live");
-          setPublished(true);
+          finalizeLive();
           return;
         }
         setPublishStage(stage);
@@ -589,10 +606,12 @@ export function useBuilderState() {
       return;
     }
 
-    // REAL mode — backend build + deploy, polled for status.
+    // REAL mode — backend build + deploy, polled for status. The live URL is ONLY
+    // ever the real `siteUrl` the backend returns; we never fall back to a
+    // fabricated domain (showing a URL we don't actually deploy to is misleading).
     try {
       const res = await publishTenant(flavor);
-      if (res.status === "live") { setSiteUrl(res.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
+      if (res.status === "live") { if (res.siteUrl) { setSiteUrl(res.siteUrl); setSiteIsLive(true); } finalizeLive(); return; }
       // The BACKEND build can run up to ~30 min, so the frontend MUST outlast it:
       // give up only after MAX (backend 30 min + a grace margin), never before — else
       // the UI abandons a build the backend still considers healthy. Override via
@@ -609,7 +628,7 @@ export function useBuilderState() {
         tries += 1;
         try {
           const s = await getPublishStatus(flavor.slug);
-          if (s.status === "live") { setSiteUrl(s.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
+          if (s.status === "live") { if (s.siteUrl) { setSiteUrl(s.siteUrl); setSiteIsLive(true); } finalizeLive(); return; }
           if (s.status === "failed") { setPublishError(s.message || "Build failed."); setPublishing(false); return; }
           // Map the backend status to a deploy stage so the stepper advances:
           // queued → building, building → bucket once it's been going a bit, then deploying.

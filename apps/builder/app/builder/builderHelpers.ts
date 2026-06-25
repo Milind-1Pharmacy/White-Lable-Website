@@ -61,10 +61,11 @@ export function sameOrder(a: string[], b: string[]): boolean {
 }
 
 /** localStorage key for the persisted draft (versioned so a shape change can reset).
- *  Bumped to v12: the default seed is now BLANK() (clean slate) instead of the rich
- *  UrMedz/pharmacy INITIAL() demo — a cached v11 draft (full of demo data) must reset
- *  so a fresh visitor starts empty. (Set NEXT_PUBLIC_SEED_DEMO=1 to seed the demo.) */
-export const DRAFT_KEY = "wb:appConfig:v12";
+ *  Bumped to v13: removed the fabricated "<slug>.1pharmacy.site" live URL from the
+ *  publish/preview UI (only the real backend siteUrl is shown now) and made the demo
+ *  seed's sticky-CTA text generic ("Our pharmacy app is here.") instead of "UrMedz".
+ *  v12 was the BLANK()-default clean-slate change. */
+export const DRAFT_KEY = "wb:appConfig:v13";
 
 /** A CSS colour value is safe only if it's a hex or rgb/hsl function literal. */
 const SAFE_COLOR_RE = /^(?:#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|(?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s/]+\))$/;

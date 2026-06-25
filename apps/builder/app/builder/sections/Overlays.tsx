@@ -13,7 +13,6 @@
 
 import React, { useState, useEffect } from "react";
 import { PICKER_ORDER, TYPES, LEGAL_SECTIONS, type LegalSectionId } from "../builderData";
-import { PUBLISH_DOMAIN } from "../builderHelpers";
 import { isLegalNavMessage } from "@wl/render-engine/lib/legalRoutes";
 import {
   BTN_OUTLINE, CHECK_RING, CONFETTI, PICKER_BACK, PICKER_CLOSE, PICKER_POP, PICK_ITEM,
@@ -71,8 +70,10 @@ export function Overlays({ api }: { api: BuilderApi }) {
     (acc[x.group] ||= []).push(x);
     return acc;
   }, {});
-  // Shown live URL: the backend's siteUrl once live, else the placeholder slug domain.
-  const liveUrl = siteUrl || slug + "." + PUBLISH_DOMAIN;
+  // Shown live URL: ONLY the real siteUrl the backend returned. Empty until the
+  // deploy actually succeeds — we never fabricate a "<slug>.1pharmacy.site" address
+  // (showing a URL we don't deploy to is misleading).
+  const liveUrl = siteUrl;
   return (
     <>
       {/* Section picker */}
@@ -149,11 +150,15 @@ export function Overlays({ api }: { api: BuilderApi }) {
                   </svg>
                 </div>
                 <h2 style={{ fontSize: 23, fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 7px" }}>You&apos;re live! 🎉</h2>
-                <p style={{ fontSize: 14, color: "#71717A", margin: "0 0 20px", lineHeight: 1.5 }}>Your site has been published to the edge and is ready to share.</p>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px 14px", background: "#F7F7F9", border: "1px solid #ECECEF", borderRadius: 11, marginBottom: 20 }}>
-                  <span style={{ display: "flex", color: "#2E6ACF" }}>{icon("globe", 15)}</span>
-                  <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: "#3F3F46" }}>{liveUrl}</span>
-                </div>
+                <p style={{ fontSize: 14, color: "#71717A", margin: "0 0 20px", lineHeight: 1.5 }}>Your site has been published and is ready to share.</p>
+                {/* Show the URL row ONLY when the backend returned a real live URL —
+                    never a fabricated address. */}
+                {liveUrl && (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px 14px", background: "#F7F7F9", border: "1px solid #ECECEF", borderRadius: 11, marginBottom: 20 }}>
+                    <span style={{ display: "flex", color: "#2E6ACF" }}>{icon("globe", 15)}</span>
+                    <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, color: "#3F3F46" }}>{liveUrl}</span>
+                  </div>
+                )}
                 <div style={{ display: "flex", gap: 10 }}>
                   <Hoverable as="button" onClick={() => { setPublishing(false); setPublished(false); }} style={PUBLISH_BTN_GHOST} hover={{ background: "#FAFAFB" }}>Back to editor</Hoverable>
                   {siteIsLive && siteUrl && (
@@ -227,7 +232,9 @@ export function Overlays({ api }: { api: BuilderApi }) {
               ) : (
                 <>
                   <span style={{ display: "flex", color: "#16A34A" }}>{icon("eye", 14)}</span>
-                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>How your site will look deployed · <b style={{ color: "#3F3F46", fontWeight: 600, fontFamily: "'JetBrains Mono',monospace" }}>{slug + "." + PUBLISH_DOMAIN}</b></span>
+                  {/* A preview of the rendered site — NOT a real URL. Don't show a
+                      fabricated "<slug>.1pharmacy.site" address here. */}
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Preview · how your site will look</span>
                 </>
               )}
             </span>

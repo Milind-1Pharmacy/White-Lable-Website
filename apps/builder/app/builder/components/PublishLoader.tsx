@@ -161,11 +161,14 @@ export function PublishLoader({
           })}
         </div>
 
-        {/* ── URL + cancel ── */}
-        <div style={URL_ROW}>
-          <span style={{ display: "flex", color: BRAND }}>{icon("globe", 14)}</span>
-          <span style={URL_TXT}>{liveUrl}</span>
-        </div>
+        {/* ── URL + cancel ── URL row shown ONLY when a real destination is known
+            (the backend returned a live URL). While building we don't fabricate one. */}
+        {liveUrl && (
+          <div style={URL_ROW}>
+            <span style={{ display: "flex", color: BRAND }}>{icon("globe", 14)}</span>
+            <span style={URL_TXT}>{liveUrl}</span>
+          </div>
+        )}
         <Hoverable as="button" onClick={onCancel} style={CANCEL} hover={{ background: "#F4F6F9", borderColor: "#CBD3DE", color: MUTE }}>
           Cancel
         </Hoverable>
