@@ -558,7 +558,8 @@ export type SystemConfig = {
   rendering: {
     default: string;
     strategy: string;
-    revalidateSeconds: number;
+    /** Legacy/no-op under `output: "export"` (ISR doesn't run on a static deploy). */
+    revalidateSeconds?: number;
   };
   sectionAllowlist: SectionType[];
   sectionMapping: Record<string, string>;
