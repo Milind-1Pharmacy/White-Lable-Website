@@ -56,16 +56,20 @@ export function PublishLoader({
   const activeIdx = PHASES.findIndex((p) => p.key === stage);
 
   // Ease-in progress that creeps toward the active phase's target so the bar keeps
-  // visibly moving between status polls (never sits frozen, never claims 100%).
+  // visibly moving between status polls (never sits frozen, never claims 100%). The
+  // arc is driven by the real STAGE (backend status), not wall-clock, so it stays
+  // correct whether a build takes 3 min or 30 — only the within-phase creep is timed.
   const target = PHASE_TARGET[stage];
   const base = activeIdx > 0 ? PHASE_TARGET[PHASES[activeIdx - 1].key] : 0;
-  // Asymptotic creep within the current phase: fast at first, slowing toward target.
-  const sinceStage = Math.min(elapsed, 90);
-  const creep = (target - base) * (1 - Math.exp(-sinceStage / 22));
+  // Asymptotic creep within the current phase: a slow time-constant (~4 min) so the
+  // bar doesn't sprint to the phase target early on a long build, yet always inches
+  // forward toward it. The real jump happens when the stage actually advances.
+  const sinceStage = Math.min(elapsed, 600);
+  const creep = (target - base) * (1 - Math.exp(-sinceStage / 240));
   const pct = Math.min(99, Math.round(base + creep));
 
-  // Past the comfortable window: keep it honest rather than implying it's stuck.
-  const slow = elapsed > 300;
+  // Past the comfortable window (~10 min): reassure rather than imply it's stuck.
+  const slow = elapsed > 600;
 
   return (
     <div style={CARD}>
@@ -88,8 +92,8 @@ export function PublishLoader({
         <div style={{ textAlign: "center", marginBottom: 22 }}>
           <h2 style={HEAD}>Publishing your site</h2>
           <p style={SUB}>
-            This usually takes <strong style={{ color: "#fff", fontWeight: 600 }}>about 5 minutes</strong>. You can keep this
-            tab open — we&apos;ll show your live link the moment it&apos;s ready.
+            This usually takes <strong style={{ color: "#fff", fontWeight: 600 }}>a few minutes</strong> — occasionally up to
+            ~30 for a first build. Keep this tab open and we&apos;ll show your live link the moment it&apos;s ready.
           </p>
         </div>
 

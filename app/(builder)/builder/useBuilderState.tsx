@@ -582,10 +582,17 @@ export function useBuilderState() {
     try {
       const res = await publishTenant(flavor);
       if (res.status === "live") { setSiteUrl(res.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
-      // A real build runs ~3–5 min. Poll fast at first (2s) for snappy early
-      // feedback, then back off to 4s to cut request volume; give up after ~6 min.
+      // The BACKEND build can run up to ~30 min, so the frontend MUST outlast it:
+      // give up only after MAX (backend 30 min + a grace margin), never before — else
+      // the UI abandons a build the backend still considers healthy. Override via
+      // NEXT_PUBLIC_PUBLISH_TIMEOUT_MIN when the backend timeout changes.
+      // Cadence: a brief 2s warm-up for snappy early feedback, then a flat 10s — a
+      // tenant build's state changes on the order of tens of seconds, so 10s keeps
+      // request volume sane (~180 calls over a full 30 min) without feeling stale.
       let tries = 0;
-      const FAST_MS = 2000, SLOW_MS = 4000, FAST_TRIES = 15, MAX_MS = 6 * 60_000;
+      const WARMUP_MS = 2000, STEADY_MS = 10_000, WARMUP_TRIES = 4;
+      const timeoutMin = Number(process.env.NEXT_PUBLIC_PUBLISH_TIMEOUT_MIN) || 32;
+      const MAX_MS = timeoutMin * 60_000;
       const startedAt = startStamp.current;
       const poll = async () => {
         tries += 1;
@@ -598,13 +605,13 @@ export function useBuilderState() {
           setPublishStage(s.status === "queued" ? "building" : s.status === "building" ? "bucket" : "deploying");
         } catch { /* transient network blip — keep polling */ }
         if (Date.now() - startedAt < MAX_MS) {
-          pubT.current = setTimeout(poll, tries < FAST_TRIES ? FAST_MS : SLOW_MS);
+          pubT.current = setTimeout(poll, tries < WARMUP_TRIES ? WARMUP_MS : STEADY_MS);
         } else {
           setPublishError("This build is taking longer than expected. It may still finish — check back shortly, or view the CodeBuild logs.");
           setPublishing(false);
         }
       };
-      pubT.current = setTimeout(poll, FAST_MS);
+      pubT.current = setTimeout(poll, WARMUP_MS);
     } catch (err) {
       setPublishError(err instanceof Error ? err.message : "Publish failed.");
       setPublishing(false);
