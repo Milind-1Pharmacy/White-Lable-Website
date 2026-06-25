@@ -44,13 +44,24 @@ import { makeFieldBuilders } from "./fieldBuilders";
 import { DEFAULT_THEME } from "./themePresets";
 import { validateDraft, blockingIssues, type ValidationIssue } from "./validationSchema";
 
+/**
+ * Dev-tools feature flag. When ON, the builder header shows the "Fill mock data"
+ * and "Reset data" buttons (handy in dev/preview); when OFF they disappear.
+ * Set NEXT_PUBLIC_DEV_TOOLS=1 to show them. Independent of NODE_ENV so it can be
+ * toggled on a Vercel deployment without changing the build mode. Inlined at build.
+ * NOTE: this does NOT gate publishing — publishing is always available.
+ */
+export const DEV_TOOLS_ENABLED = process.env.NEXT_PUBLIC_DEV_TOOLS === "1";
+
 export function useBuilderState() {
   const [step, setStep] = useState<StepId>("sections");
-  // Seed deterministically from INITIAL() so the FIRST render is identical on the
-  // server and the client (localStorage isn't available server-side; reading it in
-  // the initial state caused a hydration mismatch). The persisted draft is restored
-  // post-mount in an effect below (still silent/automatic).
-  const seed = useRef(INITIAL());
+  // Seed the FIRST render deterministically (identical server + client; localStorage
+  // isn't available server-side, so reading it in initial state caused a hydration
+  // mismatch). A real saved draft is restored post-mount in an effect below.
+  // Default seed is BLANK() — a fresh visitor gets a CLEAN SLATE, not the UrMedz/
+  // pharmacy demo. Set NEXT_PUBLIC_SEED_DEMO=1 to seed the rich INITIAL() demo
+  // instead (for showcasing).
+  const seed = useRef(process.env.NEXT_PUBLIC_SEED_DEMO === "1" ? INITIAL() : BLANK());
   const [config, setConfig] = useState<AppConfig>(() => seed.current.config);
   const [sections, setSections] = useState<DraftSection[]>(() => seed.current.sections);
   const [saved, setSaved] = useState(true);
@@ -821,7 +832,7 @@ export function useBuilderState() {
     selectedSectionId, setSelectedSectionId,
     pickerOpen, setPickerOpen,
     publishing, setPublishing, published, setPublished, doPublish, siteUrl, siteIsLive, publishError, setPublishError,
-    publishStage, publishElapsed, cancelPublish, publishedSiteOpen, setPublishedSiteOpen,
+    publishStage, publishElapsed, cancelPublish, publishedSiteOpen, setPublishedSiteOpen, devToolsEnabled: DEV_TOOLS_ENABLED,
     publishIssues, setPublishIssues, jumpToIssue,
     previewSheetOpen, setPreviewSheetOpen,
     saved,

@@ -20,9 +20,7 @@ import { safeSrc } from "@wl/render-engine/lib/safeUrl";
 import type { BuilderApi } from "../useBuilderState";
 
 export function BuilderHeader({ api }: { api: BuilderApi }) {
-  const { config, saved, publishing, doPublish, setPreviewSheetOpen, fillMockData, clearAllData } = api;
-  // Dev-only data tools — never rendered in a production (published-tenant) build.
-  const isDev = process.env.NODE_ENV !== "production";
+  const { config, saved, publishing, doPublish, setPreviewSheetOpen, fillMockData, clearAllData, devToolsEnabled } = api;
   // The website's own logo (if the config has one) + its name. NOT a tenant
   // switcher — there's no multi-site dropdown here, just an identity label.
   const siteLogo = safeSrc(config.branding?.logo) || safeSrc(config.branding?.logoFull);
@@ -44,8 +42,9 @@ export function BuilderHeader({ api }: { api: BuilderApi }) {
       </div>
       <span style={DRAFT_BADGE}>DRAFT</span>
 
-      {/* DEV-ONLY data tools (stripped from production builds). */}
-      {isDev && (
+      {/* Dev data tools — shown only when NEXT_PUBLIC_DEV_TOOLS=1 (toggleable per
+          deployment, independent of NODE_ENV). Does not affect publishing. */}
+      {devToolsEnabled && (
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 4 }}>
           <span title="Development only" style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 9, fontWeight: 600, letterSpacing: ".08em", color: "#B45309", background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 5, padding: "2px 6px" }}>DEV</span>
           <Hoverable as="button" onClick={fillMockData} style={DEV_BTN} hover={{ background: "#FFFBEB", borderColor: "#FDE68A" }}>
