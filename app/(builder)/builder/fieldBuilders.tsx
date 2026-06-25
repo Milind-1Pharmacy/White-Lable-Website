@@ -31,7 +31,28 @@ import {
   disclaimerTemplate,
   dataDeletionTemplate,
 } from "./legalTemplates";
+import {
+  templateInfoFromConfig,
+  seoTemplate,
+  heroTemplate,
+  aboutTemplate,
+  servicesTemplate,
+  sectionTemplate,
+} from "./sectionTemplates";
+import { needsSpaceBetween, richHeadingToText } from "@/modules/RichHeading";
 import type { LegalPage } from "@/types/config.types";
+
+/** The "Let AI write it" button as a Field — fills a section with tailored template content. */
+function aiFillField(onFill: () => void): Field {
+  return {
+    kind: "action",
+    label: "Let AI write it",
+    doneLabel: "Filled",
+    icon: "sparkles",
+    tooltip: "Let our AI write standard content for this section from your business details — tweak as you like.",
+    onClick: onFill,
+  };
+}
 
 /** Spreadable {max,min} char-limit props for a Field/column from a TEXT_LIMITS id. */
 function limProps(id?: TextLimitId): { max?: number; min?: number } {
@@ -107,12 +128,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     const secs = page.sections ?? [];
     const fields: Field[] = [
       { kind: "group", label: groupLabel, sub: groupSub },
-      {
-        kind: "action",
-        label: "Reset to recommended",
-        icon: "sparkles",
-        onClick: () => setCfg((c) => { ensurePages(c)[pageKey] = makeTemplate(); }),
-      },
+      aiFillField(() => setCfg((c) => { ensurePages(c)[pageKey] = makeTemplate(); })),
       {
         kind: "area",
         label: "Intro",
@@ -143,8 +159,8 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     let out: Field[] = [];
     if (s === "identity")
       out = [
-        { kind: "text", label: "Business name", value: C.tenant.name, placeholder: "e.g. Northwind Bakehouse", help: "Shown in the header, footer and browser tab.", ...limProps("name"), count: C.tenant.name.length, onChange: (e: InputEvt) => setCfg((c) => (c.tenant.name = e.target.value)) },
-        { kind: "text", label: "Category", value: C.tenant.category, placeholder: "e.g. Artisan Bakery & Café", help: "A short descriptor of what you do.", ...limProps("eyebrow"), count: C.tenant.category.length, onChange: (e: InputEvt) => setCfg((c) => (c.tenant.category = e.target.value)) },
+        { kind: "text", label: "Business name", value: C.tenant.name, placeholder: "e.g. 1Pharmacy", help: "Shown in the header, footer and browser tab.", ...limProps("name"), count: C.tenant.name.length, onChange: (e: InputEvt) => setCfg((c) => (c.tenant.name = e.target.value)) },
+        { kind: "text", label: "Category", value: C.tenant.category, placeholder: "e.g. Pharmacy & Wellness", help: "A short descriptor of what you do.", ...limProps("eyebrow"), count: C.tenant.category.length, onChange: (e: InputEvt) => setCfg((c) => (c.tenant.category = e.target.value)) },
       ];
     else if (s === "branding") {
       // Colour theme FIRST — picking a preset fills the six colour fields below.
@@ -185,26 +201,34 @@ export function makeFieldBuilders(ctx: FieldCtx) {
       out.push({ kind: "upload", label: "Logo mark", spec: "logo", value: C.branding.logo || "", onChange: (url: string) => setCfg((c) => (c.branding.logo = url)) });
     } else if (s === "seo") {
       // Live length guidance — the search-snippet "sweet spots" that score best.
+      // When empty, the help shows a concrete EXAMPLE so a non-technical user knows
+      // what good input looks like (not just the character rule).
       const tLen = C.seo.title.length;
       const titleHelp =
-        tLen === 0 ? "Appears in search results and the browser tab. Aim for 50–60 characters."
+        tLen === 0 ? "Shown in the browser tab and as the blue link in Google. e.g. “1Pharmacy — Trusted Medicines, Delivered Fast”. Aim for 50–60 characters."
         : tLen < 30 ? `A bit short (${tLen}). Aim for 50–60 characters for the best search snippet.`
         : tLen <= 60 ? `Good length (${tLen}/60). This is the ideal range.`
         : `A little long (${tLen}). Search engines may truncate past ~60 characters.`;
       const dLen = C.seo.description.length;
       const descHelp =
-        dLen === 0 ? "A one–two sentence summary shown by search engines. Aim for 150–160 characters."
+        dLen === 0 ? "The grey summary under your link in Google. e.g. “Genuine, licensed medicines and everyday wellness products delivered to your door. Order online or visit your nearest store.” Aim for 150–160 characters."
         : dLen < 70 ? `A bit short (${dLen}). Aim for 150–160 characters to fill the snippet.`
         : dLen <= 160 ? `Good length (${dLen}/160). This is the ideal range.`
         : `A little long (${dLen}). Search engines may truncate past ~160 characters.`;
       const socials = C.seo.socialProfiles ?? [];
       out = [
-        { kind: "text", label: "Page title", value: C.seo.title, help: titleHelp, ...limProps("seoTitle"), count: tLen, onChange: (e: InputEvt) => setCfg((c) => (c.seo.title = e.target.value)) },
-        { kind: "area", label: "Meta description", value: C.seo.description, help: descHelp, ...limProps("seoDescription"), count: dLen, onChange: (e: AreaEvt) => setCfg((c) => (c.seo.description = e.target.value)) },
+        aiFillField(() => setCfg((c) => {
+          const t = seoTemplate(templateInfoFromConfig(c));
+          // Only overwrite the SEO copy; keep any siteUrl/socials/ogImage the user set.
+          c.seo.title = t.title; c.seo.description = t.description; c.seo.keywords = t.keywords;
+        })),
+        { kind: "text", label: "Page title", value: C.seo.title, placeholder: "1Pharmacy — Trusted Medicines, Delivered Fast", help: titleHelp, ...limProps("seoTitle"), count: tLen, onChange: (e: InputEvt) => setCfg((c) => (c.seo.title = e.target.value)) },
+        { kind: "area", label: "Meta description", value: C.seo.description, placeholder: "Genuine, licensed medicines and everyday wellness products delivered across Pune. Order online or visit your nearest store.", help: descHelp, ...limProps("seoDescription"), count: dLen, onChange: (e: AreaEvt) => setCfg((c) => (c.seo.description = e.target.value)) },
         {
           kind: "tags",
           label: "Keywords",
-          placeholder: "Type a keyword, press Enter",
+          placeholder: "e.g. pharmacy, medicines, wellness — press Enter after each",
+          help: "A few words people might search to find you. Add 4–6.",
           items: C.seo.keywords.map((k, i) => ({ text: k, onRemove: () => setCfg((c) => c.seo.keywords.splice(i, 1)) })),
           onAdd: (e: KeyEvt) => {
             if (e.key === "Enter" && e.currentTarget.value.trim()) {
@@ -215,12 +239,12 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           },
         },
         { kind: "group", label: "Discoverability", sub: "Helps search engines index and rank your site correctly." },
-        { kind: "text", label: "Site address (URL)", value: C.seo.siteUrl || "", placeholder: "https://yourbusiness.com", help: "Your live domain. Sets the canonical URL, sitemap and structured data — important for ranking.", onChange: (e: InputEvt) => setCfg((c) => (c.seo.siteUrl = e.target.value)) },
+        { kind: "text", label: "Site address (URL)", value: C.seo.siteUrl || "", placeholder: "https://1pharmacy.com", help: "Your website's address, the way people type it in the browser. e.g. https://1pharmacy.com — sets the canonical URL, sitemap and structured data.", onChange: (e: InputEvt) => setCfg((c) => (c.seo.siteUrl = e.target.value)) },
         {
           kind: "tags",
           label: "Social profiles",
-          placeholder: "Paste a full URL (https://…), press Enter",
-          help: "Your Facebook, Instagram, LinkedIn, etc. Links your brand identity for richer search results.",
+          placeholder: "e.g. https://instagram.com/1pharmacy — press Enter",
+          help: "Paste the full link to each of your social pages (Instagram, Facebook, LinkedIn…). e.g. https://facebook.com/1pharmacy. Helps search engines connect your brand.",
           items: socials.map((u, i) => ({ text: u, onRemove: () => setCfg((c) => { (c.seo.socialProfiles ?? []).splice(i, 1); }) })),
           onAdd: (e: KeyEvt) => {
             if (e.key === "Enter" && e.currentTarget.value.trim()) {
@@ -339,7 +363,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         { kind: "area", label: "Footer description", value: footer?.description || "", onChange: (e: AreaEvt) => setCfg((c) => (ensureFooter(c).description = e.target.value)) },
         { kind: "group", label: "Sticky CTA", sub: "The bar that follows the user up the page." },
         { kind: "toggle", label: "Show sticky CTA", trackStyle: switchStyles(!!sticky?.enabled, false).track, knobStyle: switchStyles(!!sticky?.enabled, false).knob, onToggle: () => setCfg((c) => { const st = ensureSticky(c); st.enabled = !st.enabled; }) },
-        { kind: "text", label: "Text", value: sticky?.text || "", placeholder: "The UrMedz app is here.", onChange: (e: InputEvt) => setCfg((c) => (ensureSticky(c).text = e.target.value)) },
+        { kind: "text", label: "Text", value: sticky?.text || "", placeholder: "The 1Pharmacy app is here.", onChange: (e: InputEvt) => setCfg((c) => (ensureSticky(c).text = e.target.value)) },
         { kind: "text", label: "Button label", value: sticky?.ctaLabel || "", placeholder: "Download App Now", onChange: (e: InputEvt) => setCfg((c) => (ensureSticky(c).ctaLabel = e.target.value)) },
         { kind: "text", label: "Button link", value: sticky?.ctaHref || "", placeholder: "#app", onChange: (e: InputEvt) => setCfg((c) => (ensureSticky(c).ctaHref = e.target.value)) },
       ];
@@ -413,13 +437,19 @@ export function makeFieldBuilders(ctx: FieldCtx) {
       const hero = C.content.hero;
       const parts = hero.headlineRich?.parts || [];
       return [
+        aiFillField(() => setCfg((c) => {
+          // Keep the user's uploaded images; fill all the copy.
+          const t = heroTemplate(templateInfoFromConfig(c));
+          const imgs = { image: c.content.hero.image, slides: c.content.hero.slides };
+          c.content.hero = { ...t, ...(imgs.image ? { image: imgs.image } : {}), ...(imgs.slides?.length ? { slides: imgs.slides } : {}) };
+        })),
         { kind: "group", label: "Headline", sub: "Mix italics and accent colour for emphasis." },
         { kind: "text", label: "Eyebrow", value: hero.eyebrow, placeholder: "Small label above the headline", ...tcap("eyebrow"), count: (hero.eyebrow || "").length, onChange: (e: InputEvt) => setCfg((c) => (c.content.hero.eyebrow = e.target.value)) },
         richField("Headline", parts, (mutate) =>
           setCfg((c) => {
             if (!c.content.hero.headlineRich) c.content.hero.headlineRich = { parts: [] };
             mutate(c.content.hero.headlineRich.parts);
-            c.content.hero.headline = c.content.hero.headlineRich.parts.map((p) => p.text).join(" ");
+            c.content.hero.headline = richHeadingToText(c.content.hero.headlineRich);
           }), crule?.headingLimit
         ),
         { kind: "area", label: "Tagline", value: hero.tagline, ...tcap("tagline"), count: (hero.tagline || "").length, onChange: (e: AreaEvt) => setCfg((c) => (c.content.hero.tagline = e.target.value)) },
@@ -435,7 +465,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           rows: (hero.slides || []).map((sl, i) => ({
             cols: [
               { key: "image", label: i === 0 ? "Image (main hero)" : "Image", upload: true, spec: "hero", placeholder: "/tenant/gallery/img.png", value: sl.image || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].image = url; }) },
-              { key: "tag", label: "Tag", placeholder: "Quick commerce", ...ccap("slides", "tag"), value: sl.tag || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].tag = e.target.value; }), onUpload: () => {} },
+              { key: "tag", label: "Tag", placeholder: "Fast delivery", ...ccap("slides", "tag"), value: sl.tag || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].tag = e.target.value; }), onUpload: () => {} },
               { key: "caption", label: "Caption", area: true, placeholder: "Same-day delivery, neighbourhood-fast", ...ccap("slides", "caption"), value: sl.caption || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { if (c.content.hero.slides?.[i]) c.content.hero.slides[i].caption = e.target.value; }), onUpload: () => {} },
             ],
             onRemove: () => setCfg((c) => { c.content.hero.slides?.splice(i, 1); }),
@@ -451,7 +481,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
             cols: [
               { key: "value", label: "Value", placeholder: "25", ...ccap("meta", "value"), value: m.value || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].value = e.target.value; }), onUpload: () => {} },
               { key: "suffix", label: "Suffix", placeholder: "+ / k / day", ...ccap("meta", "suffix"), value: m.suffix || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].suffix = e.target.value; }), onUpload: () => {} },
-              { key: "label", label: "Label", placeholder: "Retail stores across South India", area: true, ...ccap("meta", "label"), value: m.label || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].label = e.target.value; }), onUpload: () => {} },
+              { key: "label", label: "Label", placeholder: "Stores across the city", area: true, ...ccap("meta", "label"), value: m.label || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { ensureMeta(c)[i].label = e.target.value; }), onUpload: () => {} },
             ],
             onRemove: () => setCfg((c) => { c.content.hero.meta?.splice(i, 1); }),
           })),
@@ -459,7 +489,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         },
         { kind: "group", label: "Status rail", sub: "Optional live-status badge beside the hero." },
         { kind: "text", label: "Live label", value: hero.rail?.liveLabel || "", placeholder: "Live", ...limProps("badge"), count: (hero.rail?.liveLabel || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).liveLabel = e.target.value; }) },
-        { kind: "text", label: "Location text", value: hero.rail?.locationText || "", placeholder: "Bengaluru", ...limProps("badge"), count: (hero.rail?.locationText || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).locationText = e.target.value; }) },
+        { kind: "text", label: "Location text", value: hero.rail?.locationText || "", placeholder: "Your city", ...limProps("badge"), count: (hero.rail?.locationText || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).locationText = e.target.value; }) },
         { kind: "text", label: "Badge text", value: hero.rail?.badgeText || "", placeholder: "EST 2024", ...limProps("badge"), count: (hero.rail?.badgeText || "").length, onChange: (e: InputEvt) => setCfg((c) => { ensureRail(c).badgeText = e.target.value; }) },
         {
           kind: "tags",
@@ -479,6 +509,11 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     if (key === "about") {
       const a = C.content.about || { description: "" };
       return [
+        aiFillField(() => setCfg((c) => {
+          const t = aboutTemplate(templateInfoFromConfig(c));
+          const img = c.content.about?.image;
+          c.content.about = { ...t, ...(img ? { image: img } : {}) };
+        })),
         { kind: "text", label: "Eyebrow", value: a.eyebrow, ...tcap("eyebrow"), count: (a.eyebrow || "").length, onChange: (e: InputEvt) => setCfg((c) => ensureAbout(c).eyebrow = e.target.value) },
         richField("Title", a.title?.parts || [], (mutate) =>
           setCfg((c) => { const ab = ensureAbout(c); if (!ab.title) ab.title = { parts: [] }; mutate(ab.title.parts); }), crule?.headingLimit
@@ -495,10 +530,10 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           rows: (a.pillars || []).map((p, i) => ({
             cols: [
               { key: "n", label: "Number", placeholder: "01", ...ccap("pillars", "n"), value: p.n || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].n = e.target.value; }), onUpload: () => {} },
-              { key: "title", label: "Title", placeholder: "50,000 sft fulfilment", ...ccap("pillars", "title"), value: p.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].title = e.target.value; }), onUpload: () => {} },
+              { key: "title", label: "Title", placeholder: "Licensed pharmacists", ...ccap("pillars", "title"), value: p.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].title = e.target.value; }), onUpload: () => {} },
               { key: "body", label: "Body", area: true, placeholder: "Purpose-built centres…", ...ccap("pillars", "body"), value: p.body || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].body = e.target.value; }), onUpload: () => {} },
               { key: "accent", label: "Accent", placeholder: "#F5A623", value: p.accent || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].accent = e.target.value; }), onUpload: () => {} },
-              { key: "meta", label: "Meta", placeholder: "Bengaluru · Hyderabad", ...ccap("pillars", "meta"), value: p.meta || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].meta = e.target.value; }), onUpload: () => {} },
+              { key: "meta", label: "Meta", placeholder: "Across the city", ...ccap("pillars", "meta"), value: p.meta || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { const pl = ensureAbout(c).pillars; if (pl?.[i]) pl[i].meta = e.target.value; }), onUpload: () => {} },
             ],
             onRemove: () => setCfg((c) => { ensureAbout(c).pillars?.splice(i, 1); }),
           })),
@@ -509,6 +544,13 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     // services
     const sm = C.content.servicesMeta;
     return [
+      aiFillField(() => setCfg((c) => {
+        const t = servicesTemplate();
+        // Fill the service cards (keep any icons the user uploaded) + the heading meta.
+        const existing = c.content.services || [];
+        c.content.services = t.items.map((it: { title: string; description: string; icon: string }, idx: number) => ({ ...it, icon: existing[idx]?.icon || "" }));
+        c.content.servicesMeta = { ...(c.content.servicesMeta || {}), ...t.meta };
+      })),
       { kind: "group", label: "Services heading", sub: "Eyebrow + heading shown above the grid." },
       { kind: "text", label: "Eyebrow", value: sm?.eyebrow || "", ...tcap("eyebrow"), count: (sm?.eyebrow || "").length, onChange: (e: InputEvt) => setCfg((c) => (ensureServicesMeta(c).eyebrow = e.target.value)) },
       richField("Heading", sm?.heading?.parts || [], (mutate) =>
@@ -523,8 +565,8 @@ export function makeFieldBuilders(ctx: FieldCtx) {
         ...itemMeta("items", C.content.services || []),
         rows: (C.content.services || []).map((sv, i) => ({
           cols: [
-            { key: "title", label: "Title", placeholder: "Retail Stores", ...ccap("items", "title"), value: sv.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].title = e.target.value; }), onUpload: () => {} },
-            { key: "description", label: "Description", area: true, placeholder: "Short description", ...ccap("items", "description"), value: sv.description || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].description = e.target.value; }), onUpload: () => {} },
+            { key: "title", label: "Title", placeholder: "Medicine Delivery", ...ccap("items", "title"), value: sv.title || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].title = e.target.value; }), onUpload: () => {} },
+            { key: "description", label: "Description", area: true, placeholder: "e.g. Medicines delivered to your door, same day", ...ccap("items", "description"), value: sv.description || "", onChange: (e: InputEvt | AreaEvt) => setCfg((c) => { c.content.services![i].description = e.target.value; }), onUpload: () => {} },
             { key: "icon", label: "Icon", upload: true, spec: "icon", placeholder: "/tenant/services/icon.png", value: sv.icon || "", onChange: () => {}, onUpload: (url: string) => setCfg((c) => { c.content.services![i].icon = url; }) },
           ],
           onRemove: () => setCfg((c) => c.content.services!.splice(i, 1)),
@@ -632,15 +674,20 @@ export function makeFieldBuilders(ctx: FieldCtx) {
     }, limitId);
   }
 
-  /** Inline RichHeading preview used inside the rich field (serif fragment view). */
+  /** Inline RichHeading preview used inside the rich field (serif fragment view).
+   *  Uses the SAME smart-spacing rule as the live renderer (needsSpaceBetween), so
+   *  the editor PREVIEW box matches the deployed site exactly. */
   function renderRichInline(parts: Array<{ text: string; emphasis?: string; br?: boolean }>, accent: string): React.ReactNode {
     return parts.map((p, i) => {
       const st: React.CSSProperties = {};
       if (p.emphasis === "italic" || p.emphasis === "italic-accent") st.fontStyle = "italic";
       if (p.emphasis === "accent" || p.emphasis === "italic-accent") st.color = accent;
+      const prev = i > 0 ? parts[i - 1] : undefined;
+      const space = prev && needsSpaceBetween(prev.text, prev.br, p.text) ? " " : "";
       return (
         <React.Fragment key={i}>
-          <span style={st}>{p.text + " "}</span>
+          {space}
+          <span style={st}>{p.text}</span>
           {p.br ? <br /> : null}
         </React.Fragment>
       );
@@ -653,7 +700,23 @@ export function makeFieldBuilders(ctx: FieldCtx) {
    * the section's items (so Stats metrics, FAQ Q&As, Team departments, etc. are
    * all editable from here — no "full editor" placeholder).
    */
+  /**
+   * Public entry: prepend the "Let AI write it" button (if a template exists for
+   * this section type) to the section's detail fields. Filling replaces the whole
+   * data slice with tailored template content (image slots stay empty).
+   */
   function buildSectionDetailFields(sec: DraftSection): Field[] {
+    const fields = sectionDetailFieldsInner(sec);
+    if (!sectionTemplate(sec.type)) return fields;
+    const aiBtn = aiFillField(() => {
+      const tmpl = sectionTemplate(sec.type);
+      if (tmpl) setSections((arr) => arr.map((s) => (s.id === sec.id ? ({ ...s, data: tmpl } as DraftSection) : s)));
+      markDirty();
+    });
+    return [aiBtn, ...fields];
+  }
+
+  function sectionDetailFieldsInner(sec: DraftSection): Field[] {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const d: any = sec.data || {};
     const id = sec.id;
@@ -774,10 +837,10 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           area("descriptor", "Descriptor", "Sentence under the heading"),
           { kind: "group", label: "Metrics", sub: "Big numbers shown in the grid." },
           itemList("items", "Add metric", () => ({ value: "0", suffix: "", label: "New metric", footnote: "" }), [
-            { key: "value", label: "Value", placeholder: "25" },
-            { key: "suffix", label: "Suffix", placeholder: "+" },
-            { key: "label", label: "Label", placeholder: "Retail stores" },
-            { key: "footnote", label: "Footnote", placeholder: "South India" },
+            { key: "value", label: "Value", placeholder: "50" },
+            { key: "suffix", label: "Suffix", placeholder: "k+" },
+            { key: "label", label: "Label", placeholder: "Orders delivered" },
+            { key: "footnote", label: "Footnote", placeholder: "Across the city" },
           ]),
         ];
       case "savings":
@@ -919,7 +982,7 @@ export function makeFieldBuilders(ctx: FieldCtx) {
           { kind: "group", label: "Frames", sub: "An editorial mosaic — the first frame leads, the rest stack." },
           itemList("images", "Add frame", () => ({ src: "", alt: "", caption: "", title: "", description: "" }), [
             { key: "src", label: "Image", upload: true, spec: "gallery", placeholder: "/tenant/gallery/img.png" },
-            { key: "caption", label: "Kicker", placeholder: "e.g. Retail · Fulfilment" },
+            { key: "caption", label: "Kicker", placeholder: "e.g. In-store · Delivery" },
             { key: "title", label: "Title", placeholder: "Editorial title for this frame" },
             { key: "description", label: "Description", placeholder: "One line shown on hover" },
             { key: "alt", label: "Alt text", placeholder: "Describe the image" },

@@ -186,12 +186,74 @@ function ThemeSelect({ value, presets, onSelect }: { value: string; presets: The
   );
 }
 
+/**
+ * ActionButton - the "Let AI write it" button (kind: "action"). On click it shows a
+ * brief "Writing…" spinner (~350ms, so the deterministic template fill FEELS
+ * generated), runs `onClick`, then flashes "✓ Filled" before returning to idle.
+ * Local state only — nothing else in the editor re-renders while it animates.
+ */
+function ActionButton({ label, doneLabel, iconName, tooltip, onClick }: { label: string; doneLabel?: string; iconName?: string; tooltip?: string; onClick?: () => void }) {
+  const [state, setState] = useState<"idle" | "busy" | "done">("idle");
+  const tRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (tRef.current) clearTimeout(tRef.current); }, []);
+  const run = () => {
+    if (state === "busy") return;
+    setState("busy");
+    tRef.current = setTimeout(() => {
+      onClick?.();
+      setState("done");
+      tRef.current = setTimeout(() => setState("idle"), 1100);
+    }, 350);
+  };
+  const busy = state === "busy";
+  const done = state === "done";
+  return (
+    <button
+      onClick={run}
+      title={tooltip}
+      disabled={busy}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 7,
+        padding: "9px 14px", borderRadius: 10, cursor: busy ? "wait" : "pointer",
+        border: "1px solid " + (done ? "#BBF0D4" : "#DBE5F5"),
+        background: done ? "#ECFDF3" : "#F1F6FD",
+        color: done ? "#15803D" : "#2457B0",
+        fontSize: 12.5, fontWeight: 600, fontFamily: "inherit",
+        transition: "all .18s ease",
+      }}
+    >
+      {busy ? (
+        <span style={{ width: 13, height: 13, border: "2px solid #C7D7F2", borderTopColor: "#2457B0", borderRadius: "50%", animation: "wb-spin .7s linear infinite", display: "inline-block" }} />
+      ) : (
+        icon(done ? "check" : (iconName || "sparkles"), 14)
+      )}
+      {busy ? "Writing…" : done ? (doneLabel || "Filled") : label}
+    </button>
+  );
+}
+
 export function FieldRow({ f }: { f: Field }) {
   const [focus, setFocus] = useState(false);
   const focusStyle = focus ? { borderColor: "#2E6ACF", boxShadow: "0 0 0 3px rgba(46,106,207,.14)" } : null;
   // Index of the rich-heading fragment whose grip is held — gates `draggable` so
   // the text inputs stay selectable/editable until the user grabs the handle.
   const [fragDrag, setFragDrag] = useState<number | null>(null);
+
+  // Auto-focus the first input of a NEWLY-added item/fragment row, so adding an
+  // entity drops the cursor straight into it (the user just types). We watch the
+  // row/fragment count and, when it grows, focus the last row's first text input.
+  const listRef = useRef<HTMLDivElement>(null);
+  const rowCount = f.kind === "items" ? (f.rows?.length ?? 0) : f.kind === "rich" ? (f.fragments?.length ?? 0) : 0;
+  const prevCount = useRef(rowCount);
+  useEffect(() => {
+    if (rowCount > prevCount.current && listRef.current) {
+      const rows = listRef.current.querySelectorAll<HTMLElement>("[data-wb-item-row]");
+      const last = rows[rows.length - 1];
+      const input = last?.querySelector<HTMLInputElement | HTMLTextAreaElement>("input:not([type=color]), textarea");
+      input?.focus();
+    }
+    prevCount.current = rowCount;
+  }, [rowCount]);
 
   return (
     <div style={{ marginBottom: 20 }}>
@@ -218,18 +280,7 @@ export function FieldRow({ f }: { f: Field }) {
       )}
 
       {f.kind === "action" && (
-        <button
-          onClick={f.onClick}
-          style={{
-            display: "inline-flex", alignItems: "center", gap: 7,
-            padding: "9px 14px", borderRadius: 10, cursor: "pointer",
-            border: "1px solid #DBE5F5", background: "#F1F6FD", color: "#2457B0",
-            fontSize: 12.5, fontWeight: 600, fontFamily: "inherit",
-          }}
-        >
-          {icon(f.icon || "sparkles", 14)}
-          {f.label}
-        </button>
+        <ActionButton label={f.label} doneLabel={f.doneLabel} iconName={f.icon} tooltip={f.tooltip} onClick={f.onClick} />
       )}
 
       {f.kind === "text" && (
@@ -340,7 +391,7 @@ export function FieldRow({ f }: { f: Field }) {
       )}
 
       {f.kind === "items" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+        <div ref={listRef} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
           {/* Single clean badge: "3 / 4 images · min 1 · required". The high-value info. */}
           {(f.max != null || f.min != null) && (
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: -2 }}>
@@ -348,7 +399,7 @@ export function FieldRow({ f }: { f: Field }) {
             </div>
           )}
           {f.rows.map((row: ItemRow, i: number) => (
-            <div key={i} style={{ padding: 14, border: "1px solid #EDEDF0", borderRadius: 13, background: "#fff", position: "relative" }}>
+            <div key={i} data-wb-item-row style={{ padding: 14, border: "1px solid #EDEDF0", borderRadius: 13, background: "#fff", position: "relative" }}>
               <button onClick={row.onRemove} style={SERVICE_X} title="Remove">{icon("x", 13)}</button>
               <div style={{ display: "flex", flexDirection: "column", gap: 9, paddingRight: 26 }}>
                 {row.cols.map((col: ItemColField, j: number) => (
@@ -520,10 +571,11 @@ export function FieldRow({ f }: { f: Field }) {
           <label style={FIELD_LABEL}>
             {f.label} <span style={{ color: "#A1A1AA", fontWeight: 400 }}>· styled fragments</span>
           </label>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 12, border: "1px solid #E4E4EA", borderRadius: 13, background: "#FBFBFC" }}>
+          <div ref={listRef} style={{ display: "flex", flexDirection: "column", gap: 8, padding: 12, border: "1px solid #E4E4EA", borderRadius: 13, background: "#FBFBFC" }}>
             {f.fragments.map((frag: RichFrag, i: number) => (
               <div
                 key={i}
+                data-wb-item-row
                 draggable={fragDrag === i}
                 onDragOver={(e) => { e.preventDefault(); try { e.dataTransfer.dropEffect = "move"; } catch { /* */ } }}
                 onDrop={(e) => { e.preventDefault(); frag.onDropOn(); setFragDrag(null); }}
