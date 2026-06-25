@@ -65,4 +65,19 @@ describe("applyCompliance", () => {
     const out = applyCompliance(app({ compliance: { mode: "business-profile-safe", disclaimer: "Mine." } }), system);
     expect(out.compliance.disclaimer).toBe("Mine.");
   });
+
+  it("does not crash on a config missing hero (partial-config invariant)", () => {
+    // A config whose content omits `hero` entirely must degrade, not throw.
+    const partial = { content: { sections: [] } };
+    expect(() => applyCompliance(app(partial), system)).not.toThrow();
+    const out = applyCompliance(app(partial), system);
+    // The synthesised CTA still gets a safe label rather than crashing.
+    expect(out.content.hero.cta.label).toBeTruthy();
+  });
+
+  it("does not crash when content is entirely absent", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const bare = { tenant: { name: "X", category: "Y" }, features: {} } as any;
+    expect(() => applyCompliance(bare, system)).not.toThrow();
+  });
 });
