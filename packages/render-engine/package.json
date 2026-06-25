@@ -1,0 +1,31 @@
+{
+  "name": "@wl/render-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./modules/*": "./src/modules/*.tsx",
+    "./lib/*": "./src/lib/*.ts",
+    "./components/*": "./src/components/*"
+  },
+  "dependencies": {
+    "@wl/config-types": "*",
+    "@base-ui/react": "^1.4.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.12.0",
+    "tailwind-merge": "^3.5.0"
+  },
+  "peerDependencies": {
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}
