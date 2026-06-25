@@ -41,9 +41,18 @@ phases:
       # Full install. NOTE: `next build` needs build-time tooling at runtime —
       # @tailwindcss/postcss + tailwindcss (CSS) and typescript + @types/* (the
       # build type-checks). Those now live in `dependencies` (not devDependencies)
-      # so the build survives even an `npm ci --omit=dev`; plain `npm ci` is still
-      # preferred. Cached node_modules keeps repeat builds near-instant.
+      # so the build survives even an `npm ci --omit=dev`.
+      #
+      # Wipe node_modules FIRST so a poisoned CACHE can't shadow this install: an
+      # earlier `npm ci --omit=dev` run cached a tree WITHOUT @tailwindcss/postcss,
+      # and a restored stale cache makes the build fail "Cannot find module
+      # @tailwindcss/postcss" even though package.json is correct. `npm ci` already
+      # prunes, but removing the dir defends against a cache restored over the top.
+      - rm -rf node_modules
       - npm ci
+      # Fail FAST with a clear message if the critical build dep is still missing,
+      # instead of letting it surface later as an opaque Turbopack/PostCSS error.
+      - node -e "require.resolve('@tailwindcss/postcss')" && echo "OK: @tailwindcss/postcss present"
 
   pre_build:
     commands:
