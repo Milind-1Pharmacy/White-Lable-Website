@@ -43,3 +43,7 @@ next-env.d.ts
 # Static export artifacts
 out/
 out.zip
+
+# monorepo build artifacts
+apps/*/.next/
+apps/*/out/

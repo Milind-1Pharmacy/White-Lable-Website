@@ -1,0 +1,155 @@
+/* legal.css — the Contact / Terms / Privacy / Disclaimer / Data-deletion pages.
+   Shared across every site; colours are var(--…) from the theme tokens, so these
+   pages match the brand. Used by the live legal routes' look AND by the builder
+   preview (app/(builder)/builder/LegalPreview.tsx) → preview = live. */
+
+.legal-page {
+  /* Top padding clears the FIXED navbar (≈84px tall with the logo) so the eyebrow
+     and heading never sit under / overlap it. Extra breathing room below that. */
+  padding: clamp(120px, 14vw, 168px) 0 96px;
+  background: var(--white);
+}
+
+.legal-wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.legal-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.legal-heading {
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 28px;
+}
+
+.legal-article {
+  max-width: 760px;
+}
+
+.legal-intro {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.7;
+  color: var(--ink);
+  margin: 0 0 26px;
+}
+
+.legal-section {
+  margin-top: 34px;
+}
+
+.legal-subhead {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.legal-subhead2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  opacity: 0.9;
+  margin: 0 0 10px;
+}
+
+.legal-p {
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--ink);
+  opacity: 0.82;
+  margin: 0 0 14px;
+}
+
+.legal-list {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.legal-list--ol {
+  list-style: decimal;
+}
+
+.legal-list li {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.82;
+  margin-bottom: 8px;
+}
+
+.legal-empty {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--mute);
+  background: var(--cream);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 0 0 28px;
+}
+
+/* ---- Contact page grid ---- */
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.contact-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--cream);
+  padding: 20px 22px;
+}
+
+.contact-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.contact-value {
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  word-break: break-word;
+}
+
+a.contact-value:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .legal-page {
+    /* Still clear the fixed mobile navbar — only the bottom padding shrinks. */
+    padding: 104px 0 56px;
+  }
+}

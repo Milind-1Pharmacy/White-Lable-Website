@@ -1,0 +1,18 @@
+/* aarav.tokens.css — Aarav Pharmacy colour theme (blue + teal). Exact colours the
+ * Aarav site shipped with. Structure/layout comes from blocks.css; this only sets
+ * colours. The runtime bridge overrides these when the user edits brand colours. */
+@import "./_base.tokens.css";
+
+:root {
+  --navy: #1f5fb8;
+  --navy-2: #184c95;
+  --ink: #0e1b2a;
+  --cream: #f7fafc;
+  --cream-2: #eaf1f8;
+  --line: rgba(14, 27, 42, 0.12);
+  --line-2: rgba(14, 27, 42, 0.06);
+  --mute: rgba(14, 27, 42, 0.62);
+  --accent: #14c6c0;
+  --brand-teal: #14c6c0;
+  --brand-navy: #1f5fb8;
+}

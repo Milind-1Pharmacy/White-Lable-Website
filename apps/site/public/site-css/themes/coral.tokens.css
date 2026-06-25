@@ -1,0 +1,18 @@
+/* coral.tokens.css — Coral colour theme (terracotta / ivory). Warm, inviting.
+ * Structure/layout comes from blocks.css; this only sets colours. The runtime
+ * bridge overrides these when the user edits brand colours. */
+@import "./_base.tokens.css";
+
+:root {
+  --navy: #7a2e22;
+  --navy-2: #3a1e16;
+  --ink: #2b1b16;
+  --cream: #fbf5ee;
+  --cream-2: #f1e6d8;
+  --line: rgba(43, 27, 22, 0.12);
+  --line-2: rgba(43, 27, 22, 0.06);
+  --mute: rgba(43, 27, 22, 0.62);
+  --accent: #e0633e;
+  --brand-teal: #e0633e;
+  --brand-navy: #7a2e22;
+}
