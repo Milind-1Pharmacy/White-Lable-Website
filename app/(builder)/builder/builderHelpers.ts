@@ -13,14 +13,14 @@
  * @created 2026-06-23
  */
 import type React from "react";
-import type { AppConfig } from "@/types/config.types";
+import type { AppConfig, RichHeading } from "@/types/config.types";
 import type { DraftSection, StepId } from "./builderData";
+import { richHeadingToText } from "@/modules/RichHeading";
 
-/** Join a RichHeading's parts (or a plain string) into one display string. */
-export function headingText(rh: { parts: Array<{ text: string }> } | string | undefined): string {
-  if (!rh) return "";
-  if (typeof rh === "string") return rh;
-  return (rh.parts || []).map((p) => p.text).join("");
+/** Join a RichHeading's parts (or a plain string) into one display string, with
+ *  the SAME smart spacing the heading renders with (so labels/SEO text match). */
+export function headingText(rh: RichHeading | string | undefined): string {
+  return richHeadingToText(rh);
 }
 
 /** Whether the visitor prefers reduced motion (resolved once on the client). */
