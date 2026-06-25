@@ -38,9 +38,11 @@ phases:
         else
           echo "Using the source CodeBuild already checked out (sourceVersion / project default)."
         fi
-      # Full install — @tailwindcss/postcss (and other build-time tooling) live in
-      # devDependencies, so `--omit=dev` strips them and Turbopack fails to process
-      # app/globals.css. Cached node_modules keeps repeat builds near-instant.
+      # Full install. NOTE: `next build` needs build-time tooling at runtime —
+      # @tailwindcss/postcss + tailwindcss (CSS) and typescript + @types/* (the
+      # build type-checks). Those now live in `dependencies` (not devDependencies)
+      # so the build survives even an `npm ci --omit=dev`; plain `npm ci` is still
+      # preferred. Cached node_modules keeps repeat builds near-instant.
       - npm ci
 
   pre_build:
