@@ -70,6 +70,9 @@ export function useBuilderState() {
   const [published, setPublished] = useState(false);
   // Current deploy stage shown while publishing (demo sequence or real status).
   const [publishStage, setPublishStage] = useState<"building" | "bucket" | "deploying" | "live">("building");
+  // Seconds elapsed since Publish was clicked — drives the loader's live timer and
+  // its ease-in progress arc (a real deploy takes ~5 min, so users need the clock).
+  const [publishElapsed, setPublishElapsed] = useState(0);
   // Set from the publish response once the site goes live; "" until then. In demo
   // mode this is a placeholder slug domain — see `siteIsLive` to tell them apart.
   const [siteUrl, setSiteUrl] = useState("");
@@ -115,6 +118,9 @@ export function useBuilderState() {
   const fragDragRef = useRef<number | null>(null);
   const saveT = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pubT = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Wall-clock stamp of when the current publish started — used to enforce the
+  // ~6 min poll ceiling independent of how many polls actually fired.
+  const startStamp = useRef(0);
   const flipAddId = useRef<string | null>(null);
   const prevStep = useRef<StepId>(step);
   const prevPicker = useRef(false);
@@ -222,6 +228,15 @@ export function useBuilderState() {
       if (pubT.current) clearTimeout(pubT.current);
     };
   }, []);
+
+  // Tick the publish elapsed-seconds clock once per second while a publish is in
+  // flight (the loader reads it for the live timer + progress arc). doPublish resets
+  // it to 0 at the start of each run, so the interval only needs to increment here.
+  useEffect(() => {
+    if (!publishing) return;
+    const t = setInterval(() => setPublishElapsed((s) => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [publishing]);
 
   // Every view fits the visible frame(s) into the pane BOX (width AND height) so the
   // component is fully visible without scrolling. "all" stacks both frames; the
@@ -535,6 +550,8 @@ export function useBuilderState() {
     setSiteIsLive(false);
     setPublished(false);
     setPublishStage("building");
+    setPublishElapsed(0);
+    startStamp.current = Date.now();
     setPublishing(true);
 
     const flavor = buildFlavor();
@@ -565,23 +582,45 @@ export function useBuilderState() {
     try {
       const res = await publishTenant(flavor);
       if (res.status === "live") { setSiteUrl(res.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
+      // A real build runs ~3–5 min. Poll fast at first (2s) for snappy early
+      // feedback, then back off to 4s to cut request volume; give up after ~6 min.
       let tries = 0;
+      const FAST_MS = 2000, SLOW_MS = 4000, FAST_TRIES = 15, MAX_MS = 6 * 60_000;
+      const startedAt = startStamp.current;
       const poll = async () => {
         tries += 1;
         try {
           const s = await getPublishStatus(flavor.slug);
           if (s.status === "live") { setSiteUrl(s.siteUrl || liveUrl); setSiteIsLive(true); setPublished(true); return; }
           if (s.status === "failed") { setPublishError(s.message || "Build failed."); setPublishing(false); return; }
-          setPublishStage(s.status === "queued" ? "building" : "deploying");
-        } catch { /* transient — keep polling */ }
-        if (tries < 60) pubT.current = setTimeout(poll, 2000);
-        else { setPublishError("Build is taking longer than expected."); setPublishing(false); }
+          // Map the backend status to a deploy stage so the stepper advances:
+          // queued → building, building → bucket once it's been going a bit, then deploying.
+          setPublishStage(s.status === "queued" ? "building" : s.status === "building" ? "bucket" : "deploying");
+        } catch { /* transient network blip — keep polling */ }
+        if (Date.now() - startedAt < MAX_MS) {
+          pubT.current = setTimeout(poll, tries < FAST_TRIES ? FAST_MS : SLOW_MS);
+        } else {
+          setPublishError("This build is taking longer than expected. It may still finish — check back shortly, or view the CodeBuild logs.");
+          setPublishing(false);
+        }
       };
-      pubT.current = setTimeout(poll, 2000);
+      pubT.current = setTimeout(poll, FAST_MS);
     } catch (err) {
       setPublishError(err instanceof Error ? err.message : "Publish failed.");
       setPublishing(false);
     }
+  }
+
+  /**
+   * Cancel an in-flight publish: stop the poll/stage timer chain and drop the
+   * overlay. (The backend build keeps running server-side — this only detaches the
+   * UI from it; the user can re-open status later.)
+   */
+  function cancelPublish() {
+    if (pubT.current) clearTimeout(pubT.current);
+    pubT.current = null;
+    setPublishing(false);
+    setPublished(false);
   }
 
   /**
@@ -775,7 +814,7 @@ export function useBuilderState() {
     selectedSectionId, setSelectedSectionId,
     pickerOpen, setPickerOpen,
     publishing, setPublishing, published, setPublished, doPublish, siteUrl, siteIsLive, publishError, setPublishError,
-    publishStage, publishedSiteOpen, setPublishedSiteOpen,
+    publishStage, publishElapsed, cancelPublish, publishedSiteOpen, setPublishedSiteOpen,
     publishIssues, setPublishIssues, jumpToIssue,
     previewSheetOpen, setPreviewSheetOpen,
     saved,

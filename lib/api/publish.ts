@@ -38,14 +38,42 @@ function authHeaders(token?: string): Record<string, string> {
   return token ? { "session-token": token } : {};
 }
 
-/** Unwrap the universal envelope: { statusCode, data } | { statusCode, error }. */
-async function unwrap(res: Response): Promise<unknown> {
+/**
+ * Resolve the session token to send. A caller-supplied token wins; otherwise fall
+ * back to the build-time `NEXT_PUBLIC_PUBLISH_TOKEN` (a dev/test token set in
+ * `.env.local`). Returns undefined when neither is set (unauthenticated call).
+ */
+export function publishToken(token?: string): string | undefined {
+  return token || process.env.NEXT_PUBLIC_PUBLISH_TOKEN || undefined;
+}
+
+/**
+ * Unwrap the UNIVERSAL response envelope — the platform contract is that every
+ * success payload sits under `data` ({ statusCode, data } | { statusCode, error }).
+ * This peels exactly that one envelope layer (same as upload.ts's `json.data.*`).
+ * The publish/status handlers nest their own object one level deeper still
+ * (`data: { status }`) — that second peel is the caller's job, not this helper's,
+ * so this stays a faithful single-envelope unwrap shared by both endpoints.
+ */
+async function unwrap(res: Response): Promise<Record<string, unknown> | null> {
   const json = await res.json().catch(() => null);
   if (!res.ok || (json && json.error)) {
     const msg = json?.error?.userMessage || `Request failed (HTTP ${res.status})`;
     throw new Error(msg);
   }
-  return json?.data ?? json;
+  return (json?.data ?? json ?? null) as Record<string, unknown> | null;
+}
+
+/**
+ * Pull the `{ status, siteUrl, message }` object out of an already-envelope-
+ * unwrapped publish/status response. The handler wraps it under its own `data`
+ * key ({ data: { status } }) but tolerate a flat `{ status }` too, so the client
+ * survives if the backend ever drops the inner nesting.
+ */
+function readStatusObject(unwrapped: Record<string, unknown> | null): Partial<PublishStatus> {
+  if (!unwrapped) return {};
+  const inner = "data" in unwrapped ? (unwrapped.data as Record<string, unknown>) : unwrapped;
+  return (inner ?? {}) as Partial<PublishStatus>;
 }
 
 /**
@@ -57,11 +85,11 @@ async function unwrap(res: Response): Promise<unknown> {
 export async function publishTenant(payload: PublishPayload, token?: string): Promise<PublishStatus> {
   const res = await fetch(getURL({ key: "TENANT_PUBLISH" }), {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders(token) },
+    headers: { "Content-Type": "application/json", ...authHeaders(publishToken(token)) },
     body: JSON.stringify(payload),
   });
-  const data = (await unwrap(res)) as Partial<PublishStatus> | null;
-  return { status: data?.status ?? "building", siteUrl: data?.siteUrl, message: data?.message };
+  const data = readStatusObject(await unwrap(res));
+  return { status: data.status ?? "building", siteUrl: data.siteUrl, message: data.message };
 }
 
 /**
@@ -72,8 +100,8 @@ export async function publishTenant(payload: PublishPayload, token?: string): Pr
 export async function getPublishStatus(slug: string, token?: string): Promise<PublishStatus> {
   const res = await fetch(getURL({ key: "TENANT_STATUS", queryParams: { slug } }), {
     method: "GET",
-    headers: { ...authHeaders(token) },
+    headers: { ...authHeaders(publishToken(token)) },
   });
-  const data = (await unwrap(res)) as Partial<PublishStatus> | null;
-  return { status: data?.status ?? "building", siteUrl: data?.siteUrl, message: data?.message };
+  const data = readStatusObject(await unwrap(res));
+  return { status: data.status ?? "building", siteUrl: data.siteUrl, message: data.message };
 }

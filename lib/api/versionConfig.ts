@@ -13,7 +13,7 @@
 import type { AppEnv } from "./env";
 
 /** Environments the override may name (kept in sync with the ENV map in env.ts). */
-const VALID: AppEnv[] = ["prod", "beta", "test", "stagging", "gamma", "theta"];
+const VALID: AppEnv[] = ["prod", "beta", "test", "atest", "stagging", "gamma", "theta"];
 
 /** Read an optional build-time override; fall back to a non-prod env. */
 function resolve(): AppEnv {

@@ -17,18 +17,19 @@ import { PUBLISH_DOMAIN } from "../builderHelpers";
 import { isLegalNavMessage } from "@/lib/legalRoutes";
 import {
   BTN_OUTLINE, CHECK_RING, CONFETTI, PICKER_BACK, PICKER_CLOSE, PICKER_POP, PICK_ITEM,
-  PREVIEW_SHEET, PUBLISH_BTN_GHOST, PUBLISH_BTN_PRIMARY, PUBLISH_CARD, PUBLISH_OVERLAY, SPINNER_LG,
+  PREVIEW_SHEET, PUBLISH_BTN_GHOST, PUBLISH_BTN_PRIMARY, PUBLISH_CARD, PUBLISH_OVERLAY,
 } from "../builderStyles";
 import { icon } from "../icons";
 import { BuilderPreview } from "../preview";
 import { Hoverable } from "../components/Hoverable";
+import { PublishLoader } from "../components/PublishLoader";
 import type { BuilderApi } from "../useBuilderState";
 
 export function Overlays({ api }: { api: BuilderApi }) {
   const {
     pickerOpen, setPickerOpen, addSection,
     publishing, published, setPublishing, setPublished, slug, siteUrl, siteIsLive, publishError, setPublishError,
-    publishStage,
+    publishStage, publishElapsed, cancelPublish,
     publishIssues, setPublishIssues, jumpToIssue,
     previewSheetOpen, setPreviewSheetOpen, previewConfig, sections, step, selectedSectionId,
     legalSection,
@@ -72,13 +73,6 @@ export function Overlays({ api }: { api: BuilderApi }) {
   }, {});
   // Shown live URL: the backend's siteUrl once live, else the placeholder slug domain.
   const liveUrl = siteUrl || slug + "." + PUBLISH_DOMAIN;
-  // Human label for the current deploy stage shown while publishing.
-  const stageLabel = {
-    building: "Building your site…",
-    bucket: "Creating storage bucket…",
-    deploying: "Deploying to the edge…",
-    live: "Live!",
-  }[publishStage];
   return (
     <>
       {/* Section picker */}
@@ -124,13 +118,12 @@ export function Overlays({ api }: { api: BuilderApi }) {
       {(publishing || published || publishError) && (
         <div style={PUBLISH_OVERLAY}>
           {publishing && !published && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18, textAlign: "center" }}>
-              <span style={SPINNER_LG} />
-              <div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{stageLabel}</div>
-                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12.5, color: "rgba(255,255,255,.6)", marginTop: 6, letterSpacing: ".04em" }}>{slug + "." + PUBLISH_DOMAIN}</div>
-              </div>
-            </div>
+            <PublishLoader
+              stage={publishStage}
+              elapsed={publishElapsed}
+              liveUrl={liveUrl}
+              onCancel={cancelPublish}
+            />
           )}
           {publishError && !publishing && !published && (
             <div style={PUBLISH_CARD}>

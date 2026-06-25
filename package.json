@@ -5,12 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:tenant": "next build",
+    "build:tenant": "STATIC_EXPORT=1 next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:urmedz": "TENANT=urmedz next build",
+    "build:urmedz": "STATIC_EXPORT=1 TENANT=urmedz next build",
     "sync:urmedz": "aws s3 sync out/ s3://www.urmedz.in/ --delete --profile urmedz",
     "invalidate:urmedz": "aws cloudfront create-invalidation --profile urmedz --paths \"/*\" --distribution-id \"$(aws cloudfront list-distributions --profile urmedz --query \"DistributionList.Items[?contains(Aliases.Items, 'www.urmedz.in')].Id | [0]\" --output text)\"",
     "deploy:urmedz": "npm run build:urmedz && npm run sync:urmedz"

@@ -2,13 +2,14 @@
 #
 # Backend-oriented: the backend writes the tenant's AppConfig to a small S3 object,
 # then calls codebuild.start_build with the slug + bucket. CodeBuild runs:
-#   1. install deps (cached)            2. pull configs/<slug>.json from S3
-#   3. TENANT=<slug> next build → ./out 4. sync ./out to the site bucket + invalidate CF
+#   1. install deps (cached)   2. pull config from S3 + provision the site bucket
+#   3. STATIC_EXPORT build → ./out   4. sync ./out to the site bucket + invalidate CF
 #
 # Env vars the backend passes via environmentVariablesOverride on start_build:
 #   TENANT         tenant slug (e.g. "urmedz") — the build target + config filename
 #   CONFIG_S3_URI  s3://<configs-bucket>/<slug>.json — where the backend wrote the AppConfig
 #   BUCKET         the tenant's S3 SITE bucket (e.g. "urmedz.1pharmacy.io")
+#   AWS_REGION     bucket region for create-bucket (defaults to ap-south-1 below)
 #   DISTRIBUTION   optional — CloudFront distribution id to invalidate (may be empty)
 #   BRANCH         optional — only used by the install-phase fallback below; defaults to main
 #
@@ -37,14 +38,26 @@ phases:
         else
           echo "Using the source CodeBuild already checked out (sourceVersion / project default)."
         fi
-      # Skip dev tooling (eslint/vitest) — not needed to build. Cached node_modules
-      # makes this near-instant on repeat builds.
-      - npm ci --omit=dev
+      # Full install — @tailwindcss/postcss (and other build-time tooling) live in
+      # devDependencies, so `--omit=dev` strips them and Turbopack fails to process
+      # app/globals.css. Cached node_modules keeps repeat builds near-instant.
+      - npm ci
 
   pre_build:
     commands:
       # Download this tenant's config from S3 into the configs folder.
       - aws s3 cp "$CONFIG_S3_URI" "configs/$TENANT.json"
+      # Self-provision the tenant's PUBLIC site bucket on first publish so a brand-new
+      # tenant deploys with no manual AWS setup. All three are idempotent (re-publishing
+      # an existing tenant is a no-op): create the bucket (|| true swallows
+      # "already owned by you"), drop the block-public-access guards, then attach a
+      # read-only public-object policy so the static site is served straight from S3.
+      # NOTE: only needed when the bucket is served via the S3 *website* endpoint. If a
+      # tenant is fronted by CloudFront + OAC, the bucket should stay PRIVATE and these
+      # three commands should be skipped for it (see docs/deploy-security-headers.md).
+      - aws s3api create-bucket --bucket "$BUCKET" --region "${AWS_REGION:-ap-south-1}" --create-bucket-configuration "LocationConstraint=${AWS_REGION:-ap-south-1}" || true
+      - aws s3api put-public-access-block --bucket "$BUCKET" --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
+      - aws s3api put-bucket-policy --bucket "$BUCKET" --policy "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::$BUCKET/*\"}]}"
 
   build:
     commands:

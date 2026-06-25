@@ -26,6 +26,9 @@ export const ENV = {
   prod: { baseURL: "https://d7oupb2fs2659.cloudfront.net/" },
   beta: { baseURL: "https://apiv2.1pharmacy.io/beta/" },
   test: { baseURL: "https://apiv2.1pharmacy.io/test/" },
+  // Dedicated dev stage for the tenant-publish pipeline (CodeBuild trigger). The
+  // backend exposes tenant_config / tenant_config/publish / tenant_config/status here.
+  atest: { baseURL: "https://apiv2.1pharmacy.io/a-test/" },
   stagging: { baseURL: "https://apiv2.1pharmacy.io/stagging/" },
   gamma: { baseURL: "https://apiv2.1pharmacy.io/gamma/" },
   theta: { baseURL: "https://apiv2.1pharmacy.io/theta/" },
