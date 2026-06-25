@@ -1,0 +1,18 @@
+/* urmedz.tokens.css — UrMedz colour theme (editorial / cream). Exact colours the
+ * UrMedz site shipped with. Structure/layout comes from blocks.css; this only sets
+ * colours. The runtime bridge overrides these when the user edits brand colours. */
+@import "./_base.tokens.css";
+
+:root {
+  --navy: #1b2a5b;
+  --navy-2: #11225e;
+  --ink: #1b2a5b;
+  --cream: #f4efe6;
+  --cream-2: #ebe3d2;
+  --line: rgba(27, 42, 91, 0.12);
+  --line-2: rgba(27, 42, 91, 0.06);
+  --mute: rgba(27, 42, 91, 0.62);
+  --accent: #1fafa6;
+  --brand-teal: #1fafa6;
+  --brand-navy: #1b2a5b;
+}

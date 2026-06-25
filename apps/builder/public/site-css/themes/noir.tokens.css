@@ -1,0 +1,18 @@
+/* noir.tokens.css — Noir colour theme (charcoal / warm amber). Premium dark-ink
+ * editorial. Structure/layout comes from blocks.css; this only sets colours. The
+ * runtime bridge overrides these when the user edits brand colours. */
+@import "./_base.tokens.css";
+
+:root {
+  --navy: #17171a;
+  --navy-2: #0f0f11;
+  --ink: #17171a;
+  --cream: #f3f1ec;
+  --cream-2: #e8e5dd;
+  --line: rgba(23, 23, 26, 0.12);
+  --line-2: rgba(23, 23, 26, 0.06);
+  --mute: rgba(23, 23, 26, 0.62);
+  --accent: #c8892b;
+  --brand-teal: #c8892b;
+  --brand-navy: #17171a;
+}

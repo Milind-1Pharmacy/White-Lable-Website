@@ -1,0 +1,25 @@
+/* _base.tokens.css — the NON-colour tokens every theme shares: fonts, gutter, maxw,
+ * and the Next.js Instrument-Serif font bridge. Colour tokens (--navy/--ink/--cream/
+ * --accent/--mute/--line…) are NOT here — a theme's <name>.tokens.css sets the
+ * defaults and the runtime colour bridge overrides them from the user's brand colours.
+ * Imported first by every theme file. */
+[data-tenant] {
+  --font-display: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+}
+
+:root {
+  --white: #ffffff;
+  --accent-ink: #ffffff;
+
+  /* Fixed brand-palette accents used by a few decorative bits (not theme colours). */
+  --brand-yellow: #f5a623;
+  --brand-purple: #6b3fa0;
+  --brand-pink: #e5326c;
+
+  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  --gutter: clamp(20px, 4vw, 56px);
+  --maxw: 1320px;
+}

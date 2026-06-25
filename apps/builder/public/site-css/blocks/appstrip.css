@@ -1,0 +1,382 @@
+/* ── App download strip ──────────────────────────────────────────────── */
+.appstrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 28px;
+  gap: clamp(32px, 5vw, 56px);
+  align-items: center;
+  padding: clamp(28px, 3.5vw, 44px) clamp(32px, 4vw, 56px);
+  border-radius: 22px;
+  background: var(--ink);
+  color: var(--cream);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.appstrip::before {
+  content: "";
+  position: absolute;
+  right: -160px;
+  top: -160px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.appstrip__left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 280px;
+}
+
+.appstrip__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 5px;
+  flex: 0 0 auto;
+}
+
+.appstrip__h {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-size: clamp(22px, 2.4vw, 32px);
+  color: var(--cream);
+  margin: 0 0 4px;
+}
+
+.appstrip__body {
+  font-size: 13.5px;
+  color: rgba(244, 239, 230, .6);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.appstrip__badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.store-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 239, 230, .18);
+  background: rgba(255, 255, 255, .05);
+  color: var(--cream);
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+}
+
+.store-badge:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(244, 239, 230, .32);
+}
+
+.store-badge>svg {
+  flex: 0 0 auto;
+}
+
+.store-badge__small {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  line-height: 1.3;
+}
+
+.store-badge__big {
+  display: block;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.store-badge--apple svg {
+  color: var(--cream);
+}
+
+/* Phone cluster */
+.appstrip__phone {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  min-height: 600px;
+}
+
+.phone {
+  width: 270px;
+  height: 560px;
+  background: #111827;
+  border-radius: 42px;
+  padding: 7px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(244, 239, 230, 0.08);
+  position: relative;
+  transform: rotate(-3deg);
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1);
+  z-index: 1;
+}
+
+.appstrip:hover .phone {
+  transform: rotate(0deg);
+}
+
+.phone__notch {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 24px;
+  background: #000;
+  border-radius: 14px;
+  z-index: 2;
+}
+
+.phone__screen {
+  background: linear-gradient(180deg, #1B2A5B 0%, #050B26 100%);
+  height: 100%;
+  width: 100%;
+  border-radius: 35px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #fff;
+  overflow: hidden;
+}
+
+.phone__status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px 0;
+  opacity: 0.9;
+}
+
+.phone__app {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  flex: 1;
+}
+
+.phone__topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone__appicon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 3px;
+}
+
+.phone__greet {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.phone__greet .label {
+  font-size: 8.5px;
+  letter-spacing: .1em;
+}
+
+.phone__name {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.phone__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .08);
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, .65);
+}
+
+.phone__chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.phone__chips span {
+  font-size: 10.5px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .08);
+  color: rgba(255, 255, 255, .75);
+}
+
+.phone__chips span.is-active {
+  font-weight: 600;
+}
+
+.phone__card {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 14px;
+  padding: 12px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.phone__card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.phone__card-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.phone__card-sub {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, .55);
+}
+
+.phone__card-prices {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: #fff;
+  margin-top: 2px;
+}
+
+.phone__card-cta {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 10px 13px;
+  border-radius: 10px;
+  text-align: center;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.phone__deliv {
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 12px;
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.phone__deliv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.phone__deliv-track {
+  height: 4px;
+  background: rgba(255, 255, 255, .1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.phone__deliv-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.phone__deliv-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Floating cards beside phone */
+.ph-float {
+  position: absolute;
+  background: #FFFFFF;
+  color: var(--ink);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  min-width: 175px;
+}
+
+.ph-float--top {
+  top: 10%;
+  left: -10%;
+  transform: rotate(-4deg);
+}
+
+.ph-float--bot {
+  bottom: 6%;
+  right: -8%;
+  transform: rotate(3deg);
+}
+
+.appstrip:hover .ph-float--top {
+  transform: rotate(-2deg) translateY(-4px);
+}
+
+.appstrip:hover .ph-float--bot {
+  transform: rotate(1deg) translateY(-4px);
+}
+
+@media (max-width: 1180px) {
+  .ph-float--top {
+    left: -4%;
+  }
+
+  .ph-float--bot {
+    right: -2%;
+  }
+}
+
+@media (max-width: 980px) {
+  .ph-float {
+    position: static;
+    transform: none;
+    margin: 8px auto;
+  }
+}
+

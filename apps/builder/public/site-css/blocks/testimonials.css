@@ -1,0 +1,96 @@
+/* ── Testimonials ─────────────────────────────────────────────────── */
+.tm__viewport {
+  overflow: hidden;
+}
+
+.tm__track {
+  display: flex;
+  transition: transform .6s cubic-bezier(.2, .7, .2, 1);
+}
+
+.tm__card {
+  flex: 0 0 100%;
+  padding: clamp(40px, 6vw, 80px) 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+@media (max-width: 880px) {
+  .tm__card {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tm__quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(26px, 3vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--cream);
+}
+
+.tm__quote::before {
+  content: "“";
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent);
+  font-size: 1em;
+  margin-right: 4px;
+}
+
+.tm__attr {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tm__name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--cream);
+  letter-spacing: -0.01em;
+}
+
+.tm__role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(244, 239, 230, 0.55);
+}
+
+.tm__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tm__nav button {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 239, 230, .2);
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .25s ease, color .25s ease, border-color .25s ease;
+}
+
+.tm__nav button:hover {
+  background: var(--accent);
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.tm__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: rgba(244, 239, 230, 0.55);
+}
+

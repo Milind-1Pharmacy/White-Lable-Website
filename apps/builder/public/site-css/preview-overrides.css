@@ -1,0 +1,7 @@
+/* preview-overrides.css — loaded ONLY in the builder preview iframe, NEVER deployed.
+ *
+ * Currently empty: the Team pull-quote layout fix that used to live here is now part
+ * of the shared blocks (blocks/team.css uses flexbox so it wraps correctly at any
+ * width), so preview and live match without a preview-only patch. Kept as a hook for
+ * any future preview-frame-only tweak.
+ */
