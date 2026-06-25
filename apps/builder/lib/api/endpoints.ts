@@ -15,7 +15,11 @@ import { env } from "./env";
 /** Endpoint path constants (mirrors the b2c key→path map). */
 const APIURLCollection: Record<string, string> = {
   UPLOAD_URL: "upload_url",
-  // Publish pipeline (see docs/system-architecture.md → Backend Requirements §2).
+  // Publish pipeline (see docs/backend-requirements.md §2).
+  // Builder LOAD — GET the authed tenant's stored config ({slug, tenantConfig, status,
+  // siteUrl}); the last-published AppConfig, or a valid-empty default on first use. The
+  // tenant is resolved from the session token, so the slug is NOT in the path.
+  TENANT_CONFIG: "tenant_config",
   TENANT_PUBLISH: "tenant_config/publish",
   TENANT_STATUS: "tenant_config/status",
 };

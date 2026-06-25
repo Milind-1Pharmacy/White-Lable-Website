@@ -38,7 +38,7 @@ import {
 } from "./builderHelpers";
 import type { Field } from "./builderTypes";
 import { PREVIEW_BASE_WIDTH, PREVIEW_MOBILE_WIDTH } from "./preview";
-import { publishTenant, getPublishStatus, type PublishPayload } from "@/lib/api/publish";
+import { publishTenant, getPublishStatus, getTenantConfig, type PublishPayload } from "@/lib/api/publish";
 import { isLegalNavMessage } from "@wl/render-engine/lib/legalRoutes";
 import { makeFieldBuilders } from "./fieldBuilders";
 import { DEFAULT_THEME } from "./themePresets";
@@ -52,6 +52,51 @@ import { validateDraft, blockingIssues, type ValidationIssue } from "./validatio
  * NOTE: this does NOT gate publishing — publishing is always available.
  */
 export const DEV_TOOLS_ENABLED = process.env.NEXT_PUBLIC_DEV_TOOLS === "1";
+
+/**
+ * Convert a STORED/PUBLISHED AppConfig (from GET /tenant_config) into the builder's
+ * editable draft shape — the inverse of `buildFlavor()`. The stored config has its
+ * sections inlined under `content.sections` (no client ids) and the render order baked
+ * into `content.order` (`["hero","about","services","section:<i>",…]`). The builder
+ * draft instead keeps sections as a separate `DraftSection[]` (each with a stable
+ * client `id`) plus a `blockOrder` of card ids, and an empty `content.sections` on the
+ * config. So we: pull the inlined sections out, give each a fresh `genId()`, rebuild
+ * `blockOrder` from `content.order` (mapping each `section:<i>` token to that section's
+ * new id; `hero|about|services` pass through), and blank `content.sections`/`order` on
+ * the returned config. Mirrors preview/buildFlavor so preview === live === restored.
+ */
+function tenantConfigToDraft(appConfig: AppConfig): { config: AppConfig; sections: DraftSection[]; blockOrder: string[] } {
+  const inlined = (appConfig.content?.sections ?? []) as DraftSection["data"][] & { type?: BuilderSectionType }[];
+  // Re-attach a stable client id to each stored section (its type/data are kept as-is).
+  const sections: DraftSection[] = (inlined as Array<{ type: BuilderSectionType; data?: unknown } & Record<string, unknown>>).map(
+    (s) => ({ id: genId(), type: s.type, data: (s as { data?: unknown }).data ?? s } as DraftSection)
+  );
+  // Rebuild the unified card order from the baked content.order tokens.
+  const order = (appConfig.content?.order ?? []) as string[];
+  const blockOrder: string[] = order.length
+    ? order
+        .map((tok) => {
+          if (tok === "hero" || tok === "about" || tok === "services") return tok;
+          const m = /^section:(\d+)$/.exec(tok);
+          if (m) {
+            const i = Number(m[1]);
+            return sections[i] ? sections[i].id : null;
+          }
+          return null;
+        })
+        .filter((id): id is string => id != null)
+    : ["hero", "about", "services", ...sections.map((s) => s.id)];
+  // Ensure hero is present and first; append any sections missing from the order.
+  const withHero = blockOrder.includes("hero") ? blockOrder : ["hero", ...blockOrder];
+  const seen = new Set(withHero);
+  const finalOrder = ["hero", ...withHero.filter((id) => id !== "hero"), ...sections.map((s) => s.id).filter((id) => !seen.has(id))];
+  // The draft config holds sections separately, so blank the inlined copy + order.
+  const config: AppConfig = {
+    ...appConfig,
+    content: { ...appConfig.content, sections: [], order: [] },
+  };
+  return { config, sections, blockOrder: finalOrder };
+}
 
 export function useBuilderState() {
   const [step, setStep] = useState<StepId>("sections");
@@ -76,9 +121,17 @@ export function useBuilderState() {
   // Guards the persistence effect from overwriting localStorage before the initial
   // restore has run (otherwise the deterministic seed would clobber a saved draft).
   const hydrated = useRef(false);
+  // True once the user has edited (first markDirty). The async server-fallback seed
+  // (GET /tenant_config, fired only when there was NO local draft) checks this so it
+  // can NEVER overwrite edits the user started typing while the fetch was in flight.
+  const userTouched = useRef(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+  // "Reset to published" UI state: a busy flag while GET /tenant_config runs, and a
+  // short notice (e.g. "Nothing published yet") shown when there's nothing to restore.
+  const [resetBusy, setResetBusy] = useState(false);
+  const [resetNotice, setResetNotice] = useState<string | null>(null);
   // Current deploy stage shown while publishing (demo sequence or real status).
   const [publishStage, setPublishStage] = useState<"building" | "bucket" | "deploying" | "live">("building");
   // Seconds elapsed since Publish was clicked — drives the loader's live timer and
@@ -162,11 +215,35 @@ export function useBuilderState() {
   useEffect(() => {
     const draft = loadDraft();
     if (draft) {
+      // A LOCAL draft always wins — never lose in-progress work on refresh.
       setConfig(draft.config);
       setSections(draft.sections);
       setBlockOrder(draft.blockOrder);
+      hydrated.current = true;
+      return;
     }
+    // No local draft (fresh browser/device, cleared storage). Fall back to the
+    // tenant's LAST-PUBLISHED config from the backend so the user sees their live
+    // site instead of an empty BLANK() — but only if the publish API is wired and
+    // the user hasn't started editing the seed while the fetch is in flight.
     hydrated.current = true;
+    if (!process.env.NEXT_PUBLIC_PUBLISH_API) return;
+    let cancelled = false;
+    getTenantConfig()
+      .then((rec) => {
+        if (cancelled || userTouched.current || !rec) return;
+        const seeded = tenantConfigToDraft(rec.tenantConfig);
+        setConfig(seeded.config);
+        setSections(seeded.sections);
+        setBlockOrder(seeded.blockOrder);
+        if (rec.siteUrl) setSiteUrl(rec.siteUrl);
+      })
+      .catch(() => {
+        /* backend unreachable — keep the BLANK() seed; nothing is lost */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -369,6 +446,7 @@ export function useBuilderState() {
 
   // ---------- mutations ----------
   const markDirty = useCallback(() => {
+    userTouched.current = true; // the user has edited — the async server seed must not clobber this
     setSaved(false);
     if (saveT.current) clearTimeout(saveT.current);
     saveT.current = setTimeout(() => setSaved(true), 900);
@@ -410,6 +488,38 @@ export function useBuilderState() {
     if (typeof window !== "undefined" && !window.confirm("Clear all builder data and start from an empty site? This can't be undone.")) return;
     loadDraftState(BLANK());
   }, [loadDraftState]);
+
+  /**
+   * Replace the current draft with the tenant's LAST-PUBLISHED config from the
+   * backend (GET /tenant_config). A user-facing escape hatch — "go back to what's
+   * actually live", discarding local edits — so it confirms first (it overwrites the
+   * draft). If nothing has ever been published (or the API isn't wired / is
+   * unreachable), it does NOT wipe to BLANK; it surfaces a short notice and leaves
+   * the draft untouched. `resetBusy` drives a button spinner while the fetch runs.
+   */
+  const resetToPublished = useCallback(async () => {
+    if (resetBusy) return;
+    setResetNotice(null);
+    if (!process.env.NEXT_PUBLIC_PUBLISH_API) {
+      setResetNotice("Connect the publish API to load your published site.");
+      return;
+    }
+    setResetBusy(true);
+    try {
+      const rec = await getTenantConfig();
+      if (!rec) {
+        setResetNotice("Nothing published yet — there's no live version to restore.");
+        return;
+      }
+      if (typeof window !== "undefined" && !window.confirm("Replace your current draft with your last published site? Unsaved changes will be lost.")) return;
+      loadDraftState(tenantConfigToDraft(rec.tenantConfig));
+      if (rec.siteUrl) setSiteUrl(rec.siteUrl);
+    } catch (err) {
+      setResetNotice(err instanceof Error ? err.message : "Couldn't load your published site.");
+    } finally {
+      setResetBusy(false);
+    }
+  }, [resetBusy, loadDraftState]);
 
   /**
    * Commit a drag-reorder of the UNIFIED block list. `target` is a gap index into
@@ -847,6 +957,8 @@ export function useBuilderState() {
     config, sections, slug,
     // dev-only draft actions
     fillMockData, clearAllData,
+    // restore-from-published (user-facing, not dev-gated)
+    resetToPublished, resetBusy, resetNotice, setResetNotice,
     // selection + overlays
     selectedSectionId, setSelectedSectionId,
     pickerOpen, setPickerOpen,

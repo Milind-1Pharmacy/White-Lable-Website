@@ -20,7 +20,7 @@ import { safeSrc } from "@wl/render-engine/lib/safeUrl";
 import type { BuilderApi } from "../useBuilderState";
 
 export function BuilderHeader({ api }: { api: BuilderApi }) {
-  const { config, saved, publishing, doPublish, setPreviewSheetOpen, fillMockData, clearAllData, devToolsEnabled } = api;
+  const { config, saved, publishing, doPublish, setPreviewSheetOpen, fillMockData, clearAllData, devToolsEnabled, resetToPublished, resetBusy, resetNotice, setResetNotice } = api;
   // The website's own logo (if the config has one) + its name. NOT a tenant
   // switcher — there's no multi-site dropdown here, just an identity label.
   const siteLogo = safeSrc(config.branding?.logo) || safeSrc(config.branding?.logoFull);
@@ -71,6 +71,25 @@ export function BuilderHeader({ api }: { api: BuilderApi }) {
           </>
         )}
       </div>
+
+      {/* Restore from the last-published site (user-facing — NOT dev-gated). Pulls
+          GET /tenant_config and replaces the draft after a confirm; shows a short
+          notice (e.g. "Nothing published yet") instead of wiping when there's nothing
+          to restore. */}
+      {resetNotice && (
+        <span
+          role="status"
+          onClick={() => setResetNotice(null)}
+          title="Dismiss"
+          style={{ fontSize: 12, color: "#92400E", background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: 7, padding: "5px 9px", cursor: "pointer", maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+        >
+          {resetNotice}
+        </span>
+      )}
+      <Hoverable as="button" onClick={resetToPublished} style={{ ...BTN_OUTLINE, opacity: resetBusy ? 0.6 : 1, cursor: resetBusy ? "default" : "pointer" }} hover={{ background: "#FAFAFB", borderColor: "#D4D4DB" }}>
+        <span style={{ display: "flex" }}>{resetBusy ? <span style={SPINNER_SM} /> : icon("history", 16)}</span>
+        {resetBusy ? "Loading…" : "Restore published"}
+      </Hoverable>
 
       <Hoverable as="button" onClick={() => setPreviewSheetOpen(true)} style={BTN_OUTLINE} hover={{ background: "#FAFAFB", borderColor: "#D4D4DB" }}>
         <span style={{ display: "flex" }}>{icon("eye", 16)}</span>Preview live site

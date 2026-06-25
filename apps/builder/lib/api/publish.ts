@@ -9,6 +9,8 @@
  * @responsibilities
  *  - publishTenant(payload) → POST tenant_config/publish (fire-and-forget).
  *  - getPublishStatus(slug) → GET tenant_config/status (builder polls this).
+ *  - getTenantConfig() → GET tenant_config (builder load: the stored/last-published
+ *    AppConfig, used as a fallback seed + "reset to published"; never a draft).
  * @dependencies ./endpoints
  * @author WhiteLabel Platform Team
  * @created 2026-06-23
@@ -104,4 +106,54 @@ export async function getPublishStatus(slug: string, token?: string): Promise<Pu
   });
   const data = readStatusObject(await unwrap(res));
   return { status: data.status ?? "building", siteUrl: data.siteUrl, message: data.message };
+}
+
+/** The authed tenant's stored config, as returned by `GET /tenant_config`. */
+export type TenantConfigRecord = {
+  /** Tenant slug the backend resolved from the session token. */
+  slug?: string;
+  /** The stored AppConfig — the last-published config (render-ready). */
+  tenantConfig: AppConfig;
+  /** Current build state of that config. */
+  status?: PublishStatus["status"];
+  /** The live URL, set once the tenant has gone live (null/absent until then). */
+  siteUrl?: string;
+};
+
+/** True when a tenantConfig is the backend's valid-empty first-use default (no real content). */
+function isEmptyTenantConfig(cfg: AppConfig | undefined): boolean {
+  if (!cfg) return true;
+  const c = cfg as unknown as { tenant?: { name?: string }; content?: { hero?: { headline?: string; headlineRich?: { parts?: unknown[] } }; sections?: unknown[]; services?: unknown[] } };
+  const hasName = !!c.tenant?.name?.trim();
+  const hasHero = !!(c.content?.hero?.headline?.trim() || (c.content?.hero?.headlineRich?.parts?.length));
+  const hasSections = !!(c.content?.sections?.length || c.content?.services?.length);
+  return !hasName && !hasHero && !hasSections;
+}
+
+/**
+ * Load the authed tenant's stored config — `GET /tenant_config` (docs/backend-
+ * requirements.md §2). This is the LAST-PUBLISHED AppConfig the backend holds (or a
+ * valid-empty default the backend creates on first use); the tenant is resolved from
+ * the session token, so no slug is sent. It is deliberately SEPARATE from the user's
+ * local in-progress draft (localStorage): it answers "what is stored/live?", never
+ * "what unsaved edits do I have?".
+ *
+ * Returns null when there is no usable config to seed from — i.e. the response has no
+ * `tenantConfig`, OR it's the backend's valid-empty first-use default — so the caller
+ * falls back to the local `BLANK()` seed rather than seeding an empty record.
+ */
+export async function getTenantConfig(token?: string): Promise<TenantConfigRecord | null> {
+  const res = await fetch(getURL({ key: "TENANT_CONFIG" }), {
+    method: "GET",
+    headers: { ...authHeaders(publishToken(token)) },
+  });
+  const data = await unwrap(res); // peels the universal { statusCode, data } envelope
+  const cfg = data?.tenantConfig as AppConfig | undefined;
+  if (!cfg || isEmptyTenantConfig(cfg)) return null;
+  return {
+    slug: data?.slug as string | undefined,
+    tenantConfig: cfg,
+    status: data?.status as PublishStatus["status"] | undefined,
+    siteUrl: data?.siteUrl as string | undefined,
+  };
 }

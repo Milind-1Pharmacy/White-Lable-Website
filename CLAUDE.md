@@ -43,12 +43,29 @@ the old `app/(builder)` path fails with "Root Directory does not exist". The
 `NEXT_PUBLIC_API_ENV` env key is **`atest`** (no hyphen). Full steps:
 `docs/vercel-deployment.md`.
 
+**Deploy the builder via CLI:** `npm i -g vercel` (not installed by default), then
+`(cd apps/builder && vercel --prod --yes)` — running from `apps/builder/` selects the
+`whitelabel-builder` project unambiguously (live at `whitelabel-builder-six.vercel.app`).
+A push to `main` also auto-deploys via the GitHub integration. `NEXT_PUBLIC_*` are baked
+at **build** time, so changing an env value or code requires a **redeploy** to take effect.
+
 ### Monorepo gotchas (learned)
 
 - **Verify per-workspace, not from root:** run `(cd apps/site && npx tsc --noEmit)` /
   `(cd apps/builder && npx tsc)` per app/package — a root `tsc` follows imports into
   `packages/` and re-checks them under the wrong `@/` base (false errors). `npm test`
   (vitest) still runs from root; builds are `npm run build:site` / `build:builder`.
+- **Lint doesn't run standalone** — `npx eslint` from root fails ("eslint.config not
+  found") and `npx next lint` mangles args. Verify via per-app `tsc --noEmit` + a build
+  (`build:builder` / `build:site` run lint as part of `next build`).
+- **"preview = live" has ONE exception: the display font.** The builder preview iframe
+  loads **Instrument Serif** (a `<link>` in `PreviewFrame.tsx`, bound to `--font-display`
+  via `_base.tokens.css`), but the LIVE site binds whatever `apps/site/app/layout.tsx`
+  registers through `next/font` to `--font-display`. If those differ, headings render at
+  different heights → a bug shows on live but NOT in preview (e.g. a wrapping heading
+  overlapping the grid/mosaic below in `.ais__head`/`.egal__head`, fixed with `min-height`
+  on the heading). Keep the live `--font-display` == Instrument Serif; tune heading metrics
+  against LIVE, not preview.
 - **CodeBuild runs `npm ci --omit=dev`**, so build-time tooling lives in `apps/site`
   **`dependencies`** (`@tailwindcss/postcss`, `tailwindcss`, `typescript`, `@types/*`)
   and `*.test.ts(x)` are excluded from `tsconfig` — else `next build` fails on missing
@@ -214,7 +231,9 @@ Standard slots: `logo.png`, `hero.png`, `about.png`, `og-image.png`, `services/<
 - **`public/site-css/preview-overrides.css` is builder-preview ONLY** (Team-quote wrap fix for the narrow iframe). Loaded only by the in-pane preview, never `published`/deploy. Never deploy it.
 - **Editor fields are built in TWO parallel paths** in `fieldBuilders.tsx`: `buildCoreFields` (hero/about/services — hand-rolled literals) and `buildSectionDetailFields` (every dynamic section, via the `txt`/`area`/`itemList` helpers). They do NOT share code — a field-level change (limits, props) must be applied to BOTH or core blocks silently miss it.
 - **All content validation is schema-driven** (`app/(builder)/builder/validationSchema.ts`): `TEXT_LIMITS` (`{max,min}`), `SECTION_RULES` (array min/max, required, text/url field maps, `headingLimit`), `validateDraft()`. Editors + `FieldRow` + the publish gate read from it — change a limit there ONLY, never hardcode in components. `FieldRow.tsx` renders the counters/badges; inputs hard-cap via `maxLength={f.max}`.
-- **Bump `DRAFT_KEY` in `builderHelpers.ts` (`wb:appConfig:vN`) whenever the seed-draft shape changes** (`builderData.ts` `INITIAL`/`DEFAULTS`). Otherwise a cached localStorage draft hides the change and the builder loads stale data.
+- **`DRAFT_KEY` (`wb:appConfig:vN` in `builderHelpers.ts`) is a CACHE version, NOT a reset switch.** Bump `N` ONLY on a genuine draft-SHAPE change (a field added/renamed/retyped in `builderData.ts` `BLANK`/`INITIAL`/`DEFAULTS`). NEVER bump for a value/text/UI-only change — and even then, `loadDraft` now **migrates the newest older `vN` draft forward** (`migrateLegacyDraft` → re-save under the current key → `pruneLegacyDrafts`), so a bump is a cache refresh, never a data wipe. Only explicit "Clear all data" / "Restore published" empties a draft.
+- **Builder load order is local-draft-FIRST, then server fallback** (`useBuilderState` hydration effect): (1) current-version localStorage draft wins → (2) migrated older draft → (3) **no local draft** → async `getTenantConfig()` (the documented `GET /tenant_config`, gated on `NEXT_PUBLIC_PUBLISH_API`) seeds from the last-published config, guarded by a `userTouched` ref so it never clobbers fresh edits → (4) `BLANK()`. The "Restore published" header button (`resetToPublished`, NOT dev-gated) pulls the same endpoint on demand. Never add a backend autosave — the doc specifies no `PUT`; localStorage is the only draft store and the backend persists only on publish.
+- **Don't invent backend endpoints.** The only tenant routes are `tenant_config` (GET load), `tenant_config/publish` (POST), `tenant_config/status` (GET) — see `docs/backend-requirements.md` §2. `getTenantConfig`/`publishTenant`/`getPublishStatus` in `lib/api/publish.ts` map to exactly these. The universal envelope is `{statusCode, data}`; `unwrap()` peels it.
 - If builder changes don't appear in the browser, the long-running `npm run dev` has stale HMR: `lsof -ti:3000 | xargs kill -9; rm -rf .next; npm run dev`. (`npm run build` ignores lint; the `(site)/layout.tsx` manual-`<link>` warning is expected.)
 - **Components portaled into the preview iframe (e.g. `Navbar`) must read scroll/resize from their OWN `ownerDocument`/`defaultView`, not the JS-global `window`** (which is the parent frame). Otherwise scroll-driven state (e.g. nav's `is-scrolled`) never fires in preview.
 - **GSAP/measure effects in `useBuilderState.tsx` query DOM ids** rendered in `sections/*` (`#wb-editor-body`, `#wb-sec-list`, `#wb-preview-scroll`, `#wb-picker-pop`, `#wb-publish-card`, `#wb-check-path`, `[data-confetti]`, `.wb-sec-card`). Renaming one silently breaks animations — keep them byte-identical.

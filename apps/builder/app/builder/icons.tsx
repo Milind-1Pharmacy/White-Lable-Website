@@ -57,6 +57,8 @@ export const ICON: Record<string, string> = {
   lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   globe:
     '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.5 2.6 15.5 0 18M12 3c-2.6 2.5-2.6 15.5 0 18"/>',
+  history:
+    '<path d="M3 5v5h5"/><path d="M3.5 10a9 9 0 1 1-.9 4"/><path d="M12 8v4l3 2"/>',
   minus: '<path d="M5 12h14"/>',
   shapes: '<circle cx="8" cy="8" r="3.4"/><rect x="13" y="13" width="7" height="7" rx="1.5"/><path d="M8 14.5 5 20h6z"/>',
   zoomReset: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/>',
