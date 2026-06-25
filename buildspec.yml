@@ -48,9 +48,11 @@ phases:
 
   build:
     commands:
-      # Build ONLY this tenant. next build reads process.env.TENANT → configs/$TENANT.json
-      # (lib/getConfig.ts) and emits a static site to ./out.
-      - TENANT="$TENANT" npm run build
+      # Build ONLY this tenant as a STATIC export. STATIC_EXPORT=1 flips
+      # next.config.ts into `output: "export"` (the builder on Vercel leaves it
+      # unset and builds dynamically). TENANT selects configs/$TENANT.json
+      # (lib/getConfig.ts); the static site is emitted to ./out.
+      - STATIC_EXPORT=1 TENANT="$TENANT" npm run build
 
   post_build:
     commands:

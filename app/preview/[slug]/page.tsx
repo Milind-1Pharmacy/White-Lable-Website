@@ -23,24 +23,32 @@ import { buildMetadata } from "@/lib/seoBuilder";
 
 type Params = { slug: string };
 
+// Static-parseable literal (Next reads it at compile time) AND required to be
+// `false` under `output: "export"`. So generateStaticParams MUST return a
+// non-empty set in every mode — anything not listed simply isn't reachable.
 export const dynamicParams = false;
 
 /**
  * List preview slugs to pre-render.
  *
  * The contract that matters: a PRODUCTION tenant deploy must never ship another
- * tenant's preview. Production always builds `TENANT=<slug> next build` (see
+ * tenant's preview. The tenant pipeline builds `TENANT=<slug> next build` (see
  * buildspec.yml), so when TENANT is set we emit ONLY that tenant's preview — no
- * cross-tenant leak. When TENANT is unset (local dev / the preview gallery) we
- * fall back to every config: that build is never deployed, and `output: export`
- * + `dynamicParams = false` requires at least one param, so we can't return [].
+ * cross-tenant leak.
+ *
+ * With no TENANT (the builder on Vercel, or local dev) we list every config.
+ * These extra static preview pages are harmless on the builder app and keep the
+ * set non-empty, which `output: "export"` + `dynamicParams = false` requires.
  */
 export async function generateStaticParams(): Promise<Params[]> {
   const tenants = await listConfigs();
   const tenant = process.env.TENANT?.trim();
   if (tenant) {
     const slug = tenant.endsWith(".json") ? tenant.slice(0, -5) : tenant;
-    return tenants.some((t) => t.slug === slug) ? [{ slug }] : [];
+    // Scope to this tenant when it matches a real config. If it matches nothing
+    // (e.g. a stale TENANT left on a non-tenant deploy), fall through to listing
+    // all rather than returning [] — an empty set breaks `output: export`.
+    if (tenants.some((t) => t.slug === slug)) return [{ slug }];
   }
   return tenants.map((t) => ({ slug: t.slug }));
 }
