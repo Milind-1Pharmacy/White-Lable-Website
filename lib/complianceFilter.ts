@@ -68,14 +68,18 @@ export function applyCompliance(
   app: AppConfig,
   system: SystemConfig,
 ): AppConfig {
+  // Honour the "render with partial/missing config" invariant: never assume
+  // `content` or `hero` exist. A config missing either must degrade, not crash.
+  const content = app.content ?? ({} as AppConfig["content"]);
+  const hero = content.hero;
   const sanitizedHeroCta = {
-    ...app.content.hero.cta,
-    label: sanitizeCta(app.content.hero.cta?.label, system),
+    ...hero?.cta,
+    label: sanitizeCta(hero?.cta?.label, system),
     type: "safe-action" as const,
   };
 
   const allowlist = system.sectionAllowlist;
-  const filteredSections = (app.content.sections ?? []).filter((s) =>
+  const filteredSections = (content.sections ?? []).filter((s) =>
     isAllowedSection(s, allowlist),
   );
 
@@ -91,8 +95,10 @@ export function applyCompliance(
   return {
     ...app,
     content: {
-      ...app.content,
-      hero: { ...app.content.hero, cta: sanitizedHeroCta },
+      ...content,
+      // Only re-attach hero when the source had one — spreading `...hero` (possibly
+      // undefined) is a no-op, so we don't fabricate a half-empty hero block.
+      hero: { ...hero, cta: sanitizedHeroCta } as AppConfig["content"]["hero"],
       sections: filteredSections,
     },
     features,

@@ -1,0 +1,77 @@
+# buildspec.yml — AWS CodeBuild recipe for building ONE tenant's site.
+#
+# Backend-oriented: the backend's only job is to (a) write the tenant's AppConfig to
+# a small S3 object, then (b) call codebuild.start_build with the slug + bucket. CodeBuild
+# runs these phases on a managed Node machine:
+#   1. install deps (cached, so only the first build is slow)
+#   2. download the tenant's AppConfig from S3 → configs/<slug>.json
+#   3. TENANT=<slug> next build  → ./out  (a complete static site)
+#   4. upload ./out to that tenant's S3 site bucket + invalidate CloudFront
+#
+# WHY S3, not an env var: a full AppConfig (inlined sections, legal pages, URLs) easily
+# exceeds CodeBuild's env-var / start_build size limits. So the config travels via S3,
+# and only small scalars (slug, bucket, …) are passed as env vars.
+#
+# Which branch is built:
+#   PREFERRED — the backend passes `sourceVersion` to start_build (e.g. "main" or a
+#   feature branch / commit SHA). CodeBuild checks that out BEFORE this file runs.
+#   If sourceVersion is omitted, set the CodeBuild project's default branch to "main".
+#   OPTIONAL fallback — pass a BRANCH env var; the install phase checks it out (→ main
+#   if unset). Use only if you're NOT relying on sourceVersion.
+#
+# Env vars the backend passes via environmentVariablesOverride on start_build:
+#   TENANT         the tenant slug (e.g. "urmedz") — the build target + config filename
+#   CONFIG_S3_URI  s3://<configs-bucket>/<slug>.json — where the backend wrote the AppConfig
+#   BUCKET         the tenant's S3 SITE bucket (e.g. "urmedz.1pharmacy.io")
+#   DISTRIBUTION   optional — the CloudFront distribution id to invalidate (may be empty)
+#   BRANCH         optional — only used by the install-phase fallback below; defaults to main
+#
+# CodeBuild project settings: source = this repo; image = aws/codebuild/standard
+# (Node 20); cache = Local (LOCAL_CUSTOM_CACHE) or S3, so node_modules persists.
+#
+# NOTE: CodeBuild runs phases in a FIXED order (install → pre_build → build →
+# post_build), not file order — so the optional branch checkout lives at the START of
+# `install`, BEFORE npm ci.
+
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      # OPTIONAL branch checkout — runs FIRST, before npm ci. No-op unless BRANCH is set.
+      - |
+        if [ -d .git ] && [ -n "${BRANCH:-}" ]; then
+          echo "Checking out branch: $BRANCH"
+          git fetch --depth 1 origin "$BRANCH"
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+        else
+          echo "Using the source CodeBuild already checked out (sourceVersion / project default = main)."
+        fi
+      # Skip dev tooling (eslint/vitest) — not needed to build. Cached node_modules
+      # makes this near-instant on repeat builds.
+      - npm ci --omit=dev
+
+  build:
+    commands:
+      # Fetch the tenant's AppConfig from S3 (written by the backend before start_build).
+      - aws s3 cp "$CONFIG_S3_URI" "configs/$TENANT.json"
+      # Build ONLY this tenant. next build reads process.env.TENANT → configs/$TENANT.json
+      # (lib/getConfig.ts) and emits a static site to ./out.
+      - TENANT="$TENANT" npm run build:tenant
+
+  post_build:
+    commands:
+      # Ship the static output to the tenant's site bucket.
+      - aws s3 sync out/ "s3://$BUCKET/" --delete
+      # Invalidate CloudFront if a distribution id was supplied.
+      - |
+        if [ -n "${DISTRIBUTION:-}" ]; then
+          aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" --paths "/*"
+        fi
+
+# Cache node_modules between builds so npm ci is near-instant after the first run.
+cache:
+  paths:
+    - 'node_modules/**/*'

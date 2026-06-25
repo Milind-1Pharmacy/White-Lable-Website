@@ -17,15 +17,13 @@ import { buildMetadata } from "@/lib/seoBuilder";
 import { SectionWrapper } from "@/components/common/SectionWrapper";
 import { LegalArticle } from "@/components/common/LegalArticle";
 
-export const revalidate = 3600;
-
 /**
  * generateMetadata - Builds SEO metadata for the Privacy Policy page.
  * @returns Next.js Metadata for the route
  */
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
-  return buildMetadata(config, "Privacy Policy");
+  return buildMetadata(config, "Privacy Policy", "/privacy-policy");
 }
 
 /**

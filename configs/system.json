@@ -27,8 +27,7 @@
 
   "rendering": {
     "default": "server-component",
-    "strategy": "ssr+isr",
-    "revalidateSeconds": 3600
+    "strategy": "ssg-static-export"
   },
 
   "sectionAllowlist": [
@@ -36,13 +35,13 @@
     "about",
     "services",
     "features",
+    "categories",
     "howItWorks",
     "gallery",
     "stats",
     "savings",
     "videoFeature",
     "appStrip",
-    "testimonials",
     "faq",
     "aiStore",
     "team"
@@ -54,12 +53,12 @@
     "about": "modules/About.tsx",
     "services": "modules/Services.tsx",
     "features": "modules/Features.tsx",
+    "categories": "modules/Categories.tsx",
     "howItWorks": "modules/HowItWorks.tsx",
     "gallery": "modules/Gallery.tsx",
     "stats": "modules/Stats.tsx",
     "savings": "modules/Savings.tsx",
     "videoFeature": "modules/VideoFeature.tsx",
-    "testimonials": "modules/Testimonials.tsx",
     "faq": "modules/Faq.tsx",
     "aiStore": "modules/AIStore.tsx",
     "team": "modules/Team.tsx"
@@ -91,7 +90,7 @@
 
   "performance": {
     "rules": [
-      "Use ISR for static pages",
+      "Pre-render all pages statically (output: export); cache-bust at the CDN",
       "Minimize client-side JS",
       "Tree-shake unused components",
       "Enable image optimization",

@@ -25,9 +25,23 @@ type Params = { slug: string };
 
 export const dynamicParams = false;
 
-/** List preview slugs to pre-render. A TENANT-scoped build emits only that tenant. */
+/**
+ * List preview slugs to pre-render.
+ *
+ * The contract that matters: a PRODUCTION tenant deploy must never ship another
+ * tenant's preview. Production always builds `TENANT=<slug> next build` (see
+ * buildspec.yml), so when TENANT is set we emit ONLY that tenant's preview — no
+ * cross-tenant leak. When TENANT is unset (local dev / the preview gallery) we
+ * fall back to every config: that build is never deployed, and `output: export`
+ * + `dynamicParams = false` requires at least one param, so we can't return [].
+ */
 export async function generateStaticParams(): Promise<Params[]> {
   const tenants = await listConfigs();
+  const tenant = process.env.TENANT?.trim();
+  if (tenant) {
+    const slug = tenant.endsWith(".json") ? tenant.slice(0, -5) : tenant;
+    return tenants.some((t) => t.slug === slug) ? [{ slug }] : [];
+  }
   return tenants.map((t) => ({ slug: t.slug }));
 }
 

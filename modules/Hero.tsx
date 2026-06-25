@@ -17,6 +17,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { HeroContent, HeroSlide } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
+import { safeColor } from "@/lib/themeBridge";
 
 type HeroProps = {
   data: HeroContent;
@@ -81,13 +83,15 @@ export function Hero({ data }: HeroProps) {
           </p>
 
           <div className="row" style={{ gap: 12 }}>
-            <Link className="btn btn-primary" href="/contact">
-              {data.cta.label} <span style={{ marginLeft: 4 }}>→</span>
-            </Link>
+            {data.cta?.label && (
+              <Link className="btn btn-primary" href="/contact">
+                {data.cta.label} <span style={{ marginLeft: 4 }}>→</span>
+              </Link>
+            )}
             {data.secondaryCta && (
               <Link
                 className="btn btn-ghost"
-                href={data.secondaryCta.href ?? "/services"}
+                href={safeHref(data.secondaryCta.href, "/services")}
               >
                 {data.secondaryCta.label}
               </Link>
@@ -117,6 +121,7 @@ export function Hero({ data }: HeroProps) {
               ))}
             </div>
           )}
+
         </div>
 
         {slides.length > 0 && (
@@ -126,8 +131,10 @@ export function Hero({ data }: HeroProps) {
                 key={idx}
                 className={"slide" + (idx === i ? " is-active" : "")}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.image} alt={s.caption ?? ""} />
+                {safeSrc(s.image) && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={safeSrc(s.image)} alt={s.caption ?? ""} />
+                )}
                 <div className="overlay" />
               </div>
             ))}
@@ -197,7 +204,8 @@ export function Hero({ data }: HeroProps) {
                       width: 8,
                       height: 8,
                       borderRadius: 999,
-                      background: c,
+                      // Sanitize the config-supplied dot colour before inlining.
+                      background: safeColor(c, "var(--accent)"),
                     }}
                   />
                 ))}

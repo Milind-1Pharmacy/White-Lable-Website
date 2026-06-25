@@ -46,7 +46,7 @@ export function Features({ data }: FeaturesProps) {
   const heading = renderRichHeading(data.heading);
 
   return (
-    <section className="section section--cream">
+    <section className="section section--cream" id="features">
       <div className="wrap">
         {(data.eyebrow || heading) && (
           <div style={{ marginBottom: 56 }}>
@@ -76,7 +76,7 @@ export function Features({ data }: FeaturesProps) {
         </div>
         <MobileCarousel
           className="why__carousel"
-          ariaLabel="Why UrMedz"
+          ariaLabel={data.eyebrow || "Why us"}
           cardWidth="84%"
           maxCardWidth={340}
           gap={14}

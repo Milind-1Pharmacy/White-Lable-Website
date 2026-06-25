@@ -18,6 +18,7 @@ import Link from "next/link";
 import type { FaqSectionData } from "@/types/config.types";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeHref } from "@/lib/safeUrl";
 
 type FaqProps = {
   data: FaqSectionData;
@@ -51,9 +52,8 @@ export function Faq({ data }: FaqProps) {
                 className="h-display h-1"
                 style={{
                   marginTop: 18,
-                  maxWidth: 480,
                   lineHeight: 1,
-                  minHeight: isMobile ? 80 : 180,
+                  minHeight: isMobile ? 48 : 172,
                 }}
               >
                 {heading}
@@ -67,7 +67,7 @@ export function Faq({ data }: FaqProps) {
             {data.ctaLabel && (
               <Link
                 className="btn btn-ghost"
-                href={data.ctaHref ?? "/contact"}
+                href={safeHref(data.ctaHref, "/contact")}
                 style={{ marginTop: 20, display: "inline-block" }}
               >
                 {data.ctaLabel}
@@ -97,7 +97,7 @@ export function Faq({ data }: FaqProps) {
                       {f.learnMoreLabel && f.learnMoreHref && (
                         <>
                           {" "}
-                          <Link className="faq__a-link" href={f.learnMoreHref}>
+                          <Link className="faq__a-link" href={safeHref(f.learnMoreHref)}>
                             {f.learnMoreLabel} →
                           </Link>
                         </>

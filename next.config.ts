@@ -24,6 +24,12 @@ const nextConfig: NextConfig = {
         hostname: "www.urmedz.in",
         pathname: "/wp-content/uploads/**",
       },
+      // S3 bucket the website-builder uploads images to (see lib/api/upload.ts).
+      {
+        protocol: "https",
+        hostname: "1p-b2c-files.s3.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
   // Static export prefers trailing slashes so /about → /about/index.html,

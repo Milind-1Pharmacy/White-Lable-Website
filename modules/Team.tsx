@@ -21,6 +21,7 @@ import type {
 } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
+import { safeColor } from "@/lib/themeBridge";
 
 /** Returns a ref and a flag that turns true once the element enters view. */
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
@@ -38,7 +39,14 @@ function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
       { threshold: 0.25 },
     );
     io.observe(ref.current);
-    return () => io.disconnect();
+    // Fallback: if the observer never reports intersection (e.g. inside the
+    // builder's static preview iframe, or content that never scrolls), reveal
+    // anyway so the count lands on its final value instead of sticking at 0.
+    const t = setTimeout(() => setSeen(true), 1200);
+    return () => {
+      io.disconnect();
+      clearTimeout(t);
+    };
   }, []);
   return [ref, seen];
 }
@@ -70,7 +78,8 @@ function renderCell(d: TeamDepartment, i: number, total: number) {
     <div
       key={i}
       className="team2__cell"
-      style={{ background: d.bg, color: d.fg }}
+      // Sanitize config-supplied cell colours before they hit the inline style.
+      style={{ background: safeColor(d.bg, "transparent"), color: safeColor(d.fg, "inherit") }}
     >
       <div className="team2__cell-top">
         <span
@@ -174,7 +183,7 @@ export function Team({ data, branding }: TeamProps) {
               {departments.map((d, i) => renderCell(d, i, total))}
             </div>
             <MobileCarousel
-              ariaLabel="UrMedz team"
+              ariaLabel="Our team"
               cardWidth="84%"
               maxCardWidth={360}
               gap={14}

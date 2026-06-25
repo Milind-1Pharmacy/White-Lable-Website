@@ -11,6 +11,7 @@
  * @lastUpdated 2026-05-26
  */
 import type { LegalBlock, LegalPage } from "@/types/config.types";
+import { safeSrc } from "@/lib/safeUrl";
 
 type Props = {
   data?: LegalPage;
@@ -72,14 +73,14 @@ export function LegalArticle({ data }: Props) {
   return (
     <article className="prose prose-neutral max-w-3xl space-y-5 text-[var(--brand-text)]/85">
       {data.intro && <p className="font-medium">{data.intro}</p>}
-      {data.video?.src && (
+      {safeSrc(data.video?.src) && (
         <figure className="not-prose my-8 flex flex-col items-center">
           <div className="legal-video">
             <div className="legal-video__frame">
               <video
                 className="legal-video__media"
-                src={data.video.src}
-                poster={data.video.poster}
+                src={safeSrc(data.video?.src)}
+                poster={safeSrc(data.video?.poster) || undefined}
                 controls
                 playsInline
                 preload="metadata"
@@ -87,7 +88,7 @@ export function LegalArticle({ data }: Props) {
               />
             </div>
           </div>
-          {data.video.caption && (
+          {data.video?.caption && (
             <figcaption className="legal-video__caption mono">
               {data.video.caption}
             </figcaption>

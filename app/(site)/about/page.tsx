@@ -17,15 +17,13 @@ import { buildMetadata } from "@/lib/seoBuilder";
 import { About } from "@/modules/About";
 import { SectionRenderer } from "@/modules/SectionRenderer";
 
-export const revalidate = 3600;
-
 /**
  * generateMetadata - Builds SEO metadata for the About page.
  * @returns Next.js Metadata for the About route
  */
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
-  return buildMetadata(config, "About");
+  return buildMetadata(config, "About", "/about");
 }
 
 /**

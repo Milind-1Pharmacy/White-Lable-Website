@@ -15,6 +15,7 @@ import Link from "next/link";
 import type { HowItWorksSectionData } from "@/types/config.types";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeHref } from "@/lib/safeUrl";
 
 type HowItWorksProps = {
   data: HowItWorksSectionData;
@@ -31,7 +32,7 @@ export function HowItWorks({ data }: HowItWorksProps) {
   const heading = renderRichHeading(data.heading);
 
   return (
-    <section className="section">
+    <section className="section" id="how-it-works">
       <div className="wrap">
         {(data.eyebrow || heading || data.ctaLabel) && (
           <div
@@ -50,8 +51,7 @@ export function HowItWorks({ data }: HowItWorksProps) {
                   className="h-display h-2"
                   style={{
                     marginTop: 14,
-                    maxWidth: 720,
-                    minHeight: isMobile ? 64 : 108,
+                    minHeight: isMobile ? 64 : 48,
                     lineHeight: 1.1,
                   }}
                 >
@@ -61,7 +61,7 @@ export function HowItWorks({ data }: HowItWorksProps) {
             </div>
             {data.ctaLabel && (
               <Link
-                href={data.ctaHref ?? "/contact"}
+                href={safeHref(data.ctaHref, "/contact")}
                 className="btn btn-primary section-head__sub"
               >
                 {data.ctaLabel}

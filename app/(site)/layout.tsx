@@ -29,7 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata(config);
 }
 
-export const revalidate = 3600;
+// Note: this app builds with `output: "export"` (static S3/CloudFront deploy), so
+// ISR/`revalidate` does not run — pages are pre-rendered once at build time and
+// cache-busted at the CDN. We intentionally do NOT export `revalidate` here.
 
 /**
  * SiteLayout - Frames page content with navbar, footer, and theme.
@@ -43,12 +45,26 @@ export default async function SiteLayout({
 }>) {
   const config = await getConfig();
   const tenant = process.env.TENANT ?? "app_master";
+  // Resolve the colour-theme name: prefer branding.theme, else derive from the
+  // legacy stylesheet path (e.g. "/urmedz.css" → "urmedz"), else the premium default.
+  const branding = config.app.branding;
+  const theme =
+    branding?.theme ||
+    (branding?.stylesheet || "").replace(/^.*\//, "").replace(/\.css$/, "") ||
+    "default";
 
   return (
     <>
+      {/* Shared site stylesheet (all blocks) + the chosen colour-theme tokens.
+          Injected here (not the root layout) so they load for the render engine but
+          never for the builder app at "/". blocks.css supplies structure; the theme
+          file sets default colours, which the user's brand colours override via the
+          bridged CSS vars in `themeStyle` below. */}
+      <link rel="stylesheet" href="/site-css/blocks.css" />
+      <link rel="stylesheet" href={`/site-css/themes/${theme}.tokens.css`} />
       <div
         data-tenant={tenant}
-        className="flex min-h-screen flex-col"
+        className="flex min-h-screen flex-col text-[var(--brand-text)]"
         style={themeStyle(config)}
       >
         <StructuredData config={config} />

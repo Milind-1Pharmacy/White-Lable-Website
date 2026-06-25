@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @file Services.tsx
  * @description Renders service cards as a desktop grid and mobile carousel.
@@ -5,14 +7,17 @@
  *  - Show an optional eyebrow, rich heading, and CTA link.
  *  - Render each service as a numbered card.
  *  - Render nothing when no services are provided.
- * @dependencies RichHeading, MobileCarousel, config types
+ * @dependencies RichHeading, MobileCarousel, useIsMobile, config types
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
  */
+
 import type { ServiceItem, ServicesMeta } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 type ServicesProps = {
   data: ServiceItem[];
@@ -26,6 +31,8 @@ type ServicesProps = {
  * @returns JSX element
  */
 export function Services({ data, meta }: ServicesProps) {
+  const isMobile = useIsMobile();
+
   if (!data?.length) return null;
 
   const heading = renderRichHeading(meta?.heading);
@@ -38,6 +45,14 @@ export function Services({ data, meta }: ServicesProps) {
           {String(i + 1).padStart(2, "0")} / {total}
         </div>
       </div>
+      {safeSrc(s.icon) && (
+        <div className="service__icon">
+          <span className="service__icon-plate">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={safeSrc(s.icon)} alt="" aria-hidden="true" />
+          </span>
+        </div>
+      )}
       <div>
         <h3 className="service__title">{s.title}</h3>
         <p className="service__desc">{s.description}</p>
@@ -53,7 +68,7 @@ export function Services({ data, meta }: ServicesProps) {
           className="between"
           style={{ marginBottom: 64, alignItems: "end" }}
         >
-          <div style={{ maxWidth: 720 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             {meta?.eyebrow && (
               <span className="eyebrow">
                 <span className="dot" />
@@ -61,7 +76,10 @@ export function Services({ data, meta }: ServicesProps) {
               </span>
             )}
             {heading && (
-              <h2 className="h-display h-2" style={{ marginTop: 14 }}>
+              <h2
+                className="h-display h-2"
+                style={{ marginTop: 14, minHeight: isMobile ? 32 : 32 }}
+              >
                 {heading}
               </h2>
             )}
@@ -69,7 +87,7 @@ export function Services({ data, meta }: ServicesProps) {
           {meta?.ctaLabel && (
             <a
               className="btn btn-ghost mobile-btn"
-              href={meta.ctaHref ?? "/services"}
+              href={safeHref(meta.ctaHref, "/services")}
               style={{ background: "transparent", marginTop: 16 }}
             >
               {meta.ctaLabel}
@@ -80,7 +98,7 @@ export function Services({ data, meta }: ServicesProps) {
           {data.map(renderCard)}
         </div>
         <MobileCarousel
-          ariaLabel="UrMedz services"
+          ariaLabel="Our services"
           cardWidth="84%"
           maxCardWidth={340}
           gap={14}

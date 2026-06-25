@@ -15,6 +15,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { StickyCtaConfig } from "@/types/config.types";
+import { safeHref } from "@/lib/safeUrl";
 
 type StickyCtaProps = {
   config?: StickyCtaConfig;
@@ -46,7 +47,7 @@ export function StickyCta({ config }: StickyCtaProps) {
       <span className="pulse" style={{ background: "var(--accent)" }} />
       <span style={{ opacity: 0.85 }}>{config.text}</span>
       <Link
-        href={config.ctaHref ?? "#app"}
+        href={safeHref(config.ctaHref, "#app")}
         className="btn btn-accent"
         style={{ padding: "8px 14px", fontSize: 13 }}
       >

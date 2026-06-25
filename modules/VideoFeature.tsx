@@ -16,6 +16,7 @@
 import { useState } from "react";
 import type { VideoFeatureSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
+import { safeSrc } from "@/lib/safeUrl";
 
 type VideoFeatureProps = {
   data: VideoFeatureSectionData;
@@ -43,7 +44,7 @@ export function VideoFeature({ data }: VideoFeatureProps) {
             <>
               {data.poster && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={data.poster} alt={data.tag ?? ""} />
+                <img src={safeSrc(data.poster)} alt={data.tag ?? ""} />
               )}
               <div className="bts__overlay">
                 {data.tag && <span className="bts__tag">{data.tag}</span>}
@@ -74,7 +75,7 @@ export function VideoFeature({ data }: VideoFeatureProps) {
             <video
               autoPlay
               controls
-              src={data.videoUrl}
+              src={safeSrc(data.videoUrl)}
               poster={data.poster}
               style={{ background: "#000" }}
             />

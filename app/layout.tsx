@@ -1,23 +1,22 @@
 /**
  * @file layout.tsx
- * @description Root layout that sets up fonts, theme, and motion provider.
+ * @description Lean root layout shared by BOTH apps in this repo (the builder at
+ *  "/" and the render engine under the (site) group). It only sets up the html
+ *  shell, Google fonts, and the MotionProvider — it does NOT load tenant config.
+ *  Tenant theme/stylesheet/metadata live in the (site) layout, which the builder
+ *  doesn't inherit, so the builder root stays config-free.
  * @responsibilities
  *  - Register Google fonts as CSS variables on the html element.
- *  - Apply tenant theme and optional remote stylesheet.
  *  - Wrap the app with the MotionProvider.
- * @dependencies getConfig, themeStyle, buildMetadata, MotionProvider
+ * @dependencies MotionProvider
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
- * @lastUpdated 2026-05-26
+ * @lastUpdated 2026-06-23
  */
-import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
 import { MotionProvider } from "@/components/motion/MotionProvider";
-import { getConfig } from "@/lib/getConfig";
-import { themeStyle } from "@/lib/themeLoader";
-import { buildMetadata } from "@/lib/seoBuilder";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,41 +44,23 @@ const instrumentSerif = Instrument_Serif({
 });
 
 /**
- * generateMetadata - Builds default SEO metadata for the whole app.
- * @returns Next.js Metadata
- */
-export async function generateMetadata(): Promise<Metadata> {
-  const config = await getConfig();
-  return buildMetadata(config);
-}
-
-export const revalidate = 3600;
-
-/**
- * RootLayout - Defines the html/body shell with fonts and theme.
+ * RootLayout - The html/body shell with fonts + motion. App-agnostic: no tenant
+ * config is loaded here (the builder doesn't need it; the (site) layout applies
+ * tenant theme for the render engine).
  * @param {React.ReactNode} children - App content to render
  * @returns JSX element
  */
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const config = await getConfig();
-  const stylesheet = config.app.branding?.stylesheet;
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
-      <head>
-        {stylesheet && <link rel="stylesheet" href={stylesheet} />}
-      </head>
-      <body
-        suppressHydrationWarning
-        className="flex min-h-full flex-col text-[var(--brand-text)]"
-        style={themeStyle(config)}
-      >
+      <body suppressHydrationWarning className="flex min-h-full flex-col">
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>

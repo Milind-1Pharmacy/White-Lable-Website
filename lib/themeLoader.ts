@@ -10,6 +10,7 @@
  * @lastUpdated 2026-05-26
  */
 import type { BrandingColors, ResolvedConfig } from "@/types/config.types";
+import { bridgeVars } from "@/lib/themeBridge";
 
 /**
  * resolveColors - Merges tenant brand colors with system fallbacks.
@@ -47,18 +48,16 @@ export function colorsToCssVars(colors: Required<BrandingColors>): string {
 }
 
 /**
- * themeStyle - Builds an inline style object of brand CSS variables.
+ * themeStyle - Builds an inline style object of the CSS variables the shared site
+ * stylesheet reads. Uses the SAME themeBridge the builder preview uses, so a user's
+ * brand colours map onto --accent/--ink/--cream/--mute/--line (and the --brand-*
+ * mirror) on the LIVE site exactly as they do in preview. Previously this set only
+ * --brand-*, which the stylesheet ignores — so the live site fell back to the
+ * stylesheet's hardcoded colours and the user's choices didn't fully apply.
  * @param {ResolvedConfig} config - The resolved tenant config.
- * @returns React CSSProperties with --brand-* variables.
+ * @returns React CSSProperties with the bridged theme variables.
  */
 export function themeStyle(config: ResolvedConfig): React.CSSProperties {
   const colors = resolveColors(config);
-  return {
-    ["--brand-primary" as string]: colors.primary,
-    ["--brand-secondary" as string]: colors.secondary,
-    ["--brand-background" as string]: colors.background,
-    ["--brand-text" as string]: colors.text,
-    ["--brand-accent" as string]: colors.accent,
-    ["--brand-ink" as string]: colors.ink,
-  } as React.CSSProperties;
+  return bridgeVars(colors) as React.CSSProperties;
 }

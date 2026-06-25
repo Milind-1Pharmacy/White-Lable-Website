@@ -8,6 +8,8 @@ A **config-driven Next.js (App Router) platform** that generates compliant, SEO-
 
 Stack: Next.js (App Router) · TypeScript · TailwindCSS · shadcn/ui · npm.
 
+This repo is also intended to host a second **form-builder app** (the authoring UI that emits an `AppConfig` JSON) alongside the render engine — see `docs/system-architecture.md`. A client-side builder now lives at `app/(builder)/builder/` (route group `(builder)` keeps it out of the public `(site)` chrome). It edits an in-memory `AppConfig` draft and previews it by rendering the **real `modules/*.tsx`** inside an isolated `<iframe>` (`PreviewFrame.tsx`), styled by `public/preview.css` (builder-only — never shipped). The builder is modular: `WebsiteBuilder.tsx` is a ~36-line composition root; state lives in `useBuilderState.tsx`, field descriptors in `fieldBuilders.tsx`, with `builderStyles/Helpers/Types.ts`, `components/*` and `sections/*`. Debug the relevant file, not one monolith.
+
 ## Common commands
 
 ```bash
@@ -75,6 +77,7 @@ When adding a new section type: define its shape in `types/config.types.ts`, add
 
 - After editing config JSON / the stylesheet, validate: `node -e "JSON.parse(require('fs').readFileSync('configs/<f>.json','utf8'))"` and check CSS braces balance. `Edit` matches break often because a linter reformats the JSON (multi-line ↔ single-line) — re-Read before editing.
 - `useIsMobile()` (and all hooks) must be called BEFORE any early `return null` — eslint `rules-of-hooks` errors otherwise. `npm run build` does not fail on lint; run `npm run lint` separately.
+- `npm run lint` enforces `react-hooks/refs` as an **error**: building event-handler descriptors during render (handlers that transitively read a ref) trips a false "ref accessed during render". Scope a `/* eslint-disable react-hooks/refs */` to that file with a justification — the handlers only fire in events, never during render.
 - Section headings use rich `parts[]` with `br`/`emphasis` (`italic`, `italic-accent`); keep tenant `ariaLabel`s on `MobileCarousel` generic, never hardcode a tenant name in a shared module.
 - Logo is a wide ~2:1 lockup (no square mark): set `next/image` width/height to that ratio + size via CSS height/`width:auto`, or it stretches.
 - Compliance: the website is **non-transactional** (links to the app/WhatsApp to order); WhatsApp is **support/enquiry only — never "order on WhatsApp"** (Meta policy).
@@ -95,6 +98,7 @@ Compliance always wins. If config and compliance disagree, compliance is what re
 
 - **Server components by default.** Add `"use client"` only when a component genuinely needs state, effects, or browser APIs (e.g. a chat widget).
 - **Static + ISR for pages.** All pages export `revalidate = 3600` for hourly ISR. Legal pages (`privacy-policy`, `terms-and-conditions`, `disclaimer`) must always exist regardless of tenant config.
+- **Route groups to escape chrome:** the public Navbar/Footer/StickyCta live in `app/(site)/layout.tsx`. A page that must NOT inherit them goes in its own group (e.g. `app/(builder)/…`) with its own `layout.tsx`; it still inherits the root `app/layout.tsx` (fonts, `MotionProvider`, tenant `--brand-*` vars on `<body>`).
 - **Image optimization** via `next/image` — pull URLs from config, never inline.
 - **404 fallback** lives in `app/not-found.tsx`.
 - Lazy-load non-critical modules (`next/dynamic`) when they aren't above the fold.
@@ -127,6 +131,31 @@ Standard slots: `logo.png`, `hero.png`, `about.png`, `og-image.png`, `services/<
 - `Container` is `max-w-7xl` (1280px) with `lg:px-12 xl:px-16` padding. Don't downsize to `max-w-6xl` — gutters become too wide on 1440px+ screens.
 - The Hero `<section>` has `overflow-hidden` for the floating decorative blobs. Anything with negative absolute insets (e.g. floating badge tags) outside a child gets clipped — put overlays *inside* the inner rounded card.
 - Brand palette has six CSS vars: `--brand-primary`, `--brand-secondary`, `--brand-background`, `--brand-text`, `--brand-accent` (deeper accent for CTAs/hover), `--brand-ink` (highest contrast). All defined in `lib/themeLoader.ts` and `configs/system.json` fallbacks.
+
+## Website builder gotchas (`app/(builder)/builder/`)
+
+- **Site CSS is shared blocks + small colour-theme tokens** (under `public/site-css/`). `blocks.css` `@import`s one small file per block (`blocks/hero.css`, `team.css`, … — edit a block there, not a monolith). `themes/<name>.tokens.css` sets ONLY colours (imports `_base.tokens.css` for fonts/gutter). A site = `blocks.css` + one theme file; **both preview AND deploy load the same files**, so preview = live. The old per-tenant monoliths (`urmedz.css`/`aarav_pharmacy.css`/`preview.css`) are deleted — don't recreate them.
+- **Colours flow through ONE bridge (`lib/themeBridge.ts`).** The 6 brand colours map to the vars the stylesheet reads (`--accent`/`--ink`/`--cream`/`--mute`/`--line` + `--brand-*`). `PreviewFrame.overrideCss` (preview) and `themeLoader.themeStyle` (live `(site)/layout`) both call it — so user colours apply identically in preview and on the live site. Editing the map in one place fixes both.
+- **`branding.theme`** (name) selects the live token file; legacy `branding.stylesheet` still derives a theme name as a fallback. Theme presets live in `app/(builder)/builder/themePresets.ts`; the Branding step's picker fills the 6 colour fields from the chosen preset.
+- **`public/site-css/preview-overrides.css` is builder-preview ONLY** (Team-quote wrap fix for the narrow iframe). Loaded only by the in-pane preview, never `published`/deploy. Never deploy it.
+- **Editor fields are built in TWO parallel paths** in `fieldBuilders.tsx`: `buildCoreFields` (hero/about/services — hand-rolled literals) and `buildSectionDetailFields` (every dynamic section, via the `txt`/`area`/`itemList` helpers). They do NOT share code — a field-level change (limits, props) must be applied to BOTH or core blocks silently miss it.
+- **All content validation is schema-driven** (`app/(builder)/builder/validationSchema.ts`): `TEXT_LIMITS` (`{max,min}`), `SECTION_RULES` (array min/max, required, text/url field maps, `headingLimit`), `validateDraft()`. Editors + `FieldRow` + the publish gate read from it — change a limit there ONLY, never hardcode in components. `FieldRow.tsx` renders the counters/badges; inputs hard-cap via `maxLength={f.max}`.
+- **Bump `DRAFT_KEY` in `builderHelpers.ts` (`wb:appConfig:vN`) whenever the seed-draft shape changes** (`builderData.ts` `INITIAL`/`DEFAULTS`). Otherwise a cached localStorage draft hides the change and the builder loads stale data.
+- If builder changes don't appear in the browser, the long-running `npm run dev` has stale HMR: `lsof -ti:3000 | xargs kill -9; rm -rf .next; npm run dev`. (`npm run build` ignores lint; the `(site)/layout.tsx` manual-`<link>` warning is expected.)
+- **Components portaled into the preview iframe (e.g. `Navbar`) must read scroll/resize from their OWN `ownerDocument`/`defaultView`, not the JS-global `window`** (which is the parent frame). Otherwise scroll-driven state (e.g. nav's `is-scrolled`) never fires in preview.
+- **GSAP/measure effects in `useBuilderState.tsx` query DOM ids** rendered in `sections/*` (`#wb-editor-body`, `#wb-sec-list`, `#wb-preview-scroll`, `#wb-picker-pop`, `#wb-publish-card`, `#wb-check-path`, `[data-confetti]`, `.wb-sec-card`). Renaming one silently breaks animations — keep them byte-identical.
+- **localStorage hydration is post-mount, not in `useState`** (`loadDraft` in an effect, gated by a `hydrated` ref). Reading localStorage in the lazy initializer causes a server/client hydration mismatch.
+- **Lint enforces `react-hooks/refs` + `react-hooks/set-state-in-effect` as errors.** Scope a justified `/* eslint-disable */` rather than restructuring. Building `Field` descriptors that read refs only trips `react-hooks/refs` inside a component render — it's fine in the `fieldBuilders.tsx` factory.
+- **Preview iframe perf:** inject the tenant `<link>` ONCE (re-adding it per render re-fetches ~3.6k lines of CSS and flashes the frame); keep `onMeasure` in a ref so the measure effect stays mounted-once.
+- **Drag-reorder uses a stable `blockOrder` (card ids)** → derived `content.order` (`section:<index>` tokens). Hero is pinned first. `minmax(0,1fr)` / flex `min-width:0` is the fix for grid columns that collapse to one-word-per-line wrapping.
+
+## Security boundaries (use these for any config-driven sink)
+
+- **Config URLs** (href/src from tenant config) → wrap with `safeHref`/`safeSrc` from `lib/safeUrl.ts` before rendering into `<a>`/`<Link>`/`<img>`/`<video>`. They reject `javascript:`/`data:`/`vbscript:`/`//host`. `complianceFilter.ts` only sanitizes CTA *labels*, not hrefs.
+- **Brand colours** reach an injected iframe `<style>` (`PreviewFrame.overrideCss`) — sanitize to hex/rgb/hsl before interpolation; `loadDraft` also scrubs them (localStorage is tamperable).
+- **Image upload** (`lib/api/upload.ts`) needs a `session-token`; validates type/size, sanitizes the filename, allowlists the S3 host. **Publish never builds in the browser** — `doPublish` POSTs a flavor `{slug,theme,appConfig}` and polls; the backend runs `TENANT=<slug> next build`.
+- **`proxy.ts` is DEV-ONLY.** Under `output: "export"` (static S3+CloudFront deploy) edge handlers/middleware do NOT run, so its headers are absent on the live site. Production security headers (enforced CSP, X-Frame-Options, HSTS, …) are set by a CloudFront response-headers policy — see `docs/deploy-security-headers.md`. Never rely on proxy.ts for prod security.
+- **The preview-iframe legal-nav `postMessage`** targets a concrete origin (never `"*"`) via `postLegalNav` in `lib/legalRoutes.ts`; listeners (`useBuilderState`, `Overlays`) validate `e.origin` (own origin, or `"null"` for the opaque srcdoc frame).
 
 ## Adding a new module
 

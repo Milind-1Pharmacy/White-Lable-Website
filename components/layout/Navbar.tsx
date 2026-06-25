@@ -14,8 +14,10 @@
  */
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AppConfig, NavCta } from "@/types/config.types";
+import { safeHref, safeSrc } from "@/lib/safeUrl";
+import { postLegalNav, legalSectionForHref } from "@/lib/legalRoutes";
 
 type NavbarProps = {
   app: AppConfig;
@@ -40,12 +42,25 @@ function ctaClass(variant: NavCta["variant"]) {
 export function Navbar({ app }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
+  // Detect scroll from the navbar's OWN document/window. In the builder preview the
+  // navbar is portaled into an <iframe>, so the JS global `window` is the parent
+  // frame and never receives the iframe's scroll — leaving the nav stuck in its
+  // un-scrolled (tall, full-logo) state. Resolving the scroller via ownerDocument
+  // makes the scrolled/compact state work identically in preview and on the live site.
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 60);
+    const node = headerRef.current;
+    const doc = node?.ownerDocument ?? document;
+    const win = doc.defaultView ?? window;
+    const scroller: HTMLElement | null = doc.scrollingElement as HTMLElement | null;
+    const on = () => {
+      const y = win.scrollY || scroller?.scrollTop || 0;
+      setScrolled(y > 60);
+    };
     on();
-    window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    win.addEventListener("scroll", on, { passive: true });
+    return () => win.removeEventListener("scroll", on);
   }, []);
 
   useEffect(() => {
@@ -55,17 +70,50 @@ export function Navbar({ app }: NavbarProps) {
     };
   }, [menuOpen]);
 
-  const iconLogo = app.branding?.logo;
-  const fullLogo = app.branding?.logoFull ?? iconLogo;
+  // safeSrc rejects javascript:/data:text/html/protocol-relative logo URLs from a
+  // tampered config (returns "" → the truthiness guards below skip the <Image>).
+  const iconLogo = safeSrc(app.branding?.logo);
+  const fullLogo = safeSrc(app.branding?.logoFull) || iconLogo;
   const links = app.layout?.nav?.links ?? [];
   const ctas = app.layout?.nav?.ctas ?? [];
 
   const closeMenu = () => setMenuOpen(false);
 
+  /**
+   * Smooth-scroll to an in-page anchor (`/#id` or `#id`) within THIS link's own
+   * document, instead of letting the browser do a cross-document navigation. Works
+   * on the live site AND inside the builder preview iframe (where `/#id` would
+   * otherwise resolve against the <base href> and navigate away). Non-hash links
+   * fall through to normal navigation.
+   */
+  const onNavClick = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const win = e.currentTarget.ownerDocument.defaultView;
+    const inPreview = !!win && win.parent !== win;
+
+    // A legal-page link clicked inside the preview iframe: tell the builder to show
+    // that authored page instead of navigating to the live `(site)` route.
+    const section = legalSectionForHref(href);
+    if (section && inPreview) {
+      e.preventDefault();
+      postLegalNav(win, section);
+      closeMenu();
+      return;
+    }
+
+    const hash = href.includes("#") ? href.slice(href.indexOf("#") + 1) : "";
+    if (!hash) return; // not an in-page anchor — let it navigate normally
+    const doc = e.currentTarget.ownerDocument;
+    const target = doc.getElementById(hash);
+    if (!target) return; // anchor not on this page — let it navigate normally
+    e.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    closeMenu();
+  };
+
   return (
     <>
-      <header className={"nav" + (scrolled ? " is-scrolled" : "")}>
-        <Link href="/" className="nav__brand" onClick={closeMenu}>
+      <header ref={headerRef} className={"nav" + (scrolled ? " is-scrolled" : "")}>
+        <Link href="/" className="nav__brand" onClick={onNavClick("#top")}>
           {fullLogo && (
             <Image
               src={fullLogo}
@@ -94,8 +142,8 @@ export function Navbar({ app }: NavbarProps) {
 
         {links.length > 0 && (
           <nav className="nav__links">
-            {links.map((l) => (
-              <Link key={l.label} href={l.href}>
+            {links.map((l, i) => (
+              <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))}>
                 {l.label}
               </Link>
             ))}
@@ -107,7 +155,7 @@ export function Navbar({ app }: NavbarProps) {
             {ctas.map((c, i) => (
               <Link
                 key={i}
-                href={c.href}
+                href={safeHref(c.href)}
                 className={ctaClass(c.variant)}
                 style={{
                   padding: c.variant === "primary" ? "10px 18px" : "10px 16px",
@@ -140,8 +188,8 @@ export function Navbar({ app }: NavbarProps) {
         className={"nav__mobile-menu" + (menuOpen ? " is-open" : "")}
         aria-hidden={!menuOpen}
       >
-        {links.map((l) => (
-          <Link key={l.label} href={l.href} onClick={closeMenu}>
+        {links.map((l, i) => (
+          <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))}>
             {l.label}
           </Link>
         ))}
@@ -150,7 +198,7 @@ export function Navbar({ app }: NavbarProps) {
             {ctas.map((c, i) => (
               <Link
                 key={i}
-                href={c.href}
+                href={safeHref(c.href)}
                 className={ctaClass(c.variant)}
                 onClick={closeMenu}
                 {...(c.external

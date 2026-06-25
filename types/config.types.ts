@@ -33,10 +33,18 @@ export type BrandingColors = {
   ink?: string;
 };
 
-/** Logos, optional stylesheet, and color palette for a tenant. */
+/** Logos, theme, and color palette for a tenant. */
 export type Branding = {
   logo?: string;
   logoFull?: string; // wide ~2:1 lockup; logo is the square mark
+  /**
+   * Colour-theme name → the token file the live site loads as its colour baseline
+   * (public/site-css/themes/<theme>.tokens.css). The shared blocks.css supplies all
+   * structure; the theme only sets default colours, which the user's brand colours
+   * then override at runtime via the colour bridge. Defaults to "default".
+   */
+  theme?: string;
+  /** @deprecated legacy whole-stylesheet path; kept for backward-compat. Prefer `theme`. */
   stylesheet?: string;
   colors: BrandingColors;
 };
@@ -47,6 +55,10 @@ export type Seo = {
   description: string;
   keywords: string[];
   ogImage?: string;
+  /** Canonical absolute site URL (e.g. https://acme.com). Drives canonical + JSON-LD + sitemap. */
+  siteUrl?: string;
+  /** Public social-profile URLs (schema.org sameAs) — strengthens entity SEO + rich results. */
+  socialProfiles?: string[];
 };
 
 /** One styled fragment of a heading. */
@@ -131,6 +143,7 @@ export type ServiceItem = {
   title: string;
   description: string;
   image?: string;
+  icon?: string;
 };
 
 /** Heading and CTA shown above the services grid. */
@@ -154,6 +167,21 @@ export type FeaturesSectionData = {
   items: FeatureItem[];
 };
 
+/** A single category tile (name, optional icon and blurb). */
+export type CategoryItem = {
+  title: string;
+  icon?: string;
+  description?: string;
+};
+
+/** Data for a "categories" section. */
+export type CategoriesSectionData = {
+  eyebrow?: string;
+  heading?: RichHeading;
+  tagline?: string;
+  items: CategoryItem[];
+};
+
 /** One ordered step in a how-it-works flow. */
 export type HowItWorksStep = {
   step: number;
@@ -174,13 +202,20 @@ export type HowItWorksSectionData = {
 export type GalleryImage = {
   src: string;
   alt?: string;
+  /** Short kicker shown as an uppercase label (e.g. a place or theme). */
   caption?: string;
+  /** Editorial title for the frame, shown larger on hover/reveal. */
+  title?: string;
+  /** One-line description that fills the frame's caption block. */
+  description?: string;
 };
 
 /** Data for a "gallery" section. */
 export type GallerySectionData = {
   heading?: RichHeading;
   eyebrow?: string;
+  /** Optional intro line shown beside the heading. */
+  lede?: string;
   images: GalleryImage[];
 };
 
@@ -209,6 +244,10 @@ export type AIStoreTile = {
   tagColor?: string;
   videoUrl?: string;
   background?: string;
+  /** Capability title shown on the tile (editorial card). */
+  title?: string;
+  /** One-line description of the capability. */
+  description?: string;
 };
 
 /** Data for an "aiStore" section. */
@@ -324,6 +363,7 @@ export type FaqSectionData = {
 /** Allowed section types; the compliance filter suppresses any others. */
 export type SectionType =
   | "features"
+  | "categories"
   | "howItWorks"
   | "gallery"
   | "stats"
@@ -337,6 +377,7 @@ export type SectionType =
 /** A discriminated union: type selects the matching data shape. */
 export type Section =
   | { type: "features"; data: FeaturesSectionData }
+  | { type: "categories"; data: CategoriesSectionData }
   | { type: "howItWorks"; data: HowItWorksSectionData }
   | { type: "gallery"; data: GallerySectionData }
   | { type: "stats"; data: StatsSectionData }
@@ -354,6 +395,14 @@ export type Content = {
   services?: ServiceItem[];
   servicesMeta?: ServicesMeta;
   sections: Section[];
+  /**
+   * Optional explicit render order for the home page blocks. Tokens:
+   *  - "hero" | "about" | "services" — the fixed core blocks
+   *  - "section:<i>" — content.sections[<i>] (its index in the array)
+   * Hero always renders first regardless. When omitted, the legacy fixed order
+   * (hero → appStrip → about → services → remaining sections) is used.
+   */
+  order?: string[];
 };
 
 /** Tenant contact details. */
@@ -381,6 +430,7 @@ export type Compliance = {
 export type NavLink = {
   label: string;
   href: string;
+  external?: boolean;
 };
 
 /** A nav CTA button. external opens in a new tab. */
@@ -508,7 +558,8 @@ export type SystemConfig = {
   rendering: {
     default: string;
     strategy: string;
-    revalidateSeconds: number;
+    /** Legacy/no-op under `output: "export"` (ISR doesn't run on a static deploy). */
+    revalidateSeconds?: number;
   };
   sectionAllowlist: SectionType[];
   sectionMapping: Record<string, string>;

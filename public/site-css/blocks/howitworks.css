@@ -1,0 +1,64 @@
+/* ── How it works ────────────────────────────────────────────────── */
+.steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 880px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step {
+  padding: clamp(28px, 4vw, 48px);
+  border-right: 1px solid var(--line);
+  position: relative;
+  background: var(--white);
+  transition: background .35s ease, color .35s ease;
+}
+
+.step:last-child {
+  border-right: 0;
+}
+
+.step:hover {
+  background: var(--cream);
+}
+
+.step__n {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.step h4 {
+  margin: 0 0 12px;
+  font-size: clamp(22px, 2vw, 30px);
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.step__big {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 64px;
+  color: var(--ink);
+  line-height: 1;
+  opacity: 0.12;
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  transition: opacity .35s ease, color .35s ease;
+}
+
+.step:hover .step__big {
+  opacity: 0.32;
+  color: var(--accent);
+}
+

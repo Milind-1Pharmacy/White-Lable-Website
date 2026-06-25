@@ -1,0 +1,279 @@
+/* ── AI store — capability showcase ──────────────────────────────────────
+   An asymmetric grid of capability cards: a wide lead card beside supporting
+   ones, each with a numbered, technical caption (status dot · tag · title ·
+   description) over a gradient scrim. A more capable, platform-y counterpart to
+   the editorial gallery. Replaces the old flat 2-up tag-chip tiles. */
+
+.ais {
+  position: relative;
+}
+
+/* ─ Header ─ */
+.ais__head {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: clamp(24px, 4vw, 64px);
+  align-items: end;
+  padding-bottom: clamp(28px, 3vw, 44px);
+  margin-bottom: clamp(28px, 3vw, 44px);
+  border-bottom: 1px solid var(--line);
+}
+
+.ais__heading {
+  margin: 14px 0 0;
+  line-height: 1.04;
+  max-width: 18ch;
+}
+
+.ais__lede {
+  margin: 0 0 6px;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: var(--mute);
+  max-width: 42ch;
+}
+
+/* ─ Grid: lead card spans two rows on the left; the rest fill the right. ─ */
+.ais__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-auto-rows: minmax(232px, 1fr);
+  gap: 16px;
+}
+
+.ais__tile--lead {
+  grid-row: span 2;
+}
+
+/* ─ Tile ─ */
+.ais__tile {
+  position: relative;
+  margin: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--cream);
+  isolation: isolate;
+  min-height: 232px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.ais__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Placeholder shown while a card has no image yet (builder editing). */
+.ais__media--empty {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.03) 0 10px, transparent 10px 20px),
+    var(--cream-2, #ececef);
+}
+
+.ais__tile:hover .ais__media,
+.ais__tile:focus-within .ais__media {
+  transform: scale(1.06);
+}
+
+/* Tech-leaning scrim: darker, slight cool cast. */
+.ais__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 12, 28, 0) 30%,
+    rgba(8, 12, 28, 0.32) 60%,
+    rgba(8, 12, 28, 0.82) 100%
+  );
+  transition: opacity 0.5s ease;
+}
+
+/* ─ Corner: index number + a "live" status pill ─ */
+.ais__corner {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ais__num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35);
+}
+
+.ais__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ais__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: ais-pulse 2.4s ease-out infinite;
+}
+
+@keyframes ais-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(31, 175, 166, 0.6); }
+  70% { box-shadow: 0 0 0 7px rgba(31, 175, 166, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(31, 175, 166, 0); }
+}
+
+/* ─ Caption block ─ */
+.ais__meta {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #fff;
+}
+
+.ais__tag {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.ais__title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(20px, 1.9vw, 27px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+.ais__tile--lead .ais__title {
+  font-size: clamp(26px, 2.6vw, 38px);
+}
+
+.ais__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 46ch;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  overflow: hidden;
+  transition: max-height 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s ease, transform 0.45s ease;
+}
+
+.ais__tile:hover .ais__desc,
+.ais__tile:focus-within .ais__desc {
+  max-height: 120px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─ Play button for video tiles ─ */
+.ais__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.ais__play::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 53%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 9px 0 9px 15px;
+  border-color: transparent transparent transparent #fff;
+}
+
+.ais__play:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* ─ Mobile slider: uniform capability cards in the shared MobileCarousel. ─ */
+.ais__carousel .ais__tile {
+  height: 380px;
+  min-height: 0;
+  width: 100%;
+}
+
+.ais__carousel .ais__desc {
+  max-height: 140px;
+  opacity: 1;
+  transform: none;
+}
+
+/* ─ Responsive header ─ */
+@media (max-width: 980px) {
+  .ais__head {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 16px;
+  }
+  .ais__lede {
+    margin-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ais__media,
+  .ais__desc {
+    transition: none;
+  }
+  .ais__desc {
+    max-height: 120px;
+    opacity: 1;
+    transform: none;
+  }
+  .ais__live-dot {
+    animation: none;
+  }
+}
