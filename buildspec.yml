@@ -52,7 +52,14 @@ phases:
       - npm ci
       # Fail FAST with a clear message if the critical build dep is still missing,
       # instead of letting it surface later as an opaque Turbopack/PostCSS error.
-      - node -e "require.resolve('@tailwindcss/postcss')" && echo "OK: @tailwindcss/postcss present"
+      # Block scalar (|) so YAML doesn't try to parse the embedded quotes.
+      - |
+        if [ -d node_modules/@tailwindcss/postcss ]; then
+          echo "OK: @tailwindcss/postcss present"
+        else
+          echo "FATAL: @tailwindcss/postcss missing after npm ci (poisoned cache?)" >&2
+          exit 1
+        fi
 
   pre_build:
     commands:
