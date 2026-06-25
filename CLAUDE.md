@@ -43,6 +43,33 @@ the old `app/(builder)` path fails with "Root Directory does not exist". The
 `NEXT_PUBLIC_API_ENV` env key is **`atest`** (no hyphen). Full steps:
 `docs/vercel-deployment.md`.
 
+### Monorepo gotchas (learned)
+
+- **Verify per-workspace, not from root:** run `(cd apps/site && npx tsc --noEmit)` /
+  `(cd apps/builder && npx tsc)` per app/package — a root `tsc` follows imports into
+  `packages/` and re-checks them under the wrong `@/` base (false errors). `npm test`
+  (vitest) still runs from root; builds are `npm run build:site` / `build:builder`.
+- **CodeBuild runs `npm ci --omit=dev`**, so build-time tooling lives in `apps/site`
+  **`dependencies`** (`@tailwindcss/postcss`, `tailwindcss`, `typescript`, `@types/*`)
+  and `*.test.ts(x)` are excluded from `tsconfig` — else `next build` fails on missing
+  CSS/type deps. A stale CodeBuild node_modules cache can still poison it: clear the
+  cache (the install guard fails fast if `@tailwindcss/postcss` is absent).
+- **Validate `buildspec.yml` with a real YAML parser** before committing (pyyaml in a
+  venv) — a line starting with `"` is read as a quoted scalar and CodeBuild aborts with
+  "found character that cannot start any token". Use block scalars (`- |`) for shell
+  snippets containing quotes.
+- **If a CodeBuild failure's commands don't match `buildspec.yml`** (e.g. the log shows
+  `npm run build:tenant` / `--omit=dev` but the repo file doesn't), CodeBuild is using
+  an **inline buildspec** or an old commit — not the repo file. Fix the project's "Use a
+  buildspec file" setting, not just the repo.
+- **Publish API (`lib/api` in `apps/builder`):** responses double-wrap the payload
+  (`{data:{data:{status}}}`) — `readStatusObject` peels both; `NEXT_PUBLIC_API_ENV` is
+  the key **`atest`** (no hyphen → `…/a-test/`); token via `NEXT_PUBLIC_PUBLISH_TOKEN`.
+- **Demo/seed images are S3 URLs now** (`1p-b2c-files.s3…`), not local `/urmedz/*` paths
+  — `app_master.json` and the builder seed (`builderData.ts`) were rewired so no tenant
+  asset folder ships to every site. Bump `DRAFT_KEY` (`wb:appConfig:vN`) when the
+  builder seed shape changes.
+
 The architectural sections below still describe behavior accurately (config flow,
 compliance, animation, security), but **translate any `app/(site)`, `app/(builder)`,
 `modules/`, `lib/`, `types/` path to its new home above.** New docs:
