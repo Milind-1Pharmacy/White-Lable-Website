@@ -177,7 +177,7 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const d: Partial<Record<BuilderSectionType, any>> = {
     appStrip: {
-      logo: "/urmedz/logo.png",
+      logo: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
       heading: { parts: [{ text: "Download the " }, { text: "pharmacy", emphasis: "italic-accent" }, { text: " app" }] },
       descriptor: "Authentic medicines · licensed pharmacists · doorstep delivery",
       appStoreUrl: "https://apps.apple.com/app/urmedz",
@@ -209,13 +209,13 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
       tag: "Behind the scenes",
       heading: { parts: [{ text: "A look at our " }, { text: "hi-tech", emphasis: "italic-accent" }, { text: " fulfilment centres." }] },
       ctaLabel: "Watch Now",
-      poster: "/urmedz/video-poster.png",
+      poster: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395081793_urmedz_video-poster.png",
       videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
       marquee: ["Authentic", "Traceable", "Compliant", "Fast", "Scalable", "Trusted", "Licensed", "Pharmacist-reviewed"],
     },
     team: {
       eyebrow: "Our team of specialists",
-      logoMark: "/urmedz/logo.png",
+      logoMark: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
       quote: { parts: [{ text: "United by a single purpose — to make healthcare " }, { text: "accessible, affordable", emphasis: "italic-accent" }, { text: " and", br: true }, { text: "trustworthy", emphasis: "italic-accent" }, { text: " for everyone." }] },
       signatureLabel: "Signed,",
       signature: "the team",
@@ -242,12 +242,12 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
       heading: { parts: [{ text: "Everything your family needs, under " }, { text: "one trusted roof.", emphasis: "italic-accent" }] },
       tagline: "From everyday medicines to baby care, wellness and health devices — explore the complete range we keep in stock for you.",
       items: [
-        { title: "Medicines", icon: "/aarav_pharmacy/categories/medicines.png", description: "Genuine prescription and over-the-counter medicines, dispensed accurately by our pharmacy team." },
-        { title: "Baby Care", icon: "/aarav_pharmacy/categories/baby-care.png", description: "Baby food, diapers, gentle skincare and daily essentials for your little one." },
-        { title: "Personal Care", icon: "/aarav_pharmacy/categories/personal-care.png", description: "Skincare, haircare and everyday hygiene products from trusted brands." },
-        { title: "Diabetic Care", icon: "/aarav_pharmacy/categories/diabetic-care.png", description: "Glucometers, test strips, lancets and specialised supplies to manage diabetes with confidence." },
-        { title: "Ayurvedic Products", icon: "/aarav_pharmacy/categories/ayurvedic.png", description: "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing." },
-        { title: "Surgical Items", icon: "/aarav_pharmacy/categories/surgical.png", description: "Masks, gloves, dressings and surgical accessories for care and recovery at home." },
+        { title: "Medicines", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395080746_aarav_pharmacy_categories_medicines.png", description: "Genuine prescription and over-the-counter medicines, dispensed accurately by our pharmacy team." },
+        { title: "Baby Care", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395080483_aarav_pharmacy_categories_baby-care.png", description: "Baby food, diapers, gentle skincare and daily essentials for your little one." },
+        { title: "Personal Care", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395080919_aarav_pharmacy_categories_personal-care.png", description: "Skincare, haircare and everyday hygiene products from trusted brands." },
+        { title: "Diabetic Care", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395080618_aarav_pharmacy_categories_diabetic-care.png", description: "Glucometers, test strips, lancets and specialised supplies to manage diabetes with confidence." },
+        { title: "Ayurvedic Products", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395073704_aarav_pharmacy_categories_ayurvedic.png", description: "Time-honoured ayurvedic and herbal remedies for natural, everyday wellbeing." },
+        { title: "Surgical Items", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395081086_aarav_pharmacy_categories_surgical.png", description: "Masks, gloves, dressings and surgical accessories for care and recovery at home." },
       ],
     },
     howItWorks: {
@@ -277,9 +277,9 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
       heading: { parts: [{ text: "An AI-assisted " }, { text: "pharmacy", emphasis: "italic-accent" }, { text: " platform." }] },
       lede: "Forecasting, inventory and compliance — handled quietly in the background for every partner pharmacy.",
       tiles: [
-        { image: "/urmedz/gallery/img-1.png", alt: "Demand forecasting", tag: "Forecasting", title: "Demand, predicted", description: "Models anticipate what each store will need, so the right medicine is stocked before the rush." },
-        { image: "/urmedz/gallery/img-2.png", alt: "Automated reordering", tag: "Inventory", title: "Reordered automatically", description: "Stock thresholds trigger replenishment without a manual purchase order in sight." },
-        { image: "/urmedz/gallery/img-3.png", alt: "Compliance monitoring", tag: "Compliance", title: "Audit-ready by default", description: "Batch traceability and expiry tracking, logged continuously across the network." },
+        { image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png", alt: "Demand forecasting", tag: "Forecasting", title: "Demand, predicted", description: "Models anticipate what each store will need, so the right medicine is stocked before the rush." },
+        { image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png", alt: "Automated reordering", tag: "Inventory", title: "Reordered automatically", description: "Stock thresholds trigger replenishment without a manual purchase order in sight." },
+        { image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png", alt: "Compliance monitoring", tag: "Compliance", title: "Audit-ready by default", description: "Batch traceability and expiry tracking, logged continuously across the network." },
       ],
     },
     gallery: {
@@ -287,11 +287,11 @@ export function DEFAULTS(t: BuilderSectionType): DraftSection["data"] {
       heading: { parts: [{ text: "A look " }, { text: "inside", emphasis: "italic-accent" }, { text: " our journey." }] },
       lede: "From neighbourhood counters to hi-tech fulfilment floors — a glimpse of the people and places that keep authentic medicine moving.",
       images: [
-        { src: "/urmedz/gallery/img-1.png", alt: "Same-day delivery rider", caption: "Quick commerce", title: "Delivered, neighbourhood-fast", description: "Dark stores across the city dispatch same-day, so medicine reaches your door in hours — not days." },
-        { src: "/urmedz/gallery/img-2.png", alt: "Pharmacist at the counter", caption: "Retail", title: "Staffed by licensed pharmacists", description: "Every store is run by registered pharmacists who review and dispense each order in person." },
-        { src: "/urmedz/gallery/img-3.png", alt: "Hi-tech fulfilment centre", caption: "Fulfilment", title: "Built for scale & cold-chain", description: "Batch-traceable, temperature-controlled dispatch from our most advanced centres." },
-        { src: "/urmedz/gallery/img-1.png", alt: "Inventory dashboard", caption: "Platform", title: "Forecast-driven stocking", description: "Demand modelling keeps shelves ready before you need them." },
-        { src: "/urmedz/gallery/img-2.png", alt: "Care support team", caption: "Support", title: "Care in four languages", description: "A team reachable fast, with an average first reply under an hour." },
+        { src: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png", alt: "Same-day delivery rider", caption: "Quick commerce", title: "Delivered, neighbourhood-fast", description: "Dark stores across the city dispatch same-day, so medicine reaches your door in hours — not days." },
+        { src: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png", alt: "Pharmacist at the counter", caption: "Retail", title: "Staffed by licensed pharmacists", description: "Every store is run by registered pharmacists who review and dispense each order in person." },
+        { src: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png", alt: "Hi-tech fulfilment centre", caption: "Fulfilment", title: "Built for scale & cold-chain", description: "Batch-traceable, temperature-controlled dispatch from our most advanced centres." },
+        { src: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png", alt: "Inventory dashboard", caption: "Platform", title: "Forecast-driven stocking", description: "Demand modelling keeps shelves ready before you need them." },
+        { src: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png", alt: "Care support team", caption: "Support", title: "Care in four languages", description: "A team reachable fast, with an average first reply under an hour." },
       ],
     },
   };
@@ -348,8 +348,8 @@ export function INITIAL(): {
   const config: AppConfig = {
     tenant: { name: "UrMedz", category: "Pharmacy & Fulfilment" },
     branding: {
-      logo: "/urmedz/logo.png",
-      logoFull: "/urmedz/logo-full.png",
+      logo: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
+      logoFull: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368748_logo-full.png",
       // Colour theme → loads public/site-css/themes/urmedz.tokens.css as the colour
       // baseline; the brand colours below override it via the runtime colour bridge.
       theme: "urmedz",
@@ -388,14 +388,14 @@ export function INITIAL(): {
         },
         tagline:
           "A network of 25 retail stores and India's largest pharma fulfilment centres — delivering trusted medicines to you.",
-        image: "/urmedz/hero.png",
+        image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png",
         cta: { label: "Learn More", type: "safe-action" },
         secondaryCta: { label: "How It Works", href: "/#services" },
         proof: ["25+ retail stores", "10,000+ orders daily", "80,000 SKUs catalogued"],
         slides: [
-          { image: "/urmedz/gallery/img-1.png", tag: "Quick commerce", caption: "Same-day delivery, neighbourhood-fast" },
-          { image: "/urmedz/gallery/img-3.png", tag: "Hi-tech fulfilment", caption: "India's most advanced pharma centres" },
-          { image: "/urmedz/gallery/img-2.png", tag: "Retail stores", caption: "Safe, private, staffed by licensed pharmacists" },
+          { image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png", tag: "Quick commerce", caption: "Same-day delivery, neighbourhood-fast" },
+          { image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png", tag: "Hi-tech fulfilment", caption: "India's most advanced pharma centres" },
+          { image: "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png", tag: "Retail stores", caption: "Safe, private, staffed by licensed pharmacists" },
         ],
         meta: [
           { value: "25", suffix: "+", label: "Retail stores across South India" },
@@ -416,10 +416,10 @@ export function INITIAL(): {
         ],
       },
       services: [
-        { title: "Retail Stores", description: "A network of neighbourhood pharmacies stocked with authentic, licensed medicines — and growing.", icon: "/aarav_pharmacy/icons/prescription.png" },
-        { title: "Quick Commerce", description: "A network of pharma dark stores enabling same-day, on-demand medicine delivery to your door.", icon: "/aarav_pharmacy/icons/home-delivery.png" },
-        { title: "Fulfilment Centres", description: "Hi-tech, compliant centres handling cold-chain storage and batch-traceable dispatch at scale.", icon: "/aarav_pharmacy/icons/healthcare-essentials.png" },
-        { title: "Wellness & OTC", description: "Vitamins, supplements and everyday wellness products curated and quality-checked for your family.", icon: "/aarav_pharmacy/icons/wellness.png" },
+        { title: "Retail Stores", description: "A network of neighbourhood pharmacies stocked with authentic, licensed medicines — and growing.", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395081496_aarav_pharmacy_icons_prescription.png" },
+        { title: "Quick Commerce", description: "A network of pharma dark stores enabling same-day, on-demand medicine delivery to your door.", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395081349_aarav_pharmacy_icons_home-delivery.png" },
+        { title: "Fulfilment Centres", description: "Hi-tech, compliant centres handling cold-chain storage and batch-traceable dispatch at scale.", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395081198_aarav_pharmacy_icons_healthcare-essentials.png" },
+        { title: "Wellness & OTC", description: "Vitamins, supplements and everyday wellness products curated and quality-checked for your family.", icon: "https://1p-b2c-files.s3.amazonaws.com/demo_1782395081645_aarav_pharmacy_icons_wellness.png" },
       ],
       servicesMeta: {
         eyebrow: "What we do",
