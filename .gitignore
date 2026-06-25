@@ -47,3 +47,6 @@ out.zip
 # monorepo build artifacts
 apps/*/.next/
 apps/*/out/
+
+# Local Claude Code config
+.claude/
