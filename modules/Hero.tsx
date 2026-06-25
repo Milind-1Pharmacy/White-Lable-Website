@@ -18,6 +18,7 @@ import Link from "next/link";
 import type { HeroContent, HeroSlide } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeHref, safeSrc } from "@/lib/safeUrl";
+import { safeColor } from "@/lib/themeBridge";
 
 type HeroProps = {
   data: HeroContent;
@@ -203,7 +204,8 @@ export function Hero({ data }: HeroProps) {
                       width: 8,
                       height: 8,
                       borderRadius: 999,
-                      background: c,
+                      // Sanitize the config-supplied dot colour before inlining.
+                      background: safeColor(c, "var(--accent)"),
                     }}
                   />
                 ))}

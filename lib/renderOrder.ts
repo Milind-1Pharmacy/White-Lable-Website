@@ -38,7 +38,9 @@ export function resolveRenderOrder(content: Content): RenderBlock[] {
       else if (token === "services") blocks.push({ kind: "services" });
       else if (token.startsWith("section:")) {
         const i = Number(token.slice("section:".length));
-        if (Number.isInteger(i) && sections[i] && !seenSection.has(i)) {
+        // `i >= 0` rejects a crafted `section:-1` token — a negative index would
+        // otherwise pass Number.isInteger and read from the end of the array.
+        if (Number.isInteger(i) && i >= 0 && sections[i] && !seenSection.has(i)) {
           seenSection.add(i);
           blocks.push({ kind: "section", section: sections[i], index: i });
         }

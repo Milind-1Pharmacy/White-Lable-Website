@@ -14,6 +14,7 @@
 import type { AboutContent } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
+import { safeColor } from "@/lib/themeBridge";
 
 type AboutProps = {
   data?: AboutContent;
@@ -43,7 +44,10 @@ export function About({ data }: AboutProps) {
     <div
       key={idx}
       className="about2__pillar"
-      style={{ ["--pillar-accent" as string]: p.accent }}
+      // Sanitize the config-supplied accent before it reaches an inline style
+      // (defense-in-depth); omit the var entirely when none is set so the
+      // stylesheet default applies rather than a fabricated fallback.
+      style={p.accent ? { ["--pillar-accent" as string]: safeColor(p.accent) } : undefined}
     >
       <div className="about2__pillar-top">
         <span className="about2__pillar-badge">{p.n}</span>

@@ -21,6 +21,7 @@ import type {
 } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
+import { safeColor } from "@/lib/themeBridge";
 
 /** Returns a ref and a flag that turns true once the element enters view. */
 function useReveal(): [React.RefObject<HTMLDivElement | null>, boolean] {
@@ -77,7 +78,8 @@ function renderCell(d: TeamDepartment, i: number, total: number) {
     <div
       key={i}
       className="team2__cell"
-      style={{ background: d.bg, color: d.fg }}
+      // Sanitize config-supplied cell colours before they hit the inline style.
+      style={{ background: safeColor(d.bg, "transparent"), color: safeColor(d.fg, "inherit") }}
     >
       <div className="team2__cell-top">
         <span

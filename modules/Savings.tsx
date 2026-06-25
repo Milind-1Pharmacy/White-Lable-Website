@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import type { SavingsSectionData } from "@/types/config.types";
 import { renderRichHeading } from "@/modules/RichHeading";
 import { safeSrc } from "@/lib/safeUrl";
+import { safeColor } from "@/lib/themeBridge";
 import { MobileCarousel } from "@/components/common/MobileCarousel";
 
 /**
@@ -63,7 +64,8 @@ function SavingsCard({
   index: number;
 }) {
   const [ref, seen] = useReveal();
-  const color = row.color ?? "var(--accent)";
+  // Sanitize a config-supplied card colour; fall back to the brand accent var.
+  const color = row.color ? safeColor(row.color, "var(--accent)") : "var(--accent)";
   return (
     <article
       className={"sv-card" + (seen ? " is-seen" : "")}
