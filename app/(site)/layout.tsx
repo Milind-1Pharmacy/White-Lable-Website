@@ -29,7 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata(config);
 }
 
-export const revalidate = 3600;
+// Note: this app builds with `output: "export"` (static S3/CloudFront deploy), so
+// ISR/`revalidate` does not run — pages are pre-rendered once at build time and
+// cache-busted at the CDN. We intentionally do NOT export `revalidate` here.
 
 /**
  * SiteLayout - Frames page content with navbar, footer, and theme.

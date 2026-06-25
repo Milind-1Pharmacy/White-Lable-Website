@@ -17,8 +17,6 @@ import { buildMetadata } from "@/lib/seoBuilder";
 import { SectionWrapper } from "@/components/common/SectionWrapper";
 import { LegalArticle } from "@/components/common/LegalArticle";
 
-export const revalidate = 3600;
-
 /**
  * generateMetadata - Builds SEO metadata for the Disclaimer page.
  * @returns Next.js Metadata for the route

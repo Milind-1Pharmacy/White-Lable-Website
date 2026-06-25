@@ -17,8 +17,6 @@ import { buildMetadata } from "@/lib/seoBuilder";
 import { SectionWrapper } from "@/components/common/SectionWrapper";
 import { ContactDisplay } from "@/components/forms/ContactDisplay";
 
-export const revalidate = 3600;
-
 /**
  * generateMetadata - Builds SEO metadata for the Contact page.
  * @returns Next.js Metadata for the Contact route

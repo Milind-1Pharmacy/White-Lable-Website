@@ -17,8 +17,6 @@ import { buildMetadata } from "@/lib/seoBuilder";
 import { Services } from "@/modules/Services";
 import { SectionRenderer } from "@/modules/SectionRenderer";
 
-export const revalidate = 3600;
-
 /**
  * generateMetadata - Builds SEO metadata for the Services page.
  * @returns Next.js Metadata for the Services route

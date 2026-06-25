@@ -17,8 +17,6 @@ import { Services } from "@/modules/Services";
 import { SectionRenderer } from "@/modules/SectionRenderer";
 import { resolveRenderOrder, aboutHasContent } from "@/lib/renderOrder";
 
-export const revalidate = 3600;
-
 /**
  * HomePage - Renders the full landing page from config sections, in the order
  * resolved from content.order (or the legacy fixed order when absent).
