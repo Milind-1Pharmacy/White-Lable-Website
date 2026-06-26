@@ -143,7 +143,7 @@ export function Navbar({ app }: NavbarProps) {
         {links.length > 0 && (
           <nav className="nav__links">
             {links.map((l, i) => (
-              <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))}>
+              <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))} prefetch={false}>
                 {l.label}
               </Link>
             ))}
@@ -160,6 +160,7 @@ export function Navbar({ app }: NavbarProps) {
                 style={{
                   padding: c.variant === "primary" ? "10px 18px" : "10px 16px",
                 }}
+                prefetch={false}
                 {...(c.external
                   ? { target: "_blank", rel: "noopener noreferrer" }
                   : {})}
@@ -189,7 +190,7 @@ export function Navbar({ app }: NavbarProps) {
         aria-hidden={!menuOpen}
       >
         {links.map((l, i) => (
-          <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))}>
+          <Link key={i} href={safeHref(l.href)} onClick={onNavClick(safeHref(l.href))} prefetch={false}>
             {l.label}
           </Link>
         ))}
@@ -201,6 +202,7 @@ export function Navbar({ app }: NavbarProps) {
                 href={safeHref(c.href)}
                 className={ctaClass(c.variant)}
                 onClick={closeMenu}
+                prefetch={false}
                 {...(c.external
                   ? { target: "_blank", rel: "noopener noreferrer" }
                   : {})}

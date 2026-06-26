@@ -93,6 +93,7 @@ export function Footer({ app }: FooterProps) {
                 onClick={onFooterNavClick(safeHref(footer.ctaHref, "/contact"))}
                 className="btn btn-accent"
                 style={{ padding: "18px 28px" }}
+                prefetch={false}
               >
                 {footer.ctaLabel}
               </Link>
@@ -171,7 +172,7 @@ export function Footer({ app }: FooterProps) {
               <ul>
                 {col.links.map((l, li) => (
                   <li key={li}>
-                    <Link href={safeHref(l.href)} onClick={onFooterNavClick(safeHref(l.href))}>
+                    <Link href={safeHref(l.href)} onClick={onFooterNavClick(safeHref(l.href))} prefetch={false}>
                       {l.label}
                     </Link>
                   </li>
