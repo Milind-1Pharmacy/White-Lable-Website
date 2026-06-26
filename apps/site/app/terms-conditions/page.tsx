@@ -5,7 +5,7 @@
  *  - Load tenant config and build page metadata.
  *  - Render terms content via LegalArticle.
  *  - Degrade gracefully when config fields are missing.
- * @dependencies getConfig, buildMetadata, SectionWrapper, LegalArticle
+ * @dependencies getConfig, buildMetadata, LegalArticle
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
@@ -14,7 +14,6 @@ import type { Metadata } from "next";
 
 import { getConfig } from "@wl/render-engine/lib/getConfig";
 import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
-import { SectionWrapper } from "@wl/render-engine/components/common/SectionWrapper";
 import { LegalArticle } from "@wl/render-engine/components/common/LegalArticle";
 
 /**
@@ -34,9 +33,5 @@ export default async function TermsPage() {
   const { app } = await getConfig();
   const page = app.layout?.pages?.termsAndConditions;
 
-  return (
-    <SectionWrapper eyebrow={page?.eyebrow} heading={page?.heading}>
-      <LegalArticle data={page} />
-    </SectionWrapper>
-  );
+  return <LegalArticle data={page} />;
 }

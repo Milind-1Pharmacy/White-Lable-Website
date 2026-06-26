@@ -5,7 +5,7 @@
  *  - Load tenant config and build page metadata.
  *  - Use page body, or fall back to compliance disclaimer text.
  *  - Render content as a legal article.
- * @dependencies getConfig, buildMetadata, SectionWrapper, LegalArticle
+ * @dependencies getConfig, buildMetadata, LegalArticle
  * @author WhiteLabel Platform Team
  * @created 2026-05-26
  * @lastUpdated 2026-05-26
@@ -14,7 +14,6 @@ import type { Metadata } from "next";
 
 import { getConfig } from "@wl/render-engine/lib/getConfig";
 import { buildMetadata } from "@wl/render-engine/lib/seoBuilder";
-import { SectionWrapper } from "@wl/render-engine/components/common/SectionWrapper";
 import { LegalArticle } from "@wl/render-engine/components/common/LegalArticle";
 
 /**
@@ -40,9 +39,5 @@ export default async function DisclaimerPage() {
         ? [app.compliance.disclaimer]
         : [];
 
-  return (
-    <SectionWrapper eyebrow={page?.eyebrow} heading={page?.heading}>
-      <LegalArticle data={{ ...page, body, sections: page?.sections }} />
-    </SectionWrapper>
-  );
+  return <LegalArticle data={{ ...page, body, sections: page?.sections }} />;
 }
