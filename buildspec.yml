@@ -84,9 +84,16 @@ phases:
         tenant = os.environ['TENANT']
         bucket = os.environ['BUCKET']
         config_s3_uri = os.environ['CONFIG_S3_URI']
+        # Optional ACM cert (MUST be in us-east-1 — CloudFront only accepts certs from
+        # there) for the tenant's custom domain. When present we attach the custom
+        # domain alias + this cert; when absent we fall back to the default CloudFront
+        # cert and NO alias (attaching an alias without a cert makes create-distribution
+        # fail with "must attach a trusted certificate").
+        acm_cert_arn = os.environ.get('ACM_CERT_ARN', '').strip()
         configs_bucket = config_s3_uri.replace('s3://', '').split('/')[0]
         meta_s3_key = f'{tenant}-meta.json'
         meta_s3_path = f's3://{configs_bucket}/{meta_s3_key}'
+        custom_domain = f'{tenant}.1pharmacy.io'
 
         # Check for existing CloudFront distribution
         r = subprocess.run(['aws', 's3', 'cp', meta_s3_path, '-'], capture_output=True, text=True)
@@ -101,6 +108,7 @@ phases:
                 'CallerReference': f'{tenant}-webstore',
                 'Comment': f'Webstore for {tenant}',
                 'DefaultRootObject': 'index.html',
+                'Aliases': {'Quantity': 0, 'Items': []},
                 'Origins': {
                     'Quantity': 1,
                     'Items': [{
@@ -128,6 +136,20 @@ phases:
                 'HttpVersion': 'http2',
                 'PriceClass': 'PriceClass_All',
             }
+            # Attach the custom-domain alias + ACM cert only when a cert is provided.
+            # Without a cert, CloudFront rejects an alias, so we keep the default
+            # cloudfront.net cert and no alias (the distribution still works over HTTPS
+            # at its *.cloudfront.net domain).
+            if acm_cert_arn:
+                cf_config['Aliases'] = {'Quantity': 1, 'Items': [custom_domain]}
+                cf_config['ViewerCertificate'] = {
+                    'ACMCertificateArn': acm_cert_arn,
+                    'SSLSupportMethod': 'sni-only',
+                    'MinimumProtocolVersion': 'TLSv1.2_2021',
+                }
+            else:
+                print(f'WARN: ACM_CERT_ARN not set — creating distribution WITHOUT the '
+                      f'{custom_domain} alias (default cloudfront.net cert only).', file=sys.stderr)
             result = subprocess.run(
                 ['aws', 'cloudfront', 'create-distribution',
                  '--distribution-config', json.dumps(cf_config)],
@@ -145,7 +167,8 @@ phases:
                 ['aws', 's3', 'cp', '-', meta_s3_path],
                 input=updated_meta, text=True, check=True,
             )
-            print(f'Created CloudFront distribution {dist_id} at {cf_domain}')
+            domain_note = f' ({custom_domain})' if acm_cert_arn else ''
+            print(f'Created CloudFront distribution {dist_id}{domain_note} at {cf_domain}')
         else:
             print(f'Reusing CloudFront distribution {dist_id}')
 

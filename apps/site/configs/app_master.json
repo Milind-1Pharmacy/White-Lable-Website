@@ -1,59 +1,60 @@
 {
   "tenant": {
-    "name": "UrMedz",
-    "category": "Pharmacy & Fulfilment"
+    "name": "Meri Medicines",
+    "category": "Neighbourhood Pharmacy"
   },
   "branding": {
-    "logo": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
-    "logoFull": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368748_logo-full.png",
+    "logo": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_logo.png",
+    "logoFull": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_logo_full.png",
     "theme": "urmedz",
     "colors": {
-      "primary": "#0A174C",
-      "secondary": "#F4EFE6",
-      "background": "#F4EFE6",
-      "text": "#0A174C",
-      "accent": "#1FAFA6",
-      "ink": "#0A174C"
+      "primary": "#1B5E4A",
+      "secondary": "#F3EFE6",
+      "background": "#F3EFE6",
+      "text": "#16322A",
+      "accent": "#2FA98C",
+      "ink": "#16322A"
     }
   },
   "seo": {
-    "title": "UrMedz — Authentic Medicines, Delivered to Your Door",
-    "description": "India's most trusted pharmaceutical retail and fulfilment company. 25+ stores, 10,000+ orders daily, and 80,000 SKUs — all sourced from licensed distributors.",
+    "title": "Meri Medicines — Your Trusted Neighbourhood Pharmacy",
+    "description": "Meri Medicines is your friendly neighbourhood pharmacy — authentic medicines, caring licensed pharmacists, free home delivery and easy prescription refills, close to home.",
     "keywords": [
-      "online pharmacy India",
-      "medicine delivery Bengaluru",
+      "neighbourhood pharmacy",
+      "local chemist near me",
+      "medicine home delivery",
+      "prescription refill",
       "authentic medicines",
-      "pharmaceutical fulfilment",
-      "licensed pharmacists",
-      "generic medicines",
-      "quick commerce pharma"
+      "licensed pharmacist",
+      "OTC and wellness"
     ],
-    "ogImage": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png"
+    "ogImage": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_og.png"
   },
   "content": {
     "hero": {
-      "eyebrow": "Pharmacy & Health-Tech · Est. 2024",
-      "headline": "Authentic medicines, fingertip-fast.",
+      "eyebrow": "Your neighbourhood pharmacy · Since 2024",
+      "headline": "Meri Medicines. Meri Pharmacy.",
       "headlineRich": {
         "parts": [
           {
-            "text": "Authentic",
+            "text": "Your pharmacy,"
+          },
+          {
+            "text": " always",
+            "emphasis": "italic",
             "br": true
           },
           {
-            "text": "medicines, "
+            "text": "close",
+            "emphasis": "italic-accent"
           },
           {
-            "text": "fingertip-",
-            "emphasis": "italic"
-          },
-          {
-            "text": "fast."
+            "text": " to home."
           }
         ]
       },
-      "tagline": "A network of 25 retail stores and India's largest pharma fulfilment centres — delivering trusted medicines to you.",
-      "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png",
+      "tagline": "Authentic medicines, a pharmacist who knows you by name, and free same-day delivery to your door — that is Meri Medicines.",
+      "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_slide_counter.png",
       "cta": {
         "label": "Learn More",
         "type": "safe-action"
@@ -63,130 +64,135 @@
         "href": "/#services"
       },
       "proof": [
-        "25+ retail stores",
-        "10,000+ orders daily",
-        "80,000 SKUs catalogued"
+        "Free home delivery",
+        "Caring licensed pharmacists",
+        "Easy prescription refills"
       ],
       "slides": [
         {
-          "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png",
-          "tag": "Quick commerce",
-          "caption": "Same-day delivery, neighbourhood-fast"
+          "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_slide_delivery.png",
+          "tag": "Home delivery",
+          "caption": "Free, same-day, right to your door"
         },
         {
-          "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png",
-          "tag": "Hi-tech fulfilment",
-          "caption": "India's most advanced pharma centres"
+          "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_slide_counter.png",
+          "tag": "Our counter",
+          "caption": "A friendly face who remembers you"
         },
         {
-          "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png",
-          "tag": "Retail stores",
-          "caption": "Safe, private, and staffed by licensed pharmacists"
+          "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_slide_stocked.png",
+          "tag": "Always stocked",
+          "caption": "Everyday medicines and wellness, ready"
         }
       ],
       "meta": [
         {
-          "value": "25",
+          "value": "30",
+          "suffix": "min",
+          "label": "Average home-delivery time nearby"
+        },
+        {
+          "value": "5k",
           "suffix": "+",
-          "label": "Retail stores across South India"
+          "label": "Families who trust us with their care"
         },
         {
-          "value": "10k",
-          "suffix": " / day",
-          "label": "Orders dispensed by licensed pharmacists"
-        },
-        {
-          "value": "80k",
-          "label": "SKUs — medicines, OTC & wellness"
+          "value": "100",
+          "suffix": "%",
+          "label": "Authentic, licensed-sourced medicines"
         }
       ]
     },
     "about": {
-      "description": "UrMedz is building India's most trusted pharmaceutical infrastructure — connecting patients with authentic, affordable medicines through a network of licensed retail stores, hi-tech fulfilment centres, and trained pharmacists. Founded in Bengaluru in 2024, we believe that access to genuine medicine should never be a question of geography or cost.",
-      "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png",
-      "eyebrow": "About UrMedz · Est. 2024 · Bengaluru",
+      "description": "Meri Medicines began with a simple belief: a pharmacy should feel like family. We are your neighbourhood chemist — stocking authentic, affordable medicines, remembering your refills, and delivering to your door, all with the warmth of a place that genuinely cares. No queues, no confusion, just honest advice from pharmacists who know you.",
+      "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_gallery_counter.png",
+      "eyebrow": "About us · Your neighbourhood chemist",
       "title": {
         "parts": [
           {
-            "text": "Medicines are "
+            "text": "A pharmacy that feels like "
           },
           {
-            "text": "indispensable.",
+            "text": "family.",
             "emphasis": "italic",
             "br": true
           },
           {
-            "text": "Access",
+            "text": "Care",
             "emphasis": "italic-accent"
           },
           {
             "text": " and "
           },
           {
-            "text": "affordability",
+            "text": "trust",
             "emphasis": "italic-accent"
           },
           {
-            "text": " change everything."
+            "text": ", close to home."
           }
         ]
       },
-      "lede": "The pharma sector is experiencing a much-needed transformation. UrMedz is the pharmacy-and-platform layer that brings a wide range of options — and real choice — to your doorstep.",
+      "lede": "We are more than a counter. Meri Medicines is the neighbour you can lean on for genuine medicine, gentle advice and a delivery that always shows up.",
       "pillars": [
         {
           "n": "01",
-          "title": "50,000 sft fulfilment",
-          "body": "Purpose-built centres in Bengaluru and Hyderabad. The widest array of medicines — sourced, traced, dispatched.",
-          "accent": "#F5A623",
-          "meta": "Bengaluru · Hyderabad"
+          "title": "Always authentic",
+          "body": "Every medicine is sourced from licensed distributors and stored with care — only genuine, in-date stock ever reaches your hands.",
+          "accent": "#2FA98C",
+          "meta": "Licensed sourcing"
         },
         {
           "n": "02",
-          "title": "Affordable alternatives",
-          "body": "Same composition. Often a fraction of the cost. Our engine surfaces the best generic and brand equivalents for every prescription.",
-          "accent": "#1FAFA6",
-          "meta": "Avg. 48% saved"
+          "title": "Free home delivery",
+          "body": "Order in a message or a call and we deliver to your door the same day — usually within the hour for nearby homes.",
+          "accent": "#E08A2B",
+          "meta": "Same-day, nearby"
         },
         {
           "n": "03",
-          "title": "Pharmacist-reviewed",
-          "body": "Every order is checked by a registered pharmacist for dosage, interactions and validity — before it leaves the counter.",
-          "accent": "#E5326C",
-          "meta": "75+ registered"
+          "title": "A pharmacist who cares",
+          "body": "Our licensed pharmacists check every order, answer your questions patiently, and remember your family's regular refills.",
+          "accent": "#C24D6B",
+          "meta": "Friendly & qualified"
         }
       ]
     },
     "services": [
       {
-        "title": "Retail Stores",
-        "description": "A network of 25 neighbourhood pharmacies stocked with authentic, licensed medicines — and growing across South India.",
-        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369445_gallery-1.png"
+        "title": "In-Store Pharmacy",
+        "description": "Walk in for authentic prescription and OTC medicines, dispensed by a licensed pharmacist who takes the time to help.",
+        "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_instore.png",
+        "icon": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_instore.png"
       },
       {
-        "title": "Quick Commerce",
-        "description": "India's largest network of pharma dark stores — enabling same-day and on-demand medicine delivery directly to your door.",
-        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369651_gallery-2.png"
+        "title": "Free Home Delivery",
+        "description": "Send your order by call or message and we deliver to your door the same day — free for homes in the neighbourhood.",
+        "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_delivery.png",
+        "icon": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_delivery.png"
       },
       {
-        "title": "Hi-Tech Fulfilment",
-        "description": "State-of-the-art fulfilment centres with cold-chain handling, batch traceability, and audit-ready dispatch built in.",
-        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369847_gallery-3.png"
+        "title": "Prescription Refills",
+        "description": "We remember your regular medicines and remind you before they run out, so your refills are ready when you need them.",
+        "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_refills.png",
+        "icon": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_refills.png"
       },
       {
-        "title": "E-commerce Partner",
-        "description": "India's largest pharmaceutical fulfilment partner for e-commerce platforms — accurate, fast, and fully compliant.",
-        "image": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368958_hero.png"
+        "title": "Wellness & OTC",
+        "description": "Vitamins, baby care, personal care and everyday health essentials — curated and quality-checked for your family.",
+        "image": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_wellness.png",
+        "icon": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_services_wellness.png"
       }
     ],
     "servicesMeta": {
-      "eyebrow": "What we do",
+      "eyebrow": "What we offer",
       "heading": {
         "parts": [
           {
-            "text": "Four pillars. "
+            "text": "Everything you need, "
           },
           {
-            "text": "One network.",
+            "text": "with care.",
             "emphasis": "italic"
           }
         ]
@@ -198,14 +204,14 @@
       {
         "type": "appStrip",
         "data": {
-          "logo": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
+          "logo": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_logo.png",
           "heading": {
             "parts": [
               {
-                "text": "Download the "
+                "text": "Get the "
               },
               {
-                "text": "UrMedz",
+                "text": "Meri Medicines",
                 "emphasis": "italic-accent"
               },
               {
@@ -213,41 +219,41 @@
               }
             ]
           },
-          "descriptor": "Authentic medicines · licensed pharmacists · doorstep delivery",
-          "appStoreUrl": "https://apps.apple.com/in/app/urmedz/id6753715891",
-          "googlePlayUrl": "https://play.google.com/store/apps/details?id=com.urmedzB2C"
+          "descriptor": "Order in a tap · chat with your pharmacist · track delivery",
+          "appStoreUrl": "https://apps.apple.com/app/meri-medicines",
+          "googlePlayUrl": "https://play.google.com/store/apps/details?id=in.merimedicines"
         }
       },
       {
         "type": "stats",
         "data": {
-          "eyebrow": "By the numbers",
-          "headline": "A network sized for the country.",
-          "descriptor": "A pharmacy-and-platform footprint sized for the country, built quietly in the background.",
+          "eyebrow": "Why neighbours choose us",
+          "headline": "Small pharmacy, big-hearted care.",
+          "descriptor": "The little things that make Meri Medicines feel like your own.",
           "items": [
             {
-              "value": "25",
+              "value": "30",
+              "suffix": "min",
+              "label": "Average delivery time",
+              "footnote": "For nearby homes"
+            },
+            {
+              "value": "5000",
               "suffix": "+",
-              "label": "Retail stores",
-              "footnote": "South India · Q2 2026"
+              "label": "Families we care for",
+              "footnote": "And growing every week"
             },
             {
-              "value": "10000",
-              "suffix": "+",
-              "label": "Orders fulfilled daily",
-              "footnote": "Retail + quick commerce"
+              "value": "100",
+              "suffix": "%",
+              "label": "Authentic medicines",
+              "footnote": "Licensed-sourced only"
             },
             {
-              "value": "80000",
-              "suffix": "",
-              "label": "SKUs catalogued",
-              "footnote": "Medicines, OTC, wellness"
-            },
-            {
-              "value": "2",
-              "suffix": "",
-              "label": "Fulfilment centres",
-              "footnote": "Bengaluru & Hyderabad"
+              "value": "7",
+              "suffix": "days",
+              "label": "Open all week",
+              "footnote": "9 am – 10 pm"
             }
           ]
         }
@@ -255,154 +261,146 @@
       {
         "type": "savings",
         "data": {
-          "eyebrow": "Customer savings · Q1 2026",
+          "eyebrow": "Save with smart options",
           "heading": {
             "parts": [
               {
-                "text": "Unraveling the magic of "
+                "text": "Same medicine, "
               },
               {
-                "text": "brand options",
+                "text": "kinder price.",
                 "emphasis": "italic-accent"
-              },
-              {
-                "text": " in medicines."
               }
             ]
           },
-          "lede": "Prices vary dramatically from brand to brand, yet the composition stays identical. The UrMedz engine surfaces the optimal pick for every prescription.",
+          "lede": "The composition is identical, yet prices vary brand to brand. Our pharmacists help you find the best-value option for every prescription.",
           "items": [
             {
               "name": "Diabetes Tablets",
-              "cat": "Cat. 01 · Metformin 500mg",
+              "cat": "Metformin 500mg",
               "pct": 46,
-              "color": "#F5A623"
+              "color": "#E08A2B"
             },
             {
               "name": "Blood Sugar Tablets",
-              "cat": "Cat. 02 · Glimepiride 2mg",
+              "cat": "Glimepiride 2mg",
               "pct": 56,
-              "color": "#1FAFA6"
+              "color": "#2FA98C"
             },
             {
               "name": "Blood Pressure Tablets",
-              "cat": "Cat. 03 · Amlodipine 5mg",
+              "cat": "Amlodipine 5mg",
               "pct": 80,
-              "color": "#6B3FA0"
+              "color": "#6B8E3D"
             },
             {
               "name": "Gastric Relief Tablets",
-              "cat": "Cat. 04 · Pantoprazole 40mg",
+              "cat": "Pantoprazole 40mg",
               "pct": 55,
-              "color": "#E5326C"
+              "color": "#C24D6B"
             }
-          ]
+          ],
+          "videoPoster": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_gallery_counter.png",
+          "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+          "videoCopy": {
+            "tag": "See how it works",
+            "headline": "How we find your best-value option",
+            "ctaLabel": "Watch Now"
+          }
         }
       },
       {
         "type": "videoFeature",
         "data": {
-          "tag": "Behind the scenes",
+          "tag": "Meet your pharmacy",
           "heading": {
             "parts": [
               {
-                "text": "A look at our "
+                "text": "A warm welcome at "
               },
               {
-                "text": "hi-tech",
+                "text": "Meri Medicines.",
                 "emphasis": "italic-accent"
-              },
-              {
-                "text": " fulfilment centres."
               }
             ]
           },
           "ctaLabel": "Watch Now",
-          "poster": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391369226_savings-poster.png",
-          "videoUrl": "https://www.urmedz.in/wp-content/uploads/2024/11/new-ur_medz_video-4.mp4",
+          "poster": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_video_poster.png",
+          "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
           "marquee": [
             "Authentic",
-            "Traceable",
-            "Compliant",
-            "Fast",
-            "Scalable",
+            "Caring",
+            "Friendly",
+            "Nearby",
             "Trusted",
+            "Affordable",
             "Licensed",
-            "Pharmacist-reviewed"
+            "Always open"
           ]
         }
       },
       {
         "type": "team",
         "data": {
-          "eyebrow": "Our team of specialists · 200+ strong",
-          "logoMark": "https://1p-b2c-files.s3.amazonaws.com/demo_1782391368443_logo.png",
+          "eyebrow": "The people behind your pharmacy",
+          "logoMark": "https://1p-b2c-files.s3.amazonaws.com/meri_medicines_logo.png",
           "quote": {
             "parts": [
               {
-                "text": "United by a single purpose — to make healthcare "
+                "text": "We treat every customer like a "
               },
               {
-                "text": "accessible, affordable",
+                "text": "neighbour",
                 "emphasis": "italic-accent"
               },
               {
-                "text": " and",
+                "text": " — with patience,",
                 "br": true
               },
               {
-                "text": "trustworthy",
+                "text": "honesty",
                 "emphasis": "italic-accent"
               },
               {
-                "text": " for everyone."
+                "text": " and genuine care."
               }
             ]
           },
           "signatureLabel": "Signed,",
-          "signature": "the UrMedz team",
+          "signature": "the Meri Medicines family",
           "departments": [
             {
               "code": "01",
-              "count": 75,
+              "count": 6,
               "label": "Pharmacists",
               "role": "Licensed dispensing",
-              "bg": "#F5A623",
-              "fg": "#1B2A5B",
-              "detail": "Registered with the Karnataka State Pharmacy Council. Every order reviewed."
+              "bg": "#2FA98C",
+              "fg": "#FFFFFF",
+              "detail": "Qualified and friendly — every order checked, every question answered."
             },
             {
               "code": "02",
-              "count": 25,
-              "label": "Doctors",
-              "role": "Consulting clinicians",
-              "bg": "#1FAFA6",
-              "fg": "#FFFFFF",
-              "detail": "On-call for prescription validation, refills and pharmacist escalations."
+              "count": 4,
+              "label": "Delivery riders",
+              "role": "Free home delivery",
+              "bg": "#E08A2B",
+              "fg": "#16322A",
+              "detail": "Reliable faces who bring your medicines to the door, on time."
             },
             {
               "code": "03",
-              "count": 60,
-              "label": "Supply chain",
-              "role": "Sourcing & logistics",
-              "bg": "#6B3FA0",
+              "count": 3,
+              "label": "Care team",
+              "role": "Refills & support",
+              "bg": "#C24D6B",
               "fg": "#FFFFFF",
-              "detail": "From manufacturer pickup to last-mile — batch-traceable end to end."
-            },
-            {
-              "code": "04",
-              "count": 40,
-              "label": "Health guardians",
-              "role": "Customer support",
-              "bg": "#E5326C",
-              "fg": "#FFFFFF",
-              "detail": "Reachable in four languages, average first reply under nine minutes."
+              "detail": "We remember your refills and are a call away when you need us."
             }
           ],
           "credentials": [
             {
-              "label": "Care SLA",
-              "value": "Avg. reply < 1 hrs · 3 languages"
+              "label": "Open",
+              "value": "7 days · 9 am – 10 pm"
             }
           ]
         }
@@ -410,37 +408,34 @@
       {
         "type": "features",
         "data": {
-          "eyebrow": "Why UrMedz",
+          "eyebrow": "Why Meri Medicines",
           "heading": {
             "parts": [
               {
-                "text": "Pharmacy infrastructure, "
+                "text": "The pharmacy that "
               },
               {
-                "text": "quietly",
+                "text": "knows you.",
                 "emphasis": "italic-accent"
-              },
-              {
-                "text": " done right."
               }
             ]
           },
           "items": [
             {
-              "title": "Authenticity at the source",
-              "description": "Every medicine on our shelves is sourced from licensed distributors and traceable to its manufacturer — no grey-market shortcuts."
+              "title": "Genuine medicines, always",
+              "description": "Sourced only from licensed distributors and stored with care — never grey-market, never expired."
             },
             {
-              "title": "Scale where it matters",
-              "description": "A retail-plus-fulfilment footprint means the medicine you need is rarely more than a few kilometres away."
+              "title": "Free same-day delivery",
+              "description": "A call or message is all it takes; we deliver to nearby homes the same day, often within the hour."
             },
             {
-              "title": "Infrastructure built for compliance",
-              "description": "Cold-chain handling, batch traceability and audit-ready dispatch — built into every store and centre."
+              "title": "Refills, remembered",
+              "description": "We keep track of your regular medicines and remind you before they run out — no last-minute dashes."
             },
             {
-              "title": "An AI-assisted platform",
-              "description": "Our SaaS platform helps partner pharmacies forecast demand, manage inventory and stay compliant — quietly, in the background."
+              "title": "Advice you can trust",
+              "description": "Our licensed pharmacists take the time to explain dosage, interactions and safe use — patiently."
             }
           ]
         }
@@ -452,32 +447,32 @@
           "heading": {
             "parts": [
               {
-                "text": "Prescription to "
+                "text": "From prescription to "
               },
               {
-                "text": "pocket",
+                "text": "doorstep",
                 "emphasis": "italic-accent"
               },
               {
-                "text": " — in three steps."
+                "text": " — easily."
               }
             ]
           },
           "steps": [
             {
               "step": 1,
-              "title": "Browse or upload your prescription",
-              "description": "Search our catalogue or upload a doctor's prescription — we'll match it to authentic, in-stock medicines from licensed pharmacists."
+              "title": "Send us your order or prescription",
+              "description": "Call, message or walk in with your prescription — we'll confirm what you need from authentic, in-stock medicines."
             },
             {
               "step": 2,
-              "title": "A licensed pharmacist reviews your order",
-              "description": "Every prescription order is reviewed by one of our qualified pharmacists before it's dispensed — no exceptions."
+              "title": "A pharmacist checks everything",
+              "description": "A licensed pharmacist reviews your order for dosage and safety before it's packed — every single time."
             },
             {
               "step": 3,
-              "title": "Delivered or ready for pickup",
-              "description": "Collect from your nearest UrMedz store or receive doorstep delivery — often same-day through our quick-commerce network."
+              "title": "Delivered free, or ready to collect",
+              "description": "We deliver to your door the same day at no charge, or have it ready for a quick pickup at the counter."
             }
           ]
         }
@@ -498,35 +493,29 @@
               }
             ]
           },
-          "lede": "Anything we missed? Reach out — our team replies within a working day.",
-          "ctaLabel": "Contact support  ",
+          "lede": "Anything we missed? Just call or message — we love hearing from our neighbours.",
+          "ctaLabel": "Contact us  ",
           "ctaHref": "/contact",
           "items": [
             {
-              "question": "Where do you source your medicines from?",
-              "answer": "All medicines stocked by UrMedz are sourced exclusively from manufacturers and distributors licensed by the Central Drugs Standard Control Organisation (CDSCO). Every batch is traceable from manufacturer to shelf — we do not carry grey-market or unlicensed stock."
+              "question": "Do you really deliver for free?",
+              "answer": "Yes. Home delivery is free for homes in our neighbourhood, usually the same day and often within the hour. Just call or message us your order and a licensed pharmacist will take it from there."
             },
             {
-              "question": "How do you handle prescriptions?",
-              "answer": "Prescription medicines are dispensed only against a valid prescription, reviewed by one of our in-house licensed pharmacists. You can upload a digital copy via our app or website, or present the original at any UrMedz retail store."
+              "question": "Where do your medicines come from?",
+              "answer": "Every medicine we stock is sourced from CDSCO-licensed manufacturers and distributors, stored properly, and checked for expiry. We never carry grey-market or unlicensed stock."
             },
             {
-              "question": "Which areas do you deliver to?",
-              "answer": "We currently deliver same-day and next-day across Bengaluru through our quick-commerce network, with select pin codes covered in other South Indian cities. Check the app for live coverage in your area."
+              "question": "How do prescription medicines work?",
+              "answer": "Prescription medicines are dispensed only against a valid prescription and reviewed by our in-house licensed pharmacist. Send a clear photo on WhatsApp or bring the original to the counter."
             },
             {
-              "question": "What is your return policy?",
-              "answer": "Prescription medicines cannot be returned once dispensed, in line with Indian pharmaceutical regulations. For OTC products in sealed, undamaged condition, returns are accepted within 7 days of purchase at any retail store or via our support team."
+              "question": "Can you remind me about my refills?",
+              "answer": "Absolutely. Tell us your regular medicines and we'll keep track, reminding you before they run out so a refill is always ready when you need it."
             },
             {
-              "question": "How can I get in touch?",
-              "answer": "You can reach our support team at care@urmedz.in or call +91 80 4567 0049 during business hours (9 am – 9 pm, Mon–Sat). For urgent queries, the in-app chat connects you to a pharmacist directly."
-            },
-            {
-              "question": "How do I deactivate my UrMedz account?",
-              "answer": "You can permanently deactivate your account directly from the UrMedz app in a few taps — your profile, order history, and saved preferences will be removed and cannot be recovered.",
-              "learnMoreLabel": "See the full guide",
-              "learnMoreHref": "/deactivate-account"
+              "question": "How can I reach you?",
+              "answer": "Call or message us at +91 22 4000 1200, or email care@merimedicines.in. We're open seven days a week, 9 am to 10 pm."
             }
           ]
         }
@@ -534,9 +523,9 @@
     ]
   },
   "contact": {
-    "email": "care@urmedz.in",
-    "phone": "+91 80 4567 0049",
-    "address": "Cheemasandra, Whitefield, Bengaluru 560049"
+    "email": "care@merimedicines.in",
+    "phone": "+91 22 4000 1200",
+    "address": "Shop 4, Linking Road, Bandra West, Mumbai 400050"
   },
   "features": {
     "enableChat": false,
@@ -546,7 +535,7 @@
   },
   "compliance": {
     "mode": "business-profile-safe",
-    "disclaimer": "UrMedz Retail Pvt. Ltd. is a licensed pharmaceutical retail and fulfilment company. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication."
+    "disclaimer": "Meri Medicines Pharmacy Pvt. Ltd. is a licensed neighbourhood pharmacy. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication."
   },
   "layout": {
     "nav": {
@@ -560,12 +549,8 @@
           "href": "/#services"
         },
         {
-          "label": "Fulfilment",
-          "href": "/#fulfilment"
-        },
-        {
-          "label": "Team",
-          "href": "/#team"
+          "label": "How it works",
+          "href": "/#how-it-works"
         },
         {
           "label": "FAQ",
@@ -578,8 +563,8 @@
       ],
       "ctas": [
         {
-          "label": "Login",
-          "href": "https://ros.urmedz.in/login",
+          "label": "My Account",
+          "href": "https://account.merimedicines.in/login",
           "variant": "primary",
           "external": true
         },
@@ -592,70 +577,66 @@
     },
     "stickyCta": {
       "enabled": true,
-      "text": "The UrMedz app is here.",
-      "ctaLabel": "Download App Now",
+      "text": "Order on the Meri Medicines app.",
+      "ctaLabel": "Get the App",
       "ctaHref": "#app"
     },
     "footer": {
       "headline": {
         "parts": [
           {
-            "text": "Authentic medicines,",
+            "text": "Meri Medicines."
+          },
+          {
+            "text": " Your pharmacy,",
+            "emphasis": "italic-accent",
             "br": true
           },
           {
-            "text": "delivered with",
-            "emphasis": "italic-accent"
-          },
-          {
-            "text": " care."
+            "text": " close to home."
           }
         ]
       },
-      "description": "A pharmacy & health-tech network — retail, quick commerce and hi-tech fulfilment for authentic medicines.",
-      "addressLabel": "Head office",
+      "description": "Your friendly neighbourhood pharmacy — authentic medicines, caring pharmacists and free home delivery.",
+      "addressLabel": "Visit us",
       "columns": [
         {
-          "heading": "Company",
+          "heading": "Pharmacy",
           "links": [
             {
               "label": "About",
               "href": "/#about"
             },
             {
-              "label": "Team",
+              "label": "Our team",
               "href": "/#team"
             },
             {
-              "label": "Careers",
+              "label": "Services",
+              "href": "/#services"
+            }
+          ]
+        },
+        {
+          "heading": "Help",
+          "links": [
+            {
+              "label": "How it works",
+              "href": "/#how-it-works"
+            },
+            {
+              "label": "FAQ",
+              "href": "/#faq"
+            },
+            {
+              "label": "Contact us",
               "href": "/contact"
             }
           ]
         },
         {
-          "heading": "Services",
+          "heading": "Legal",
           "links": [
-            {
-              "label": "Retail stores",
-              "href": "/#services"
-            },
-            {
-              "label": "Fulfilment",
-              "href": "/#fulfilment"
-            },
-            {
-              "label": "Get the app",
-              "href": "/#app"
-            }
-          ]
-        },
-        {
-          "heading": "Resources",
-          "links": [
-            {
-              "label": "FAQ",
-              "href": "/#faq"
-            },
             {
               "label": "Privacy Policy",
               "href": "/privacy-policy"
@@ -663,6 +644,10 @@
             {
               "label": "Terms & Conditions",
               "href": "/terms-conditions"
+            },
+            {
+              "label": "Disclaimer",
+              "href": "/disclaimer"
             },
             {
               "label": "Data deletion",
@@ -675,15 +660,15 @@
     "pages": {
       "contact": {
         "eyebrow": "Contact",
-        "heading": "Get in touch with UrMedz",
-        "lede": "We're happy to answer questions about our offerings. Reach out via any of the channels below and our team will get back to you."
+        "heading": "Get in touch with Meri Medicines",
+        "lede": "Questions about a medicine, a refill, or a delivery? Call, message or write to us — your neighbourhood pharmacist is happy to help."
       },
       "deactivateAccount": {
         "eyebrow": "Account",
-        "heading": "Delete your UrMedz account",
-        "intro": "We're sorry to see you go. You can deactivate your UrMedz consumer account directly from the mobile app in a few taps. Account deactivation is permanent — your profile, order history, and saved preferences will be removed and cannot be recovered.",
+        "heading": "Delete your Meri Medicines account",
+        "intro": "We're sorry to see you go. You can deactivate your Meri Medicines account directly from the app in a few taps. Deactivation is permanent — your profile, order history and saved preferences will be removed and cannot be recovered.",
         "video": {
-          "src": "https://www.urmedz.in/wp-content/uploads/2025/08/deactivate-account.mp4",
+          "src": "https://www.w3schools.com/html/mov_bbb.mp4",
           "caption": "A short walkthrough of the in-app deactivation flow."
         },
         "sections": [
@@ -694,7 +679,7 @@
                 "type": "list",
                 "ordered": true,
                 "items": [
-                  "Open the UrMedz app on your phone.",
+                  "Open the Meri Medicines app on your phone.",
                   "Tap your profile icon at the bottom-right corner to open the menu.",
                   "Select the three dots next to the \"Log Out\" button.",
                   "Tap \"Deactivate\" to proceed with deleting your account.",
@@ -708,13 +693,13 @@
             "body": [
               "Your profile, address book, saved prescriptions, and order history will be permanently removed from our active systems within seven business days.",
               "Anonymised transaction records are retained for the period required by Indian pharmaceutical and tax regulations. These records cannot be linked back to your identity once deactivation is complete.",
-              "You will stop receiving any communications from UrMedz once deactivation is processed."
+              "You will stop receiving any communications from Meri Medicines once deactivation is processed."
             ]
           },
           {
             "heading": "Need help instead?",
             "body": [
-              "If you ran into a problem with an order, a refund, or a prescription, our support team can usually resolve it without you needing to close your account. Reach out via the Contact page or write to support@urmedz.in before deactivating."
+              "If you ran into a problem with an order, a refund, or a prescription, our support team can usually resolve it without you needing to close your account. Reach out via the Contact page or write to support@merimedicines.in before deactivating."
             ]
           }
         ]
@@ -723,8 +708,8 @@
         "eyebrow": "Legal",
         "heading": "Disclaimer",
         "body": [
-          "UrMedz Retail Pvt. Ltd. is a licensed pharmaceutical retail and fulfilment company. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication.",
-          "The information presented on this website is provided in good faith for general informational purposes only. UrMedz makes no representation or warranty, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.",
+          "Meri Medicines Pharmacy Pvt. Ltd. is a licensed pharmaceutical retail and fulfilment company. The information on this website is for general informational purposes only and does not constitute medical advice. All medicines are dispensed by licensed pharmacists in accordance with applicable Indian pharmaceutical regulations, and prescription medicines are dispensed only against a valid prescription. Consult a qualified medical practitioner before starting, stopping, or changing any medication.",
+          "The information presented on this website is provided in good faith for general informational purposes only. Meri Medicines makes no representation or warranty, express or implied, regarding the accuracy, adequacy, validity, reliability, availability, or completeness of any information on the site.",
           "Any reliance you place on such information is strictly at your own risk. We will not be liable for any loss or damage incurred as a result of the use of this website or the information contained herein."
         ]
       },
@@ -732,7 +717,7 @@
         "eyebrow": "Legal",
         "heading": "Privacy Policy",
         "body": [
-          "This Privacy Policy (\"Privacy Policy\") outlines the information that UrMedz Retail Private Limited (\"Company\"), as the operator of the platform, may collect from you (\"You\", \"Your\" or \"User\") through our website (www.urmedz.com) or one or more mobile applications (the \"App\"). The Company, as the owner and operator of the Platform, is referred to as \"We,\" \"Us,\" or \"Our\" in this document. Our platform includes the facilitation of pharmaceutical purchases and third-party delivery services. This policy explains how We collect, use, process, disclose, and protect your information.",
+          "This Privacy Policy (\"Privacy Policy\") outlines the information that Meri Medicines Pharmacy Private Limited (\"Company\"), as the operator of the platform, may collect from you (\"You\", \"Your\" or \"User\") through our website (www.merimedicines.in) or one or more mobile applications (the \"App\"). The Company, as the owner and operator of the Platform, is referred to as \"We,\" \"Us,\" or \"Our\" in this document. Our platform includes the facilitation of pharmaceutical purchases and third-party delivery services. This policy explains how We collect, use, process, disclose, and protect your information.",
           "By clicking on \"Continue\" during the sign-up process, using Our Platform, or accessing Our Services, You confirm that You have read, understood, and agree to the privacy practices described in this Privacy Policy, as well as the Terms of Use (the \"Terms\"). This includes consent to the collection, storage, and processing of Your information in accordance with the Terms.",
           "This Privacy Policy is incorporated by reference into the Terms. Any capitalized terms not defined within this Privacy Policy will carry the definitions provided in the Terms.",
           "This Privacy Policy is published in compliance with:",
@@ -754,9 +739,9 @@
                 "type": "list",
                 "ordered": true,
                 "items": [
-                  "By accessing or using the UrMedz Platform or Services, or by providing Us with Your information, You confirm that You have the legal capacity to enter into a binding contract under Indian law, specifically the Indian Contract Act, 1872. You also confirm that You have read, understood, and agreed to the practices and policies outlined in this Privacy Policy and agree to be bound by its terms.",
+                  "By accessing or using the Meri Medicines Platform or Services, or by providing Us with Your information, You confirm that You have the legal capacity to enter into a binding contract under Indian law, specifically the Indian Contract Act, 1872. You also confirm that You have read, understood, and agreed to the practices and policies outlined in this Privacy Policy and agree to be bound by its terms.",
                   "You hereby consent to Our collection, use, sharing, and disclosure of Your information as described in this Privacy Policy. We reserve the right to update, modify, or amend portions of this Privacy Policy at Our sole discretion at any time. Your continued use of the Platform, App, or Services after such changes signifies implicit acceptance of the Privacy Policy in its amended form. We encourage You to review the Privacy Policy periodically to stay informed of any updates or modifications.",
-                  "If You are accessing the UrMedz Site or Services from a location outside India, You do so at Your own risk and are responsible for compliance with applicable local laws.",
+                  "If You are accessing the Meri Medicines Site or Services from a location outside India, You do so at Your own risk and are responsible for compliance with applicable local laws.",
                   "If You do not agree with any terms of this Privacy Policy, please discontinue use of the Site, App, and Services immediately. This Privacy Policy may change periodically without notice, and You are encouraged to review it on the Site or App to stay updated."
                 ]
               }
@@ -819,7 +804,7 @@
           {
             "heading": "2. How Do We Use the Information We Collect?",
             "body": [
-              "UrMedz uses the information collected on its platform in various ways to operate effectively, fulfill requests, and improve user experiences. Key uses include:",
+              "Meri Medicines uses the information collected on its platform in various ways to operate effectively, fulfill requests, and improve user experiences. Key uses include:",
               "Fulfilling Service and Order Requests:",
               {
                 "type": "list",
@@ -840,7 +825,7 @@
               {
                 "type": "list",
                 "items": [
-                  "UrMedz may use information to research and grow its business operations, including expanding partnerships and refining algorithms for better service offerings."
+                  "Meri Medicines may use information to research and grow its business operations, including expanding partnerships and refining algorithms for better service offerings."
                 ]
               },
               "Customer Support and Communication:",
@@ -855,7 +840,7 @@
               {
                 "type": "list",
                 "items": [
-                  "UrMedz may use cookies and automated data to personalize user interactions, offering targeted promotions and advertisements.",
+                  "Meri Medicines may use cookies and automated data to personalize user interactions, offering targeted promotions and advertisements.",
                   "Users may be contacted via SMS, email, or phone to complete purchases if they have items in their cart but haven't checked out."
                 ]
               },
@@ -870,7 +855,7 @@
               {
                 "type": "list",
                 "items": [
-                  "UrMedz may aggregate and de-identify user data for marketing, research, and publication purposes, which allows for business insights without compromising personal information privacy."
+                  "Meri Medicines may aggregate and de-identify user data for marketing, research, and publication purposes, which allows for business insights without compromising personal information privacy."
                 ]
               },
               "Location-Based Services:",
@@ -885,7 +870,7 @@
           {
             "heading": "3. How Do We Share the Information We Collect?",
             "body": [
-              "UrMedz values user privacy and only shares personal information with third parties who adhere to protective data standards that meet or exceed those outlined in this Privacy Policy. Information sharing may occur in the following ways:",
+              "Meri Medicines values user privacy and only shares personal information with third parties who adhere to protective data standards that meet or exceed those outlined in this Privacy Policy. Information sharing may occur in the following ways:",
               "Retail and Service Partners:",
               {
                 "type": "list",
@@ -904,28 +889,28 @@
               {
                 "type": "list",
                 "items": [
-                  "UrMedz may disclose user information if legally required to comply with applicable laws, prevent crime, protect public or user safety, or enforce the terms of use. This may include sharing data with government entities for fraud prevention or credit risk reduction."
+                  "Meri Medicines may disclose user information if legally required to comply with applicable laws, prevent crime, protect public or user safety, or enforce the terms of use. This may include sharing data with government entities for fraud prevention or credit risk reduction."
                 ]
               },
               "Business Transfers:",
               {
                 "type": "list",
                 "items": [
-                  "In the event of mergers, acquisitions, or transfers, UrMedz may share user information with third parties involved, who will then adhere to the current Privacy Policy to ensure data continuity and protection."
+                  "In the event of mergers, acquisitions, or transfers, Meri Medicines may share user information with third parties involved, who will then adhere to the current Privacy Policy to ensure data continuity and protection."
                 ]
               },
               "Internal Business Improvements:",
               {
                 "type": "list",
                 "items": [
-                  "UrMedz may use recorded consultations, e-prescriptions, and diagnostic reports to improve service quality, enhance marketing efforts, and customize user experiences. This data may be transferred to third parties, including those outside India, to help refine offerings, provided data protection standards are upheld."
+                  "Meri Medicines may use recorded consultations, e-prescriptions, and diagnostic reports to improve service quality, enhance marketing efforts, and customize user experiences. This data may be transferred to third parties, including those outside India, to help refine offerings, provided data protection standards are upheld."
                 ]
               },
               "International Data Transfers:",
               {
                 "type": "list",
                 "items": [
-                  "Subject to applicable law, UrMedz may transfer data to third parties, both within and outside India, ensuring comparable levels of data protection. By using the platform, users consent to such transfers, even to locations abroad, under protective compliance with Indian and international standards."
+                  "Subject to applicable law, Meri Medicines may transfer data to third parties, both within and outside India, ensuring comparable levels of data protection. By using the platform, users consent to such transfers, even to locations abroad, under protective compliance with Indian and international standards."
                 ]
               }
             ]
@@ -937,7 +922,7 @@
               {
                 "type": "list",
                 "items": [
-                  "UrMedz uses a combination of electronic, physical, and procedural safeguards to secure user data during its collection, storage, and disclosure.",
+                  "Meri Medicines uses a combination of electronic, physical, and procedural safeguards to secure user data during its collection, storage, and disclosure.",
                   "The platform employs SSL encryption for secure transmission of information and follows internationally recognized Information Security Management System standards to protect stored data."
                 ]
               },
@@ -953,9 +938,9 @@
               {
                 "type": "list",
                 "items": [
-                  "UrMedz does not accept liability for unauthorized access resulting from weak password practices. If unauthorized use is suspected, users should immediately notify UrMedz via the provided contact details.",
-                  "In certain situations, UrMedz may disclose data without prior user consent, such as when required by law or government agencies for legal investigations.",
-                  "UrMedz is not responsible for security breaches outside its control, such as hacking, internet service issues, or unauthorized third-party access."
+                  "Meri Medicines does not accept liability for unauthorized access resulting from weak password practices. If unauthorized use is suspected, users should immediately notify Meri Medicines via the provided contact details.",
+                  "In certain situations, Meri Medicines may disclose data without prior user consent, such as when required by law or government agencies for legal investigations.",
+                  "Meri Medicines is not responsible for security breaches outside its control, such as hacking, internet service issues, or unauthorized third-party access."
                 ]
               }
             ]
@@ -985,8 +970,8 @@
               {
                 "type": "list",
                 "items": [
-                  "Age Restriction: The platform is intended only for individuals who are legally able to form binding contracts under the Indian Contract Act, 1872. Therefore, anyone under 18 is not permitted to use UrMedz.",
-                  "Safeguards for Minors: If UrMedz identifies that someone under 18 has accessed its services or provided personally identifiable information, it will take action to delete that information. Parents or guardians who become aware that their child under 18 has accessed UrMedz can request data deletion by contacting the support team."
+                  "Age Restriction: The platform is intended only for individuals who are legally able to form binding contracts under the Indian Contract Act, 1872. Therefore, anyone under 18 is not permitted to use Meri Medicines.",
+                  "Safeguards for Minors: If Meri Medicines identifies that someone under 18 has accessed its services or provided personally identifiable information, it will take action to delete that information. Parents or guardians who become aware that their child under 18 has accessed Meri Medicines can request data deletion by contacting the support team."
                 ]
               }
             ]
@@ -998,8 +983,8 @@
                 "type": "list",
                 "ordered": true,
                 "items": [
-                  "Nature of Third-Party Links: UrMedz may include links to external websites, applications, or resources, often hosted by other companies or advertisers.",
-                  "Disclaimer of Responsibility: UrMedz does not control or endorse the content on these third-party sites. It is not liable for how these sites handle data collection, the accuracy of their materials, or any transactions made.",
+                  "Nature of Third-Party Links: Meri Medicines may include links to external websites, applications, or resources, often hosted by other companies or advertisers.",
+                  "Disclaimer of Responsibility: Meri Medicines does not control or endorse the content on these third-party sites. It is not liable for how these sites handle data collection, the accuracy of their materials, or any transactions made.",
                   "User Responsibility: Users are encouraged to use discretion, review third-party privacy policies, and exercise caution as they would with offline interactions."
                 ]
               }
@@ -1011,9 +996,9 @@
               {
                 "type": "list",
                 "items": [
-                  "Storage Locations: UrMedz retains personal information or Sensitive Personal Data or Information (SPDI) through trusted third-party cloud services, including Amazon Web Services, Google Cloud Platform, and MongoDB Cloud.",
-                  "Data Destruction and Anonymization: SPDI will be destroyed or anonymized once it is no longer needed for its intended purpose or required by law. However, UrMedz may retain some information for business purposes, which may be anonymized and used for analytics or service delivery.",
-                  "Withdrawal of Consent: Users can withdraw consent for processing their information by contacting UrMedz. However, this may affect service delivery, and uninstalling the app does not delete personal information."
+                  "Storage Locations: Meri Medicines retains personal information or Sensitive Personal Data or Information (SPDI) through trusted third-party cloud services, including Amazon Web Services, Google Cloud Platform, and MongoDB Cloud.",
+                  "Data Destruction and Anonymization: SPDI will be destroyed or anonymized once it is no longer needed for its intended purpose or required by law. However, Meri Medicines may retain some information for business purposes, which may be anonymized and used for analytics or service delivery.",
+                  "Withdrawal of Consent: Users can withdraw consent for processing their information by contacting Meri Medicines. However, this may affect service delivery, and uninstalling the app does not delete personal information."
                 ]
               }
             ]
@@ -1025,7 +1010,7 @@
                 "type": "list",
                 "items": [
                   "User Access: Users can review and update their information by logging into their accounts. However, deletion of personal information is not permitted, and incorrect modifications may limit access to the platform.",
-                  "Verification: UrMedz reserves the right to verify a user's identity to ensure accurate service delivery, and access to personal information may be restricted if it violates rights or applicable laws."
+                  "Verification: Meri Medicines reserves the right to verify a user's identity to ensure accurate service delivery, and access to personal information may be restricted if it violates rights or applicable laws."
                 ]
               }
             ]
@@ -1036,7 +1021,7 @@
               {
                 "type": "list",
                 "items": [
-                  "Grievance Redressal: Users with privacy concerns or grievances can contact UrMedz's grievance officer, Sunil Gowda, at the specified address and contact details. UrMedz commits to resolving grievances within one month of receipt."
+                  "Grievance Redressal: Users with privacy concerns or grievances can contact Meri Medicines' grievance officer, Priya Menon, at the specified address and contact details. Meri Medicines commits to resolving grievances within one month of receipt."
                 ]
               }
             ]
@@ -1047,8 +1032,8 @@
               {
                 "type": "list",
                 "items": [
-                  "Disclaimer: While UrMedz is committed to protecting your privacy, it cannot guarantee that your personal information and Sensitive Personal Data or Information (SPDI) will never be disclosed in ways not outlined in the privacy policy. Users acknowledge that they assume all responsibility and risk for their use of the platform and the information they post or access.",
-                  "Indemnity: Users agree to indemnify UrMedz against any claims or disputes arising from their disclosure of information to third parties through the platform or elsewhere. UrMedz disclaims liability for actions by third parties regarding any personal information that users may have shared with them.",
+                  "Disclaimer: While Meri Medicines is committed to protecting your privacy, it cannot guarantee that your personal information and Sensitive Personal Data or Information (SPDI) will never be disclosed in ways not outlined in the privacy policy. Users acknowledge that they assume all responsibility and risk for their use of the platform and the information they post or access.",
+                  "Indemnity: Users agree to indemnify Meri Medicines against any claims or disputes arising from their disclosure of information to third parties through the platform or elsewhere. Meri Medicines disclaims liability for actions by third parties regarding any personal information that users may have shared with them.",
                   "Severability: Each clause of the privacy policy is independent. If one clause is found to be null and void, it does not affect the validity of the remaining clauses."
                 ]
               }
@@ -1061,13 +1046,13 @@
         "heading": "Terms & Conditions",
         "body": [
           "This document (\"Terms\") is an electronic record in terms of Information Technology Act, 2000 and rules thereunder, as applicable and the amended provisions pertaining to electronic records in various statutes, as amended from time to time by the Information Technology Act, 2000. This electronic record is generated by a computer system and does not require any physical or digital signatures.",
-          "This document is published in accordance with the provisions of Rule 3(1) of the Information Technology (Intermediaries Guidelines and Digital Media Ethics Code) Rules, 2021 that requires publishing of the rules and regulations, privacy policy, and Terms for access or usage of www.urmedz.com."
+          "This document is published in accordance with the provisions of Rule 3(1) of the Information Technology (Intermediaries Guidelines and Digital Media Ethics Code) Rules, 2021 that requires publishing of the rules and regulations, privacy policy, and Terms for access or usage of www.merimedicines.in."
         ],
         "sections": [
           {
             "heading": "1. General",
             "body": [
-              "The website www.urmedz.com and the UrMedz mobile application (hereinafter collectively referred to as \"Website\") are operated and maintained by UrMedz Retail Private Limited (hereinafter referred to as \"Company,\" \"We,\" \"Our,\" or \"Us\"), a company duly incorporated under the provisions of the Companies Act, 2013.",
+              "The website www.merimedicines.in and the Meri Medicines mobile application (hereinafter collectively referred to as \"Website\") are operated and maintained by Meri Medicines Pharmacy Private Limited (hereinafter referred to as \"Company,\" \"We,\" \"Our,\" or \"Us\"), a company duly incorporated under the provisions of the Companies Act, 2013.",
               "For the purposes of these Terms, wherever the context requires, \"You,\" \"Your,\" or \"User\" shall mean any natural or legal person who accesses, uses, or subscribes to our Website, agrees to become a buyer on the Website, or avails or offers to avail any of our services.",
               "Use of the Website is offered to You, subject to acceptance of all the terms, conditions, and notices contained in these Terms, including applicable policies which are incorporated herein by reference, along with any amendments/modifications made from time to time by the Company at its sole discretion and posted on the Website, including by way of imposing an additional charge for access to or use of a service(s).",
               "The Company reserves the right to change or modify these Terms or any policy or guideline of the Website, including the Privacy Policy, at any time and in its sole discretion. Any changes or modifications will be effective immediately upon posting the revisions on the Website. You waive any right you may have to receive specific notice of such changes or modifications; provided, however, that We will inform You of such changes within the timelines specified under applicable laws. Your continued use of the Website will confirm Your acceptance of such changes or modifications; therefore, you should frequently review these Terms and applicable policies to understand the terms and conditions that apply to Your use of the Website.",
@@ -1110,7 +1095,7 @@
               {
                 "type": "list",
                 "items": [
-                  "Utilize online tele-consultancy with registered medical practitioners through our partner platform Docstat for alternate prescriptions.",
+                  "Utilize online tele-consultancy with registered medical practitioners through our partner tele-consultation platform for alternate prescriptions.",
                   "Receive a call from a registered pharmacist with suggestions for alternate drugs, subject to verification by a medical practitioner."
                 ]
               },
@@ -1203,7 +1188,7 @@
             "body": [
               "Ownership of Content: All content on the website (text, graphics, user interfaces, sounds, artwork, and computer code) is owned and controlled by the Company. This content is protected by copyright, patent, trademark laws, and other intellectual property rights.",
               "Trademarks: The trademarks and logos displayed on the website belong to the Company or third-party partners. You cannot use these marks without prior consent.",
-              "Rights Reserved: The Company retains all intellectual property rights related to the trademark \"UrMedz,\" its domain name, and the website itself, including various rights and interests in copyright, patents, trade secrets, and source code.",
+              "Rights Reserved: The Company retains all intellectual property rights related to the trademark \"Meri Medicines,\" its domain name, and the website itself, including various rights and interests in copyright, patents, trade secrets, and source code.",
               "Restrictions on Use: You may not copy, republish, or distribute any content from the website without obtaining authorization from the Company or relevant third-party owners."
             ]
           },
@@ -1257,14 +1242,14 @@
           {
             "heading": "14. Governing Law",
             "body": [
-              "Jurisdiction: The Terms are governed by Indian law, and disputes will be resolved in the courts of Bengaluru, India."
+              "Jurisdiction: The Terms are governed by Indian law, and disputes will be resolved in the courts of Mumbai, India."
             ]
           },
           {
             "heading": "15. Report Abuse / Grievance Redressal",
             "body": [
               "Reporting Violations: Users can report any abuse or objectionable content to the Company's customer support.",
-              "Grievance Officer: Users can contact Sunil Gowda for concerns regarding the Terms or grievances about the website."
+              "Grievance Officer: Users can contact Priya Menon for concerns regarding the Terms or grievances about the website."
             ]
           },
           {
