@@ -193,6 +193,14 @@ Compliance always wins. If config and compliance disagree, compliance is what re
 - **Image optimization** via `next/image` — pull URLs from config, never inline.
 - **404 fallback** lives in `app/not-found.tsx`.
 - Lazy-load non-critical modules (`next/dynamic`) when they aren't above the fold.
+- **Legal & contact pages MUST use the `.legal-page` shell, not `SectionWrapper`.** `SectionWrapper`'s
+  `py-24` (96px) doesn't clear the ~84px FIXED navbar → heading overlaps the nav. `LegalArticle` + the
+  contact page emit `.legal-page`/`.legal-wrap`/`.legal-*` (from `site-css/blocks/legal.css`, which has the
+  nav-clearing `clamp(120px,…)` top padding) so they match the builder's `LegalPreview` (preview = live).
+  Don't reintroduce `SectionWrapper` on these routes.
+- **Static-export `<Link>` prefetch 403s on S3:** Next auto-prefetches route data (`/privacy-policy/` etc.)
+  which S3 can't serve → 403 console noise (harmless, click still works). Nav/Footer `<Link>`s use
+  `prefetch={false}`; keep it on any new config-driven link in those shared layout components.
 
 ## Animation patterns (GSAP + ScrollTrigger)
 
@@ -212,6 +220,22 @@ Animation primitives live in `lib/motion.ts` (`fadeUp`, `staggerCards`, `paralla
 Per-tenant images live under `public/<project>/` (e.g. `public/demo_proj/`). Sub-folder for service thumbnails: `public/<project>/services/`. The JSON references these paths absolutely (`/demo_proj/hero.png`). When swapping tenants, drop new assets into a new folder and update `configs/app_master.json` paths — no component changes.
 
 Standard slots: `logo.png`, `hero.png`, `about.png`, `og-image.png`, `services/<slug>.png`, plus any gallery images.
+
+### Asset upload & generation workflow (learned)
+
+- **Demo/brand assets live on S3 bucket `1p-b2c-files`** (public-read). Upload directly:
+  `aws s3 cp <file> s3://1p-b2c-files/<key> --acl public-read --content-type image/png`, then confirm with
+  `curl -s -o /dev/null -w '%{http_code}' https://1p-b2c-files.s3.amazonaws.com/<key>` (expect 200).
+- **Key convention is slug-prefixed flat:** `<tenant_slug>_<slot>.png` (e.g. `meri_medicines_hero.png`,
+  `aarav_pharmacy_categories_medicines.png`) — mirror it for new assets.
+- **User-pasted images** land at a temp cache path that is **cleared quickly** — always `ls`/`file` the path
+  FIRST and upload before it disappears; only edit config AFTER a confirmed HTTP 200.
+- **Crop multi-panel images with ImageMagick** (`magick <src> -crop WxH+X+Y +repage out.png`); `sips --crop`
+  is centre-only (no offset). `Read` the crops to verify framing before uploading.
+- **`Services` module renders `s.icon`, NOT `s.image`** — a service with only `image` shows no icon. Hero
+  `image` and About `image` are non-rendered fallbacks (Hero uses `slides`; About renders no image).
+- **Verify a config/asset change actually rendered** by grepping the static export after `npm run build:site`:
+  `grep -o '<tenant_slug>_[a-z_]*\.png' apps/site/out/index.html`.
 
 ## Project gotchas (Next 16.2 + shadcn base-ui)
 
