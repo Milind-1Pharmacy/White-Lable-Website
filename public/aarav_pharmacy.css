@@ -741,6 +741,15 @@ a {
     border-radius: 22px;
   }
 
+  /* Move the badge to the bottom-right on mobile, sitting just above the
+     slide indicator dots so it clears the image's top headline. */
+  .hero__media .badge.badge {
+    top: auto;
+    left: auto;
+    right: 18px;
+    bottom: 42px;
+  }
+
   .hero__copy {
     order: 2;
     padding-top: 4px;

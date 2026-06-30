@@ -77,7 +77,7 @@ export function Services({ data, meta }: ServicesProps) {
             {heading && (
               <h2
                 className="h-display h-2"
-                style={{ marginTop: 14, minHeight: isMobile ? 32 : 32 }}
+                style={{ marginTop: 14, minHeight: isMobile ? 50 : 32 }}
               >
                 {heading}
               </h2>
