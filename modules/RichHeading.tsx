@@ -31,14 +31,14 @@ export function renderRichHeading(value: RichHeadingT | undefined): React.ReactN
     let node: React.ReactNode = content;
     if (p.emphasis === "italic-accent") {
       node = (
-        <span className="serif-it" style={{ color: "var(--accent)" }}>
+        <span className="serif-it" style={{ color: "var(--accent-text)" }}>
           {content}
         </span>
       );
     } else if (p.emphasis === "italic") {
       node = <span className="serif-it">{content}</span>;
     } else if (p.emphasis === "accent") {
-      node = <span style={{ color: "var(--accent)" }}>{content}</span>;
+      node = <span style={{ color: "var(--accent-text)" }}>{content}</span>;
     }
     return (
       <Fragment key={i}>
