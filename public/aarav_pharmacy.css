@@ -18,9 +18,21 @@
   --accent: #14C6C0;
   --accent-ink: #FFFFFF;
 
-  /* Brand palette — Aarav blue + teal */
+  /* Accent-text family — the magenta-purple from the Aarav logo (the "+",
+     the "V", the swoosh and the "PHARMACY" wordmark). Teal (--accent) stays
+     the base brand (buttons, fills, dots); this purple family is used for
+     EMPHASIZED TEXT and small accent marks so the page echoes the logo's
+     two-tone identity against the teal base.
+       --accent-text  : default emphasis on light backgrounds (readable)
+       --accent-text-2: deeper shade for hovers / stronger contrast
+       --accent-text-soft: tint for washes, glows and underlines */
+  --accent-text: #D6357A;
+  --accent-text-2: #B82A6A;
+  --accent-text-soft: color-mix(in srgb, var(--accent-text) 14%, transparent);
+
+  /* Brand palette — Aarav teal + logo magenta-purple */
   --brand-yellow: #F5A623;
-  --brand-purple: #6B3FA0;
+  --brand-purple: #BC3B7E;
   --brand-teal: #14C6C0;
   --brand-pink: #E5326C;
   --brand-navy: #1F5FB8;
@@ -91,7 +103,7 @@ a {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-text);
   margin-right: 8px;
   vertical-align: 1px;
 }
@@ -105,11 +117,16 @@ a {
   margin: 0;
 }
 
+/* Emphasized words in headings/taglines: bold and upright (no italic) for
+   readability. Previously an italic serif; now matches the sans display face. */
+/* Emphasized words: UPRIGHT (no italic), and the SAME light weight as the
+   surrounding heading — emphasis comes from the magenta color alone, never
+   from bolding. This keeps the type premium and unforced. */
 .serif-it {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: inherit;
+  letter-spacing: inherit;
 }
 
 .h-big {
@@ -132,6 +149,14 @@ a {
   font-size: clamp(17px, 1.3vw, 20px);
   line-height: 1.55;
   color: var(--mute);
+}
+
+/* Taglines: upright, normal weight, in a clear readable tone — never bold.
+   Readability comes from contrast and size, not heaviness. */
+.hero__copy .body-l,
+.cat-head__tag {
+  font-weight: 400;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
 }
 
 .body {
@@ -222,6 +247,10 @@ a {
 .section--ink {
   background: var(--ink);
   color: var(--cream);
+  /* On the dark navy sections, lift the logo purple so emphasized heading
+     text (var(--accent-text)) keeps strong contrast. Same hue, lighter. */
+  --accent-text: #FF6FA8;
+  --accent-text-2: #D45F9C;
 }
 
 .section--ink .body,
@@ -306,9 +335,9 @@ a {
 }
 
 .nav__logo-full {
-  height: 48px !important;
+  height: 64px !important;
   width: auto !important;
-  max-width: 240px;
+  max-width: 300px;
   object-fit: contain;
   display: block;
   transition: opacity .3s ease, transform .3s ease;
@@ -334,7 +363,7 @@ a {
 
 .nav.is-scrolled .nav__logo-full {
   display: block;
-  height: 30px !important;
+  height: 42px !important;
   width: auto !important;
 }
 
@@ -853,11 +882,10 @@ a {
 }
 
 .hero__h em {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: inherit;
   color: var(--navy);
-
 }
 
 .hero__meta {
@@ -936,6 +964,8 @@ a {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  /* lighter logo purple for emphasized text on this dark panel */
+  --accent-text: #FF6FA8;
 }
 
 .appstrip::before {
@@ -1328,10 +1358,12 @@ a {
 }
 
 .feature__num {
-  font-family: var(--font-display);
-  font-style: italic;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.03em;
   font-size: 40px;
-  color: var(--accent);
+  color: var(--accent-text);
   line-height: 1;
 }
 
@@ -1392,7 +1424,7 @@ a {
 }
 
 .service:hover .service__num {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .service:hover .service__desc {
@@ -1543,11 +1575,11 @@ a {
   border-radius: 12px;
   background: color-mix(in srgb, var(--pillar-accent) 14%, transparent);
   color: var(--pillar-accent);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: 0;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
@@ -1600,10 +1632,10 @@ a {
 }
 
 @media (max-width: 720px) {
-  /* wide lockup logo — keep it compact in the mobile header */
+  /* wide lockup logo — larger but still tidy in the mobile header */
   .nav__logo-full,
   .nav.is-scrolled .nav__logo-full {
-    height: 28px !important;
+    height: 38px !important;
     width: auto !important;
   }
 
@@ -1687,11 +1719,11 @@ a {
   border-radius: 999px;
   background: color-mix(in srgb, var(--card-accent, var(--accent)) 14%, transparent);
   color: var(--card-accent, var(--accent));
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1904,10 +1936,11 @@ a {
 }
 
 .stat-cell .v em {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--accent);
+  font-family: var(--font-sans);
+  font-style: normal;
+  color: var(--accent-text);
   font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 .stat-cell .l {
@@ -2340,7 +2373,7 @@ a {
   position: relative;
   background:
     radial-gradient(130% 100% at 50% 0%,
-      color-mix(in srgb, var(--accent) 9%, var(--white)) 0%,
+      color-mix(in srgb, var(--accent-text) 12%, var(--white)) 0%,
       var(--white) 70%);
   border: 1px solid var(--line);
   border-radius: 28px;
@@ -2393,10 +2426,11 @@ a {
 }
 
 .cat-preview__title {
-  font-family: var(--font-display);
-  font-style: italic;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 500;
   font-size: clamp(24px, 2.4vw, 32px);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
   color: var(--ink);
   line-height: 1.15;
 }
@@ -2433,7 +2467,7 @@ a {
   top: -1px;
   height: calc(100% + 1px);
   width: 2px;
-  background: var(--accent);
+  background: var(--accent-text);
   transform: scaleY(0);
   transform-origin: top;
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2464,7 +2498,7 @@ a {
 }
 
 .cat-row.is-active .cat-row__num {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .cat-row__title {
@@ -2492,7 +2526,7 @@ a {
 .cat-row.is-active .cat-row__arrow {
   opacity: 1;
   transform: translate(0, 0);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* the inline panel is desktop-hidden — the side preview handles it there */
@@ -2532,6 +2566,13 @@ a {
   border: 1px solid var(--line);
   border-radius: 24px;
   overflow: hidden;
+  transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+
+.cat-tile:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-text);
+  box-shadow: 0 16px 40px -20px color-mix(in srgb, var(--accent-text) 50%, transparent);
 }
 
 /* soft brand wash in the corner for depth */
@@ -2545,7 +2586,7 @@ a {
   border-radius: 999px;
   background: radial-gradient(
     circle at center,
-    color-mix(in srgb, var(--accent) 14%, transparent),
+    color-mix(in srgb, var(--accent-text) 16%, transparent),
     transparent 70%
   );
   pointer-events: none;
@@ -2555,7 +2596,7 @@ a {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.16em;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .cat-tile__icon {
@@ -2568,9 +2609,9 @@ a {
   border-radius: 22px;
   background:
     radial-gradient(120% 120% at 30% 20%,
-      color-mix(in srgb, var(--accent) 12%, var(--white)) 0%,
+      color-mix(in srgb, var(--accent-text) 14%, var(--white)) 0%,
       var(--white) 100%);
-  border: 1px solid var(--line);
+  border: 1px solid color-mix(in srgb, var(--accent-text) 18%, var(--line));
 }
 
 .cat-tile__icon img {
@@ -2622,9 +2663,11 @@ a {
 }
 
 .why-cell .num {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--accent);
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--accent-text);
   font-size: 30px;
   line-height: 1;
 }
@@ -2663,7 +2706,7 @@ a {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.18em;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 24px;
 }
 
@@ -2676,8 +2719,10 @@ a {
 }
 
 .step__big {
-  font-family: var(--font-display);
-  font-style: italic;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.04em;
   font-size: 64px;
   color: var(--ink);
   line-height: 1;
@@ -2690,7 +2735,7 @@ a {
 
 .step:hover .step__big {
   opacity: 0.32;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ── Testimonials ─────────────────────────────────────────────────── */
@@ -2883,16 +2928,20 @@ a {
   background: var(--ink);
   color: var(--cream);
   padding: clamp(72px, 8vw, 120px) 0 40px;
+  /* lighter logo purple for emphasized text on this dark panel */
+  --accent-text: #FF6FA8;
 }
 
 .footer .h-big {
   color: var(--cream);
 }
 
-.footer .h-big em {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--accent);
+.footer .h-big em,
+.footer .h-big .serif-it {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: inherit;
+  color: var(--accent-text);
 }
 
 .footer__grid {
@@ -2951,6 +3000,18 @@ a {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(244, 239, 230, 0.5);
+}
+
+/* Footer tagline — upright, normal weight and readable (no italic), not the
+   mono-uppercase copyright style. */
+.footer__tagline {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: rgba(244, 239, 230, 0.7);
 }
 
 .footer__disc {

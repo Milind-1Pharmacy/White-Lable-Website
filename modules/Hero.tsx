@@ -103,9 +103,11 @@ export function Hero({ data }: HeroProps) {
                     {m.suffix && (
                       <em
                         style={{
-                          color: "var(--accent)",
-                          fontFamily: "var(--font-display)",
-                          fontStyle: "italic",
+                          color: "var(--accent-text)",
+                          fontFamily: "var(--font-sans)",
+                          fontStyle: "normal",
+                          fontWeight: 400,
+                          letterSpacing: "-0.02em",
                         }}
                       >
                         {m.suffix}

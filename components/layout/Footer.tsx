@@ -153,7 +153,9 @@ export function Footer({ app }: FooterProps) {
           <span>
             © {year} {app.tenant.name}.
           </span>
-          {footer?.bottomTag && <span>{footer.bottomTag}</span>}
+          {footer?.bottomTag && (
+            <span className="footer__tagline">{footer.bottomTag}</span>
+          )}
         </div>
       </div>
     </footer>
